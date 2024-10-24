@@ -1,0 +1,61 @@
+.footer {
+  background-color: #f8f9fa;  /* Light background for contrast */
+  padding: 10px 20px;  /* Reduced padding for height adjustment */
+  border-top: 1px solid #e0e0e0;  /* Subtle top border */
+}
+
+.footer h5 {
+  font-size: 1.25rem;  /* Larger font for section headers */
+  margin-bottom: 10px;  /* Reduced space below headers */
+}
+
+.footer ul {
+  list-style: none;  /* Remove default list styling */
+  padding: 0;  /* Remove padding */
+}
+
+.footer ul li {
+  margin-bottom: 5px;  /* Reduced space between list items */
+}
+
+.footer ul li a {
+  color: #007bff;  /* Link color */
+  text-decoration: none;  /* No underline */
+  transition: color 0.3s;  /* Smooth transition for hover */
+}
+
+.footer ul li a:hover {
+  color: #0056b3;  /* Darker color on hover */
+}
+
+.newsletter {
+  margin-top: 10px;  /* Space above newsletter section */
+}
+
+.input-group {
+  display: flex;  /* Use flexbox for input and button */
+  margin-top: 5px;  /* Reduced space above input */
+}
+
+.input-group input {
+  flex: 1;  /* Take remaining space */
+}
+
+.payment-icons {
+  margin-top: 10px;  /* Space above payment icons */
+}
+
+.payment-icons img {
+  margin-right: 5px;  /* Space between icons if multiple */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .footer .row {
+    flex-direction: column;  /* Stack columns on smaller screens */
+  }
+
+  .footer .col-md-3 {
+    margin-bottom: 20px;  /* Space between stacked columns */
+  }
+}

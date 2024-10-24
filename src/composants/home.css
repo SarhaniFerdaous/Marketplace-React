@@ -1,0 +1,105 @@
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif; /* Clean font for legibility */
+  background-color: #f9f9f9; /* Light background for contrast */
+  margin: 0;
+  padding: 0;
+}
+
+/* Hero Section - Full width */
+.carousel img {
+  max-height: 340px;  /* Adjusted height for carousel images */
+  width: 100%;        /* Ensure image takes the full width */
+  object-fit: cover;  /* Ensures the image covers the box entirely */
+}
+
+
+/* Product Grid */
+.product-grid {
+  display: flex; /* Use flexbox for the product grid */
+  flex-wrap: wrap; /* Allow wrapping to the next line */
+  justify-content: space-between; /* Space products evenly */
+  margin: 20px 0; /* Margin for the grid */
+}
+
+/* Product Card */
+.product-card {
+  flex: 0 1 calc(33.333% - 20px); /* Each card takes up 1/3 of the width minus margin */
+  margin-bottom: 20px; /* Space between rows */
+  text-align: center; /* Center the text */
+  border: none; /* Remove default border */
+  overflow: hidden; /* Prevent overflow for the card */
+  border-radius: 10px; /* Rounded corners for the card */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* More prominent shadow for depth */
+  background-color: #fff; /* White background for cards */
+  transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effect */
+}
+
+/* Product Image */
+.product-image {
+  width: 100%; /* Set the image width to 90% of the card width */
+  max-height: 500px; /* Set a maximum height for the images */
+  object-fit: contain; /* Maintain aspect ratio while fitting */
+  display: block; /* Remove any bottom space caused by inline-block */
+  margin: 10px auto; /* Center the image in the card with top/bottom margin */
+  border-radius: 5px; /* Rounded cornrs for the image */
+}
+
+/* Product Title */
+.product-title {
+  font-size: 1.2rem; /* Slightly larger font size */
+  font-weight: bold; /* Make title bold */
+  margin: 10px 0; /* Margin for spacing */
+  color: #333; /* Dark color for text */
+}
+
+/* Product Price */
+.product-price {
+  font-size: 1rem; /* Standard font size for price */
+  color: #2c3e50; /* Darker color for better readability */
+  margin: 5px 0; /* Margin for spacing */
+  font-weight: bold; /* Bold price for emphasis */
+}
+
+/* Hover Effect */
+.product-card:hover {
+  transform: translateY(-5px); /* Lift card on hover */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); /* Increase shadow on hover */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .product-grid {
+    flex-direction: column; /* Stack products vertically on small screens */
+    align-items: center; /* Center items */
+  }
+
+  .product-card {
+    flex: 1 0 90%; /* Make cards wider on smaller screens */
+  }
+}
+/* Add this to your home.css file */
+
+/* Offer Image Style */
+.offer-image {
+  flex: 0 1 calc(100% - 20px); /* Take full width minus margin */
+  margin: 20px auto; /* Center with auto margin */
+  text-align: center; /* Center image */
+}
+
+/* Add this to your home.css file */
+
+/* Offer Image Style - Full Width */
+.offer-image-full {
+  width: 100%; /* Full width */
+  margin: 20px 0; /* Margin for spacing above and below */
+  text-align: center; /* Center the image */
+}
+
+.offer-image-full img {
+  width: 100%; /* Set the image width to 100% of its container */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 10px; /* Rounded corners for the image */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Light shadow for depth */
+}
+

@@ -1,0 +1,83 @@
+/* Professional Header Styles */
+.custom-header {
+  position: fixed; /* Keep the header fixed at the top */
+  top: 0; /* Align to the top of the viewport */
+  left: 0; /* Align to the left */
+  right: 0; /* Align to the right */
+  background-color: #ffffff;  /* Clean white background */
+  border-bottom: 2px solid #e0e0e0;  /* Subtle bottom border for separation */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);  /* Soft shadow for depth */
+  padding: 10px 0;  /* Reduced padding for a more compact look */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  /* Modern, clean font */
+  height: 80px;  /* Smaller header height */
+  z-index: 1000; /* Ensure it stays on top of other content */
+}
+
+/* Logo styling */
+.nv-image {
+  height: 50px;  /* Adjust the logo size */
+  width: auto;
+}
+
+/* Search bar styling */
+.search-bar {
+  width: 450px;  /* Increased width of the search bar */
+  border-radius: 30px;  /* Rounded corners */
+  margin-right: 15px; /* Add some space to the right */
+}
+
+.search-input {
+  border: 2px solid #e0e0e0;  /* Thin border for a modern look */
+  border-radius: 30px 0 0 30px;  /* Rounded corners for the input */
+  padding: 12px 15px;  /* Increased padding for better usability */
+  font-size: 16px;  /* Increased font size for better readability */
+}
+
+/* Search button styling */
+.search-btn {
+  border-radius: 0 30px 30px 0;  /* Rounded corners for the button */
+  background: linear-gradient(90deg, #800080, #007bff); /* Gradient from purple to blue */
+  border: none;
+  height: 50px;  /* Increased height for the button */
+  width: 50px;   /* Increased width for the button */
+  display: flex; /* Use flexbox for centering */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  transition: background 0.3s; /* Smooth transition on hover */
+}
+
+.search-btn:hover {
+  background: linear-gradient(90deg, #6f007d, #0056b3); /* Darker gradient on hover */
+}
+
+.search-icon {
+  height: 28px;  /* Increased height of the icon */
+  width: 28px;   /* Increased width of the icon */
+}
+
+/* Cart and profile section */
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;  /* Adjusted space between cart and profile icons */
+}
+
+/* Adjust the layout container to avoid overlap with the fixed header */
+.layout-container {
+  margin-top: 80px; /* Adjust this based on the new height of your header */
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .search-bar {
+    width: 100%; /* Adjusted width for mobile devices */
+  }
+  .search-input {
+    font-size: 14px; /* Smaller font size for mobile */
+    padding: 10px; /* Adjust padding for better usability */
+  }
+  .search-btn {
+    height: 45px; /* Slightly smaller button height for mobile */
+    width: 45px; /* Slightly smaller button width for mobile */
+  }
+}

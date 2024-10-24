@@ -1,0 +1,60 @@
+/* General styles */
+.App {
+  display: flex; /* Use flexbox for layout */
+  flex-direction: column; /* Arrange children vertically */
+  min-height: 100vh; /* Ensure it fills the viewport height */
+  text-align: center; /* Center text in the App */
+}
+
+.App-logo {
+  height: 40vmin; /* Responsive logo size */
+  pointer-events: none; /* Disable pointer events */
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear; /* Animation for the logo */
+  }
+}
+
+/* Header styles */
+.App-header {
+  background-color: #282c34; /* Dark background for header */
+  min-height: 100px; /* Ensure a fixed height for the header */
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Center items vertically */
+  justify-content: center; /* Center items horizontally */
+  font-size: calc(10px + 2vmin); /* Responsive font size */
+  color: white; /* Text color */
+}
+
+/* Main content styles */
+.content {
+  flex: 1; /* Allow content area to expand and fill space */
+  display: flex; /* Optional: Use flexbox for content layout */
+  flex-direction: column; /* Arrange content vertically */
+  justify-content: center; /* Center content vertically */
+}
+
+/* Footer styles */
+.footer {
+  background-color: #f8f9fa; /* Example light footer background */
+  padding: 20px; /* Padding for footer */
+  text-align: center; /* Center footer text */
+  color: #333; /* Text color for footer */
+}
+
+/* Link styles */
+.App-link {
+  color: #61dafb; /* Link color */
+}
+
+/* Animation */
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg); /* Start rotation */
+  }
+  to {
+    transform: rotate(360deg); /* Complete rotation */
+  }
+}
