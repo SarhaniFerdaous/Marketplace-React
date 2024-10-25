@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth'; 
-import { getAuth } from 'firebase/auth'; 
+import { auth } from '../firebase.config'; 
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -35,24 +35,17 @@ const Register = () => {
     }
 
     try {
-      setLoading(true); // Start loading
-
-      // Create user with Firebase Authentication
-      const auth = getAuth(); // Assuming Firebase is initialized globally
+      setLoading(true);
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
-      // Handle successful registration
+      console.log(userCredential); // You can access user details here if needed
       setSuccess(true);
       setError(null);
-      setTimeout(() => {
-        navigate('/login'); // Redirect to login page
-      }, 2000);
+      setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
       setError('Registration failed. Please try again.');
-      setSuccess(false);
-      console.error(err); // Log the error for debugging
+      console.error(err);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 

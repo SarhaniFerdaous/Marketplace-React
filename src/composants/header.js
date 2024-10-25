@@ -52,14 +52,18 @@ const Header = () => {
             />
           </div>
 
-          {/* Profile Icon */}
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
-            <li className="nav-item d-flex align-items-center me-3">
-              <Link className="nav-link" to="/register">
-                <img src={profileIcon} alt="Profile" style={{ height: '50px' }} />
-              </Link>
-            </li>
-          </ul>
+          {/* Signup Button */}
+         <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
+           <li className="nav-item d-flex align-items-center me-3">
+             <Link className="nav-link" to="/register">
+               <Button
+                  variant="dark"
+                   style={{ backgroundColor: '#0d6efd', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '5px' }}
+                  > Register
+               </Button>
+             </Link>
+           </li>
+         </ul>
         </div>
       </div>
     </header>
