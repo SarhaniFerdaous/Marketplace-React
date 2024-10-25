@@ -1,47 +1,33 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase.config';
-import { db } from '../firebase.config'; // Import Firestore
-import { setDoc, doc } from 'firebase/firestore'; // Import Firestore methods
-import { useUser } from '../context/UserContext';
 
-const Register = () => {
-  const [name, setName] = useState('');
+const Signin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Basic validation
-    if (!name || !email || !password) {
+    if (!email || !password) {
       setError('Please fill in all fields');
       return;
     }
 
     try {
       setLoading(true);
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // Store additional user information in Firestore
-      await setDoc(doc(db, 'users', user.uid), {
-        name: name,
-        email: email,
-        // Add any additional fields you want
-      });
-
-      setSuccess(true);
+      await signInWithEmailAndPassword(auth, email, password);
       setError(null);
-      setTimeout(() => navigate('/'), 2000); // Redirect to the home page
+      navigate('/'); // Redirect to the home page on successful sign-in
     } catch (err) {
-      setError('Registration failed. Please try again.');
+      setError('Sign in failed. Please check your credentials and try again.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -50,21 +36,9 @@ const Register = () => {
 
   return (
     <Container>
-      <h2>Register</h2>
+      <h2>Sign In</h2>
       {error && <Alert variant="danger">{error}</Alert>}
-      {success && <Alert variant="success">Registration successful! Redirecting to home...</Alert>}
       <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="formBasicName">
-          <Form.Label>Name</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Enter your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </Form.Group>
-
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
@@ -88,11 +62,11 @@ const Register = () => {
         </Form.Group>
 
         <Button variant="primary" type="submit" disabled={loading}>
-          {loading ? 'Registering...' : 'Register'}
+          {loading ? 'Signing In...' : 'Sign In'} {/* Loading state for button */}
         </Button>
       </Form>
     </Container>
   );
 };
 
-export default Register;
+export default Signin;

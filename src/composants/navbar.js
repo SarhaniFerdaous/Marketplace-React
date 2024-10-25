@@ -1,12 +1,13 @@
-// src/navbar.js
 import React, { useState, useEffect, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Navbar, Nav } from 'react-bootstrap';
+import { useUser } from '../context/UserContext'; // Ensure correct path to UserContext
 
 // NavBar Component
 const NavBar = () => {
   const [showCategories, setShowCategories] = useState(false);
   const dropdownRef = useRef(null);
+  const { userData } = useUser(); // Retrieve user data from context
 
   const handleToggle = () => {
     setShowCategories(!showCategories);
@@ -51,7 +52,16 @@ const NavBar = () => {
               <Nav.Link as={NavLink} to="/accessoires" onClick={handleClose}>Accessoires</Nav.Link>
             </div>
           )}
+               {/* Greeting Message */}
+      <div className="greeting-message">
+        {userData ? (
+          <h1>Hello, {userData.name}!</h1> // Display user's name
+        ) : (
+          <h1>Welcome to the Home Page!</h1>
+        )}
+      </div>
         </Nav>
+        
       </Navbar.Collapse>
 
       {/* Inline CSS Styles */}
@@ -65,6 +75,12 @@ const NavBar = () => {
           color: #007bff;
         }
         
+        .greeting-message {
+          margin-left: 20px; /* Space between categories and greeting */
+          font-size: 1.2rem; /* Adjust font size as needed */
+          color: #333; /* Darker text color for readability */
+        }
+
         .categories-list {
           position: absolute;
           top: 100%;

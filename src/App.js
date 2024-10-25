@@ -4,6 +4,7 @@ import Header from './composants/header';
 import NavBar from './composants/navbar';
 import Home from './composants/home'; // Ensure Home is imported correctly
 import Register from './composants/Register'; // Ensure this import is present
+import Signin from './composants/Signin';
 import Footer from './composants/footer';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -18,6 +19,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} /> {/* This route points to Home.js */}
             <Route path="/register" element={<Register />} />
+            <Route path="/Signin" element={<Signin />} />
             <Route path="/pcs" element={<div>PCs Page</div>} />
             <Route path="/ordinateurs" element={<div>Ordinateurs Page</div>} />
             <Route path="/accessoires" element={<div>Accessoires Page</div>} />
