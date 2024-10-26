@@ -39,7 +39,7 @@ const Footer = () => {
           <div className="col-md-3 newsletter-section">
             <h5>S'INSCRIRE AUX NEWSLETTERS</h5>
             <div className="newsletter">
-              <p>Inscrivez-vous à la newsletter Mytek</p>
+              <p>Inscrivez-vous à la newsletter InfoZone</p>
               <div className="input-group">
                 <input placeholder="Saisissez votre email" type="email" className="form-control" />
                 <button className="btn btn-success">SOUSCRIRE</button>
