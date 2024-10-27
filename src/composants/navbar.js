@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import { useUser } from '../context/UserContext'; // Ensure correct path to UserContext
 
@@ -8,6 +8,7 @@ const NavBar = () => {
   const [showCategories, setShowCategories] = useState(false);
   const dropdownRef = useRef(null);
   const { userData } = useUser(); // Retrieve user data from context
+  const navigate = useNavigate();
 
   const handleToggle = () => {
     setShowCategories(!showCategories);
@@ -15,6 +16,10 @@ const NavBar = () => {
 
   const handleClose = () => {
     setShowCategories(false);
+  };
+
+  const handleAddProductClick = () => {
+    navigate('/ajouterProduits'); // Updated route
   };
 
   useEffect(() => {
@@ -65,7 +70,7 @@ const NavBar = () => {
 
         {/* Conditionally Render Ajouter Produit Button */}
         {userData && (
-          <Button variant="primary" className="add-product-button">
+          <Button variant="primary" className="add-product-button" onClick={handleAddProductClick}>
             Ajouter Produit
           </Button>
         )}
@@ -123,7 +128,7 @@ const NavBar = () => {
         .me-auto {
           position: relative;
         }
-      `}</style>
+      `}</style>  
     </Navbar>
   );
 };
