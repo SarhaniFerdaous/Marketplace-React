@@ -48,6 +48,10 @@ const Register = () => {
     }
   };
 
+  const handleSignInRedirect = () => {
+    navigate('/signin'); // Navigate to the Sign In page
+  };
+
   return (
     <Container>
       <h2>Register</h2>
@@ -87,9 +91,14 @@ const Register = () => {
           />
         </Form.Group>
 
-        <Button variant="primary" type="submit" disabled={loading}>
-          {loading ? 'Registering...' : 'Register'}
-        </Button>
+        <div className="button-group">
+          <Button variant="primary" type="submit" disabled={loading} className="me-2">
+            {loading ? 'Registering...' : 'Register'}
+          </Button>
+          <Button variant="secondary" onClick={handleSignInRedirect}>
+            Sign In
+          </Button>
+        </div>
       </Form>
     </Container>
   );

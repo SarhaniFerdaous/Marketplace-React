@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import logo from "../photo/nv.jpg"; // Path to your nv.jpg logo
 import cartIcon from "../photo/chariot.png"; // Path to your chariot.png image
 import searchIcon from "../photo/br.png"; // Path to your br.jpg image
+import profileIcon from "../photo/pr.jpg"; // Path to your pr.jpg image
 import './header.css'; // Custom styles for the header
 import { InputGroup, FormControl, Button } from 'react-bootstrap'; // Importing necessary components from React-Bootstrap
 import { auth } from '../firebase.config';
@@ -32,13 +33,6 @@ const Header = () => {
     }
   };
 
-  // Redirect to register if user is not authenticated
-  const handleAction = () => {
-    if (!user) {
-      navigate('/register'); // Redirect to the registration page
-    }
-  };
-
   return (
     <header className="custom-header">
       <div className="container d-flex align-items-center justify-content-between">
@@ -58,7 +52,7 @@ const Header = () => {
               aria-label="Search"
               className="search-input"
             />
-            <Button variant="outline-secondary" className="search-btn" onClick={handleAction}>
+            <Button variant="outline-secondary" className="search-btn">
               <img src={searchIcon} alt="Search" className="search-icon" />
             </Button>
           </InputGroup>
@@ -67,11 +61,11 @@ const Header = () => {
         {/* Profile and Cart Section */}
         <div className="header-icons d-flex align-items-center">
           {/* Cart Icon */}
-          <div className="cart-section" onClick={handleAction}>
+          <div className="cart-section" onClick={() => !user && navigate('/register')}>
             <img src={cartIcon} alt="Cart" style={{ height: '50px', marginRight: '10px' }} />
           </div>
 
-          {/* Conditional rendering of Register or Logout button */}
+          {/* Conditional rendering of Profile or Logout */}
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
             {user ? (
               // Display Logout button if user is logged in
@@ -91,21 +85,19 @@ const Header = () => {
                 </Button>
               </li>
             ) : (
-              // Display Register button if user is not logged in
+              // Display profile icon (pr.jpg) if user is not logged in
               <li className="nav-item d-flex align-items-center me-3">
-                <Link className="nav-link" to="/register">
-                  <Button
-                    variant="dark"
+                <Link to="/register">
+                  <img
+                    src={profileIcon}
+                    alt="Profile Icon"
                     style={{
-                      backgroundColor: '#0d6efd',
-                      color: '#fff',
-                      border: 'none',
-                      padding: '10px 20px',
-                      borderRadius: '5px',
+                      height: '50px',
+                      width: '50px',
+                      borderRadius: '50%',
+                      cursor: 'pointer',
                     }}
-                  >
-                    Register
-                  </Button>
+                  />
                 </Link>
               </li>
             )}
