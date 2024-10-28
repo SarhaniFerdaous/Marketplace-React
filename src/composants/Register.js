@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase.config';
-import { db } from '../firebase.config'; // Import Firestore
+import { auth, db } from '../firebase.config'; // Ensure both auth and db are imported
 import { setDoc, doc } from 'firebase/firestore'; // Import Firestore methods
-import { useUser } from '../context/UserContext';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -34,7 +32,6 @@ const Register = () => {
       await setDoc(doc(db, 'users', user.uid), {
         name: name,
         email: email,
-        // Add any additional fields you want
       });
 
       setSuccess(true);
@@ -52,9 +49,29 @@ const Register = () => {
     navigate('/signin'); // Navigate to the Sign In page
   };
 
+  // Inline CSS styles for the component
+  const styles = {
+    container: {
+      maxWidth: '400px',
+      margin: '50px auto',
+      padding: '20px',
+      border: '1px solid #ccc',
+      borderRadius: '10px',
+      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+    },
+    heading: {
+      textAlign: 'center',
+      marginBottom: '20px',
+    },
+    buttonGroup: {
+      display: 'flex',
+      justifyContent: 'space-between',
+    },
+  };
+
   return (
-    <Container>
-      <h2>Register</h2>
+    <Container style={styles.container}>
+      <h2 style={styles.heading}>Register</h2>
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">Registration successful! Redirecting to home...</Alert>}
       <Form onSubmit={handleSubmit}>
@@ -91,8 +108,8 @@ const Register = () => {
           />
         </Form.Group>
 
-        <div className="button-group">
-          <Button variant="primary" type="submit" disabled={loading} className="me-2">
+        <div style={styles.buttonGroup}>
+          <Button variant="primary" type="submit" disabled={loading}>
             {loading ? 'Registering...' : 'Register'}
           </Button>
           <Button variant="secondary" onClick={handleSignInRedirect}>

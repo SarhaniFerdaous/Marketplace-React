@@ -34,9 +34,25 @@ const Signin = () => {
     }
   };
 
+  // Inline CSS styles for the component
+  const styles = {
+    container: {
+      maxWidth: '400px',
+      margin: '50px auto',
+      padding: '20px',
+      border: '1px solid #ccc',
+      borderRadius: '10px',
+      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+    },
+    heading: {
+      textAlign: 'center',
+      marginBottom: '20px',
+    },
+  };
+
   return (
-    <Container>
-      <h2>Sign In</h2>
+    <Container style={styles.container}>
+      <h2 style={styles.heading}>Sign In</h2>
       {error && <Alert variant="danger">{error}</Alert>}
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="formBasicEmail">
@@ -61,7 +77,7 @@ const Signin = () => {
           />
         </Form.Group>
 
-        <Button variant="primary" type="submit" disabled={loading}>
+        <Button variant="primary" type="submit" disabled={loading} className="mt-3">
           {loading ? 'Signing In...' : 'Sign In'} {/* Loading state for button */}
         </Button>
       </Form>

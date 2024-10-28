@@ -52,9 +52,9 @@ const NavBar = () => {
           </div>
           {showCategories && (
             <div className="categories-list" ref={dropdownRef}>
-              <Nav.Link as={NavLink} to="/pcs" onClick={handleClose}>PC</Nav.Link>
-              <Nav.Link as={NavLink} to="/ordinateurs" onClick={handleClose}>Ordinateurs</Nav.Link>
-              <Nav.Link as={NavLink} to="/accessoires" onClick={handleClose}>Accessoires</Nav.Link>
+              <Nav.Link as={NavLink} to="/pc" onClick={handleClose}>PC</Nav.Link>
+              <Nav.Link as={NavLink} to="/ecran" onClick={handleClose}>Ecran</Nav.Link>
+              <Nav.Link as={NavLink} to="/chair gamer" onClick={handleClose}>Chair Gamer</Nav.Link>
             </div>
           )}
         </Nav>

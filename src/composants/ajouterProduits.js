@@ -1,6 +1,29 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Row, Col } from "react-bootstrap";
 
+// Inline CSS styles for the component
+const styles = {
+  container: {
+    maxWidth: "600px",
+    marginTop: "30px",
+    padding: "20px",
+    border: "1px solid #ccc",
+    borderRadius: "10px",
+    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+  },
+  heading: {
+    textAlign: "center",
+    marginBottom: "20px",
+  },
+  formControl: {
+    borderColor: "#007bff",
+    borderRadius: "5px",
+  },
+  submitButton: {
+    width: "100%",
+  },
+};
+
 const AddProductForm = () => {
   const [productType, setProductType] = useState("");
   const [description, setDescription] = useState("");
@@ -29,14 +52,14 @@ const AddProductForm = () => {
   };
 
   return (
-    <Container>
-      <h2>Ajouter Produit</h2>
+    <Container style={styles.container}>
+      <h2 style={styles.heading}>Ajouter Produit</h2>
       <Form onSubmit={handleSubmit}>
         <Form.Group as={Row}>
-          <Form.Label as="legend" column sm={2}>
+          <Form.Label as="legend" column sm={4}>
             Type de Produit
           </Form.Label>
-          <Col sm={10}>
+          <Col sm={8}>
             <Form.Check
               type="radio"
               label="PC"
@@ -72,6 +95,7 @@ const AddProductForm = () => {
             placeholder="Enter product description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            style={styles.formControl}
           />
         </Form.Group>
 
@@ -84,6 +108,7 @@ const AddProductForm = () => {
                 placeholder="Enter price"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
+                style={styles.formControl}
               />
             </Col>
             <Col>
@@ -91,6 +116,7 @@ const AddProductForm = () => {
                 as="select"
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
+                style={styles.formControl}
               >
                 <option value="TND">TND</option>
                 <option value="Dollar">Dollar</option>
@@ -106,12 +132,13 @@ const AddProductForm = () => {
             placeholder="Enter amount"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
+            style={styles.formControl}
           />
         </Form.Group>
 
         <Form.Group controlId="image">
           <Form.Label>Product Image</Form.Label>
-          <Form.Control type="file" onChange={handleFileChange} />
+          <Form.Control type="file" onChange={handleFileChange} style={styles.formControl} />
         </Form.Group>
 
         <Form.Group controlId="brand">
@@ -121,10 +148,11 @@ const AddProductForm = () => {
             placeholder="Enter product brand"
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
+            style={styles.formControl}
           />
         </Form.Group>
 
-        <Button variant="primary" type="submit" className="mt-3">
+        <Button variant="primary" type="submit" className="mt-3" style={styles.submitButton}>
           Ajouter Produit
         </Button>
       </Form>
