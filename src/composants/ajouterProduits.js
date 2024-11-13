@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
 import { db } from "../firebase.config";
 import { collection, addDoc } from "firebase/firestore";
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const AddProductForm = () => {
   const [productType, setProductType] = useState("");
@@ -11,12 +10,21 @@ const AddProductForm = () => {
   const [currency, setCurrency] = useState("TND");
   const [amount, setAmount] = useState("");
   const [image, setImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState(""); // Store the image URL here
   const [brand, setBrand] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
   const handleFileChange = (e) => {
-    setImage(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result); // Set the data URL of the image
+        setImage(file); // Store the actual file (if needed for validation or future reference)
+      };
+      reader.readAsDataURL(file); // This converts the image file to a base64 string
+    }
   };
 
   const resetForm = () => {
@@ -26,13 +34,15 @@ const AddProductForm = () => {
     setCurrency("TND");
     setAmount("");
     setImage(null);
+    setImageUrl(""); // Clear the image URL
     setBrand("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!productType || !description || !price || !amount || !brand || !image) {
+    // Check for required fields
+    if (!productType || !description || !price || !amount || !brand || !imageUrl) {
       setMessage({ type: "danger", text: "Please fill all required fields." });
       return;
     }
@@ -48,26 +58,10 @@ const AddProductForm = () => {
     }
 
     setLoading(true);
-    setMessage({ type: "", text: "Cela peut prendre quelque minutes ..." }); // Indicate processing
+    setMessage({ type: "", text: "Processing your product..." });
 
     try {
-      const storage = getStorage();
-      const imageRef = ref(storage, `product-images/${image.name}`);
-      const uploadTask = uploadBytesResumable(imageRef, image);
-
-      const imageUrl = await new Promise((resolve, reject) => {
-        uploadTask.on(
-          "state_changed",
-          null,
-          (error) => reject(error),
-          () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              resolve(downloadURL);
-            });
-          }
-        );
-      });
-
+      // Save the product data to Firestore
       const productData = {
         productType,
         description,
@@ -75,14 +69,14 @@ const AddProductForm = () => {
         currency,
         amount,
         brand,
-        imageUrl, 
+        imageUrl, // Save the image URL (base64 or external URL)
         createdAt: new Date(),
       };
 
       // Add the product data to Firestore
       await addDoc(collection(db, "products"), productData);
 
-      // Show success message and reset the form
+      // Success message and reset form
       setMessage({ type: "success", text: "Product added successfully!" });
       resetForm();
     } catch (error) {
@@ -95,7 +89,6 @@ const AddProductForm = () => {
 
   return (
     <Container>
-
       {/* Display success or error messages */}
       {message.text && <Alert variant={message.type}>{message.text}</Alert>}
 
