@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Carousel, Container } from 'react-bootstrap';
-import { auth } from '../firebase.config';
+import { auth } from '../api/firebase.config';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useUser } from '../context/UserContext'; // Ensure correct path to UserContext
 import './home.css';

@@ -6,7 +6,7 @@ import searchIcon from "../photo/br.png"; // Path to your br.jpg image
 import profileIcon from "../photo/pr.jpg"; // Path to your pr.jpg image
 import './header.css'; // Custom styles for the header
 import { InputGroup, FormControl, Button } from 'react-bootstrap'; // Importing necessary components from React-Bootstrap
-import { auth } from '../firebase.config';
+import { auth } from '../api/firebase.config';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 const Header = () => {

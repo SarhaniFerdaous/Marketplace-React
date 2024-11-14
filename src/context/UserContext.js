@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth } from '../firebase.config'; // Ensure you have the correct path
+import { auth } from '../api/firebase.config'; // Ensure you have the correct path
 import { fetchUserData } from './fetchUserData'; // Adjust the path
 
 const UserContext = createContext();
