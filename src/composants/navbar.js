@@ -62,7 +62,7 @@ const NavBar = () => {
             <div className="categories-list" ref={dropdownRef}>
               <Nav.Link as={NavLink} to="/pc" onClick={handleClose}>PC</Nav.Link>
               <Nav.Link as={NavLink} to="/ecran" onClick={handleClose}>Ecran</Nav.Link>
-              <Nav.Link as={NavLink} to="/chair gamer" onClick={handleClose}>Chair Gamer</Nav.Link>
+              <Nav.Link as={NavLink} to="/chair-gamer" onClick={handleClose}>Chair Gamer</Nav.Link>
             </div>
           )}
         </Nav>

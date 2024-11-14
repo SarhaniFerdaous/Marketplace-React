@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Form, Button, Alert } from 'react-bootstrap';
+import { Container, Form, Button, Alert, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../api/firebase.config';
@@ -34,6 +34,11 @@ const Signin = () => {
     }
   };
 
+  // Navigate to Register page
+  const handleRegisterClick = () => {
+    navigate('/register'); // Navigate to the Register page
+  };
+
   // Inline CSS styles for the component
   const styles = {
     container: {
@@ -47,6 +52,11 @@ const Signin = () => {
     heading: {
       textAlign: 'center',
       marginBottom: '20px',
+    },
+    buttonContainer: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      marginTop: '20px',
     },
   };
 
@@ -81,6 +91,12 @@ const Signin = () => {
           {loading ? 'Signing In...' : 'Sign In'} {/* Loading state for button */}
         </Button>
       </Form>
+
+      <div style={styles.buttonContainer}>
+        <Button variant="link" onClick={handleRegisterClick}>
+          Don't have an account? Register
+        </Button>
+      </div>
     </Container>
   );
 };
