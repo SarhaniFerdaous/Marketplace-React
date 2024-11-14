@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from "../photo/nv.jpg"; // Path to your nv.jpg logo
+import logo from '../photo/infoz.jpg';
 import cartIcon from "../photo/chariot.png"; // Path to your chariot.png image
 import searchIcon from "../photo/br.png"; // Path to your br.jpg image
 import profileIcon from "../photo/pr.jpg"; // Path to your pr.jpg image
@@ -40,7 +40,7 @@ const Header = () => {
         {/* Logo Section - Wrapped in Link to redirect to home */}
         <div className="logo-section">
           <Link to="/">
-            <img src={logo} alt="InfoZone Logo" className="nv-image" />
+            <img src={logo} alt="InfoZone Logo" className="infoz-image" />
           </Link>
         </div>
 
@@ -61,7 +61,7 @@ const Header = () => {
         {/* Profile and Cart Section */}
         <div className="header-icons d-flex align-items-center">
           {/* Cart Icon */}
-          <div className="cart-section" onClick={() => !user && navigate('/register')}>
+          <div className="cart-section" onClick={() => navigate('/panier')}>
             <img src={cartIcon} alt="Cart" style={{ height: '50px', marginRight: '10px' }} />
           </div>
 
