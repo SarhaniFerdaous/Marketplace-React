@@ -68,22 +68,38 @@ const Header = () => {
           {/* Conditional rendering of Profile or Logout */}
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
             {user ? (
-              // Display Logout button if user is logged in
-              <li className="nav-item d-flex align-items-center me-3">
-                <Button
-                  variant="dark"
-                  onClick={handleLogout}
-                  style={{
-                    backgroundColor: '#dc3545',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '10px 20px',
-                    borderRadius: '5px',
-                  }}
-                >
-                  Logout
-                </Button>
-              </li>
+              // Display Profile Icon and Logout Button side by side if user is logged in
+              <div className="d-flex align-items-center">
+                <li className="nav-item d-flex align-items-center me-3">
+                  <img
+                    src={profileIcon}
+                    alt="Profile Icon"
+                    style={{
+                      height: '50px',
+                      width: '50px',
+                      borderRadius: '50%',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => navigate('/profile')} // Optionally add navigation to profile page
+                  />
+                </li>
+                <li className="nav-item logout-btn">
+                  <Button
+                    variant="dark"
+                    onClick={handleLogout}
+                    style={{
+                      backgroundColor: '#dc3545',
+                      color: '#fff',
+                      border: 'none',
+                      padding: '10px 20px',
+                      borderRadius: '5px',
+                      marginLeft: '10px', // Add margin to space out the buttons
+                    }}
+                  >
+                    Logout
+                  </Button>
+                </li>
+              </div>
             ) : (
               // Display profile icon (pr.jpg) if user is not logged in
               <li className="nav-item d-flex align-items-center me-3">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import { useUser } from '../context/UserContext'; // Ensure correct path to UserContext
 
@@ -9,6 +9,7 @@ const NavBar = () => {
   const dropdownRef = useRef(null);
   const { userData } = useUser(); // Retrieve user data from context
   const navigate = useNavigate();
+  const location = useLocation(); // Use the location hook to get the current route
 
   const handleToggle = () => {
     setShowCategories(!showCategories);
@@ -42,6 +43,13 @@ const NavBar = () => {
     };
   }, []);
 
+  useEffect(() => {
+    console.log('userData:', userData); // Check if user data is being updated correctly
+  }, [userData]);
+
+  // Check if the current path is "ajouterProduits" and hide the "Ajouter Produit" button if so
+  const isOnAddProductPage = location.pathname === '/ajouterProduits';
+
   return (
     <Navbar bg="light" expand="lg">
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -69,7 +77,7 @@ const NavBar = () => {
         </div>
 
         {/* Conditionally Render Ajouter Produit Button */}
-        {userData && (
+        {userData && !isOnAddProductPage && (
           <Button variant="primary" className="add-product-button" onClick={handleAddProductClick}>
             Ajouter Produit
           </Button>
