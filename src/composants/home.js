@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Carousel, Container } from 'react-bootstrap';
 import { auth } from '../api/firebase.config';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -29,15 +29,19 @@ const HomePage = () => {
   }, []);
 
   const productLinks = [
-    { image: pcImage1, title: 'PC', path: '/pc' },
+    { image: pcImage1, title: 'PC', path: '/pc' }, // Correct the path to '/pc'
     { image: ecImage1, title: 'Ecran', path: '/ecran' },
     { image: ecImage3, title: 'Chair Gamer', path: '/chair-gamer' },
   ];
 
-  // Redirect to register if user is not authenticated
-  const handleProductClick = () => {
+  // Handle click on product image or title
+  const handleProductClick = (path) => {
     if (!user) {
+      // Redirect to register page if user is not authenticated
       navigate('/register');
+    } else {
+      // Redirect to the product page
+      navigate(path);
     }
   };
 
@@ -47,21 +51,17 @@ const HomePage = () => {
       <Carousel>
         <Carousel.Item>
           <img className="d-block w-100" src={offre} alt="First slide" />
-       
         </Carousel.Item>
         <Carousel.Item>
           <img className="d-block w-100" src={offre1} alt="Second slide" />
-         
         </Carousel.Item>
       </Carousel>
 
       {/* Product Grid Section */}
       <div className="product-grid">
         {productLinks.map((product, idx) => (
-          <div key={idx} className="product-card" onClick={handleProductClick}>
-            <Link to={product.path}>
-              <img className="product-image" src={product.image} alt={product.title} />
-            </Link>
+          <div key={idx} className="product-card" onClick={() => handleProductClick(product.path)}>
+            <img className="product-image" src={product.image} alt={product.title} />
             <div className="product-title">{product.title}</div>
           </div>
         ))}
