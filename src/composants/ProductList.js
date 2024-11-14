@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, Row, Col } from "react-bootstrap";
 import { db } from "../api/firebase.config";
 import { collection, onSnapshot } from "firebase/firestore";
+import "./ProductList.css"; // Import CSS file
 
 const ProductList = ({ productType }) => {
   const [products, setProducts] = useState([]);
@@ -12,7 +13,6 @@ const ProductList = ({ productType }) => {
       const productList = [];
       snapshot.docs.forEach((doc) => {
         const data = doc.data();
-        // Only include products that match the productType
         if (data.productType === productType) {
           productList.push({ id: doc.id, ...data });
         }
@@ -25,12 +25,11 @@ const ProductList = ({ productType }) => {
   }, [productType]);
 
   return (
-    <div>
+    <div className="product-list-container">
       {loading ? (
         <p>Loading products...</p>
       ) : (
         <div>
-          {/* Heading for the page based on the productType */}
           <h2>{productType} Products</h2>
           <Row>
             {products.length === 0 ? (
@@ -38,13 +37,15 @@ const ProductList = ({ productType }) => {
             ) : (
               products.map((product) => (
                 <Col key={product.id} sm={12} md={6} lg={4}>
-                  <Card className="mb-4">
-                    <Card.Img variant="top" src={product.imageUrl} />
-                    <Card.Body>
-                      <Card.Title>{product.brand} - {product.productType}</Card.Title>
-                      <Card.Text>{product.description}</Card.Text>
+                  <Card className="product-card">
+                    <div className="product-image-container">
+                      <Card.Img className="product-image" src={product.imageUrl} alt={product.brand} />
+                    </div>
+                    <Card.Body className="product-card-body">
+                      <Card.Title className="product-card-title">{product.brand} - {product.productType}</Card.Title>
+                      <Card.Text className="product-card-text">{product.description}</Card.Text>
                       <Row>
-                        <Col>
+                        <Col className="product-card-info">
                           <p>Price: {product.price} {product.currency}</p>
                           <p>Available Quantity: {product.amount}</p>
                         </Col>
