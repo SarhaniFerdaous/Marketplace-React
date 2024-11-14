@@ -1,96 +1,128 @@
-/* Professional Header Styles */
+/* Header Container */
 .custom-header {
-  position: fixed; /* Keep the header fixed at the top */
-  top: 0; /* Align to the top of the viewport */
-  left: 0; /* Align to the left */
-  right: 0; /* Align to the right */
-  background-color: #ffffff;  /* Clean white background */
-  border-bottom: 2px solid #e0e0e0;  /* Subtle bottom border for separation */
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);  /* Soft shadow for depth */
-  padding: 10px 0;  /* Reduced padding for a more compact look */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  /* Modern, clean font */
-  height: 80px;  /* Smaller header height */
-  z-index: 1000; /* Ensure it stays on top of other content */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border-bottom: 2px solid #e0e0e0;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
+  padding: 10px 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 80px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
 }
 
-/* Logo styling */
+/* Logo Styling */
 .infoz-image {
-  height: 60px;  /* Adjust the logo size to be a bit bigger */
+  height: 60px;
   width: auto;
-  margin-left: -100px; /* Shift the logo slightly to the left */
+  margin-left: -20px;
+  flex: 1; /* Adjusted to occupy minimum required space */
 }
 
-/* Search bar styling */
+/* Search Bar Section */
+.search-bar-container {
+  display: flex;
+  align-items: center;
+  flex: 2; /* Takes more space to center within the header */
+  max-width: 600px;
+  margin: 0 20px;
+}
+
 .search-bar {
-  width: 600px;  /* Increased width of the search bar */
-  border-radius: 30px;  /* Rounded corners */
-  margin-right: 15px; /* Add some space to the right */
-  margin-left: 20px;  /* Shift the search bar a bit from the left */
+  width: 100%;
+  display: flex;
+  border-radius: 30px;
+  overflow: hidden;
 }
 
 .search-input {
-  border: 2px solid #e0e0e0;  /* Thin border for a modern look */
-  border-radius: 30px 0 0 30px;  /* Rounded corners for the input */
-  padding: 14px 20px;  /* Increased padding for better usability */
-  font-size: 18px;  /* Larger font size for better readability */
+  flex: 1;
+  border: 2px solid #e0e0e0;
+  padding: 12px 16px;
+  font-size: 16px;
+  border-radius: 30px 0 0 30px;
 }
 
-/* Search button styling */
 .search-btn {
-  border-radius: 0 30px 30px 0;  /* Rounded corners for the button */
-  background: linear-gradient(90deg, #800080, #007bff); /* Gradient from purple to blue */
+  background: linear-gradient(90deg, #800080, #007bff);
   border: none;
-  height: 50px;  /* Increased height for the button */
-  width: 50px;   /* Increased width for the button */
-  display: flex; /* Use flexbox for centering */
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  transition: background 0.3s; /* Smooth transition on hover */
+  height: 50px;
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.3s;
+  border-radius: 0 30px 30px 0;
 }
 
 .search-btn:hover {
-  background: linear-gradient(90deg, #6f007d, #0056b3); /* Darker gradient on hover */
+  background: linear-gradient(90deg, #6f007d, #0056b3);
 }
 
 .search-icon {
-  height: 28px;  /* Increased height of the icon */
-  width: 28px;   /* Increased width of the icon */
+  height: 28px;
+  width: 28px;
 }
 
-/* Cart and profile section */
+/* Icons Section (Cart and Profile) */
 .header-icons {
   display: flex;
   align-items: center;
-  gap: 15px;  /* Space between the cart and profile icons */
+  gap: 15px;
+  flex: 1; /* Adjusted to occupy minimum required space */
+  justify-content: flex-end;
 }
 
 .header-icons li {
-  display: flex; /* Align items in a row */
-  align-items: center; /* Vertically center the icons */
+  display: flex;
+  align-items: center;
 }
 
-.header-icons .logout-btn {
-  margin-left: 20px; /* Space between profile icon and logout button */
-  padding: 5px 10px; /* Padding for the logout button */
-  cursor: pointer; /* Add pointer cursor for the button */
+.logout-btn {
+  padding: 5px 10px;
+  cursor: pointer;
 }
 
-/* Adjust the layout container to avoid overlap with the fixed header */
+/* Layout Adjustment */
 .layout-container {
-  margin-top: 80px; /* Adjust this based on the new height of your header */
+  margin-top: 80px;
 }
 
 /* Responsive Styles */
 @media (max-width: 768px) {
-  .search-bar {
-    width: 100%; /* Adjusted width for mobile devices */
+  .custom-header {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px;
+    height: auto;
   }
+
+  .infoz-image {
+    margin: 0 0 10px;
+  }
+
+  .search-bar-container {
+    width: 100%;
+    margin: 0 0 10px;
+  }
+
   .search-input {
-    font-size: 14px; /* Smaller font size for mobile */
-    padding: 10px; /* Adjust padding for better usability */
+    font-size: 14px;
+    padding: 10px;
   }
+
   .search-btn {
-    height: 45px; /* Slightly smaller button height for mobile */
-    width: 45px; /* Slightly smaller button width for mobile */
+    height: 45px;
+    width: 45px;
+  }
+
+  .header-icons {
+    justify-content: center;
+    width: 100%;
+    gap: 10px;
   }
 }

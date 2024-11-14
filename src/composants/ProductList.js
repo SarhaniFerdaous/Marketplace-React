@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Card, Row, Col } from "react-bootstrap";
+import { Card, Row, Col, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { db } from "../api/firebase.config";
 import { collection, onSnapshot } from "firebase/firestore";
 import "./ProductList.css"; // Import CSS file
@@ -7,6 +8,7 @@ import "./ProductList.css"; // Import CSS file
 const ProductList = ({ productType }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "products"), (snapshot) => {
@@ -23,6 +25,10 @@ const ProductList = ({ productType }) => {
 
     return () => unsubscribe(); // Cleanup on component unmount
   }, [productType]);
+
+  const handleAddToBasket = () => {
+    navigate("/basket"); // Redirects to the basket page
+  };
 
   return (
     <div className="product-list-container">
@@ -50,6 +56,14 @@ const ProductList = ({ productType }) => {
                           <p>Available Quantity: {product.amount}</p>
                         </Col>
                       </Row>
+                      <Button 
+                         className="add-to-basket-button mt-3" 
+                            onClick={handleAddToBasket} 
+                              style={{ backgroundColor: '#5DADE2', border: 'none' }}
+                               >
+                               Add to Basket
+                      </Button>
+
                     </Card.Body>
                   </Card>
                 </Col>
