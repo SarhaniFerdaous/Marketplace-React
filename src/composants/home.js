@@ -29,25 +29,21 @@ const HomePage = () => {
   }, []);
 
   const productLinks = [
-    { image: pcImage1, title: 'PC', path: '/pc' }, // Correct the path to '/pc'
+    { image: pcImage1, title: 'PC', path: '/pc' },
     { image: ecImage1, title: 'Ecran', path: '/ecran' },
-    { image: ecImage3, title: 'Chair Gamer', path: '/chair-gamer' },
+    { image: ecImage3, title: 'Chair Gamer', path: '/ChairGamer' },
   ];
 
-  // Handle click on product image or title
   const handleProductClick = (path) => {
     if (!user) {
-      // Redirect to register page if user is not authenticated
-      navigate('/register');
+      navigate('/register'); // Redirect to register page if not authenticated
     } else {
-      // Redirect to the product page
-      navigate(path);
+      navigate(path); // Navigate to the product page
     }
   };
 
   return (
     <Container fluid>
-      {/* Hero Section - Carousel */}
       <Carousel>
         <Carousel.Item>
           <img className="d-block w-100" src={offre} alt="First slide" />
@@ -57,7 +53,6 @@ const HomePage = () => {
         </Carousel.Item>
       </Carousel>
 
-      {/* Product Grid Section */}
       <div className="product-grid">
         {productLinks.map((product, idx) => (
           <div key={idx} className="product-card" onClick={() => handleProductClick(product.path)}>

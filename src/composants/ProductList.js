@@ -1,48 +1,42 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Button, Card, Row, Col } from "react-bootstrap";
+import { Card, Row, Col } from "react-bootstrap";
 import { db } from "../api/firebase.config";
 import { collection, onSnapshot } from "firebase/firestore";
 
-const ProductList = () => {
-  const [products, setProducts] = useState({});
+const ProductList = ({ productType }) => {
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up Firestore real-time listener
     const unsubscribe = onSnapshot(collection(db, "products"), (snapshot) => {
-      const newProducts = {};
+      const productList = [];
       snapshot.docs.forEach((doc) => {
         const data = doc.data();
-        const category = data.productType;
-        if (!newProducts[category]) {
-          newProducts[category] = [];
+        // Only include products that match the productType
+        if (data.productType === productType) {
+          productList.push({ id: doc.id, ...data });
         }
-        newProducts[category].push({ id: doc.id, ...data });
       });
-      setProducts(newProducts);
+      setProducts(productList);
       setLoading(false);
     });
 
-    // Clean up the listener on unmount
-    return () => unsubscribe();
-  }, []);
-
-  const handleAddToBasket = (productId, quantity) => {
-    // Logic to add the product to the basket
-    console.log(`Added ${quantity} of product ${productId} to basket`);
-  };
+    return () => unsubscribe(); // Cleanup on component unmount
+  }, [productType]);
 
   return (
     <div>
       {loading ? (
         <p>Loading products...</p>
       ) : (
-        Object.keys(products).map((category) => (
-          <div key={category}>
-            <h2>{category}</h2>
-            <Row>
-              {products[category].map((product) => (
+        <div>
+          {/* Heading for the page based on the productType */}
+          <h2>{productType} Products</h2>
+          <Row>
+            {products.length === 0 ? (
+              <p>No products found in this category.</p>
+            ) : (
+              products.map((product) => (
                 <Col key={product.id} sm={12} md={6} lg={4}>
                   <Card className="mb-4">
                     <Card.Img variant="top" src={product.imageUrl} />
@@ -52,29 +46,16 @@ const ProductList = () => {
                       <Row>
                         <Col>
                           <p>Price: {product.price} {product.currency}</p>
-                          <p>Quantity: {product.amount}</p>
-                        </Col>
-                        <Col>
-                          <div className="d-flex justify-content-end">
-                            <Button variant="outline-secondary">-</Button>
-                            <span className="mx-2">1</span>
-                            <Button variant="outline-secondary">+</Button>
-                          </div>
+                          <p>Available Quantity: {product.amount}</p>
                         </Col>
                       </Row>
-                      <Button
-                        variant="primary"
-                        onClick={() => handleAddToBasket(product.id, 1)}
-                      >
-                        Add to Basket
-                      </Button>
                     </Card.Body>
                   </Card>
                 </Col>
-              ))}
-            </Row>
-          </div>
-        ))
+              ))
+            )}
+          </Row>
+        </div>
       )}
     </div>
   );

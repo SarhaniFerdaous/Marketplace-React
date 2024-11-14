@@ -132,68 +132,59 @@ const AddProductForm = () => {
           <Form.Control
             as="textarea"
             rows={3}
-            placeholder="Enter product description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            required
           />
         </Form.Group>
 
-        {/* Price and Currency Input */}
-        <Form.Group controlId="price">
-          <Form.Label>Price</Form.Label>
-          <Row>
-            <Col>
-              <Form.Control
-                type="number"
-                placeholder="Enter price"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-              />
-            </Col>
-            <Col>
-              <Form.Control
-                as="select"
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-              >
-                <option value="TND">TND</option>
-                <option value="Dollar">Dollar</option>
-              </Form.Control>
-            </Col>
-          </Row>
-        </Form.Group>
-
-        {/* Amount Input */}
-        <Form.Group controlId="amount">
-          <Form.Label>Amount</Form.Label>
-          <Form.Control
-            type="number"
-            placeholder="Enter amount"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
+        {/* Price and Amount Inputs */}
+        <Form.Group as={Row}>
+          <Col sm={6}>
+            <Form.Label>Price</Form.Label>
+            <Form.Control
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              required
+            />
+          </Col>
+          <Col sm={6}>
+            <Form.Label>Amount</Form.Label>
+            <Form.Control
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              required
+            />
+          </Col>
         </Form.Group>
 
         {/* Brand Input */}
         <Form.Group controlId="brand">
-          <Form.Label>La Marque</Form.Label>
+          <Form.Label>Brand</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Enter product brand"
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
+            required
           />
         </Form.Group>
 
         {/* Image Input */}
         <Form.Group controlId="image">
           <Form.Label>Product Image</Form.Label>
-          <Form.Control type="file" onChange={handleFileChange} accept="image/*" />
+          <Form.Control type="file" onChange={handleFileChange} required />
+          {imageUrl && (
+            <div>
+              <img src={imageUrl} alt="Product Preview" width={100} />
+            </div>
+          )}
         </Form.Group>
 
         {/* Submit Button */}
-        <Button variant="primary" type="submit" className="mt-3" disabled={loading}>
-          {loading ? "Processing..." : "Ajouter Produit"}
+        <Button variant="primary" type="submit" disabled={loading}>
+          {loading ? "Submitting..." : "Add Product"}
         </Button>
       </Form>
     </Container>

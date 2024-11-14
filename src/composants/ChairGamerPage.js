@@ -1,10 +1,11 @@
 import React from 'react';
+import ProductList from '../composants/ProductList';
 
 const ChairGamerPage = () => {
   return (
     <div>
-      <h1>Chair Gamer Page</h1>
-      <p>Welcome to the Chair Gamer page. Display chair gamer-related products here.</p>
+      <h1>Chair Gamer Products</h1>
+      <ProductList productType="Chair Gamer" />
     </div>
   );
 };
