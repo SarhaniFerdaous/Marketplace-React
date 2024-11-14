@@ -14,24 +14,29 @@
 }
 
 /* Logo styling */
-.nv-image {
-  height: 50px;  /* Adjust the logo size */
+.infoz-image {
+  height: 60px;  /* Adjust the logo size to be a bit bigger */
   width: auto;
+  margin-left: -100px; /* Shift the logo slightly to the left */
 }
+
 
 /* Search bar styling */
 .search-bar {
-  width: 450px;  /* Increased width of the search bar */
+  width: 600px;  /* Increased width of the search bar */
   border-radius: 30px;  /* Rounded corners */
   margin-right: 15px; /* Add some space to the right */
+  margin-left: 20px;  /* Shift the search bar a bit from the left */
 }
+
 
 .search-input {
   border: 2px solid #e0e0e0;  /* Thin border for a modern look */
   border-radius: 30px 0 0 30px;  /* Rounded corners for the input */
-  padding: 12px 15px;  /* Increased padding for better usability */
-  font-size: 16px;  /* Increased font size for better readability */
+  padding: 14px 20px;  /* Increased padding for better usability */
+  font-size: 18px;  /* Larger font size for better readability */
 }
+
 
 /* Search button styling */
 .search-btn {
