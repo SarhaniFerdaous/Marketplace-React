@@ -1,5 +1,5 @@
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase.config'; // Ensure this path is correct
+import { db } from '../api/firebase.config'; // Ensure this path is correct
 
 export const fetchUserData = async (uid) => {
   const userDoc = doc(db, 'users', uid);

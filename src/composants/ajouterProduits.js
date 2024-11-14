@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
-import { db } from "../firebase.config";
+import { db } from "../api/firebase.config";
 import { collection, addDoc } from "firebase/firestore";
 
 const AddProductForm = () => {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from '../firebase.config'; // Ensure both auth and db are imported
+import { auth, db } from '../api/firebase.config'; // Ensure both auth and db are imported
 import { setDoc, doc } from 'firebase/firestore'; // Import Firestore methods
 
 const Register = () => {
