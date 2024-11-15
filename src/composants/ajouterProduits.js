@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
 import { db } from "../api/firebase.config";
 import { collection, addDoc } from "firebase/firestore";
@@ -14,6 +15,8 @@ const AddProductForm = () => {
   const [brand, setBrand] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
+
+  const navigate = useNavigate(); // Initialize navigate
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -79,6 +82,15 @@ const AddProductForm = () => {
       // Success message and reset form
       setMessage({ type: "success", text: "Product added successfully!" });
       resetForm();
+
+      // Navigate to the appropriate page based on product type
+      if (productType === "PC") {
+        navigate("/pc"); // Navigate to PC page
+      } else if (productType === "Ecran") {
+        navigate("/ecran"); // Navigate to Ecran page
+      } else if (productType === "Chair Gamer") {
+        navigate("/chairgamer"); // Navigate to Chair Gamer page
+      }
     } catch (error) {
       console.error("Error adding product: ", error);
       setMessage({ type: "danger", text: "Failed to add product. Please try again." });

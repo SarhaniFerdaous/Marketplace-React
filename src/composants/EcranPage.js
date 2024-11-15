@@ -4,7 +4,6 @@ import ProductList from '../composants/ProductList';
 const EcranPage = () => {
   return (
     <div>
-      <h1>Ecran Products</h1>
       <ProductList productType="Ecran" />
     </div>
   );
