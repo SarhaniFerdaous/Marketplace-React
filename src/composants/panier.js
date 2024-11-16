@@ -1,13 +1,47 @@
-import React, { useContext } from "react";
-import { Row, Col, Card, InputGroup, Button, FormControl } from "react-bootstrap"; // Import Bootstrap components
+import React, { useContext, useState } from "react";
+import {Row, Col,Card,InputGroup, Button,FormControl,Modal,} from "react-bootstrap"; // Import Bootstrap components
 import { FaTrashAlt } from "react-icons/fa"; // Import the trash icon from react-icons
+import { useNavigate } from "react-router-dom"; // For navigation
 import { BasketContext } from "../context/BasketContext";
 
 const Panier = () => {
   const { basket, updateQuantity, removeFromBasket } = useContext(BasketContext);
+  const navigate = useNavigate(); // For navigation
+
+  const [showModal, setShowModal] = useState(false); // Modal visibility state
+  const [cardNumber, setCardNumber] = useState(""); // Card number state
+  const [cardCode, setCardCode] = useState(""); // Card code state
 
   const calculateTotal = () =>
     basket.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const handlePayer = () => {
+    setShowModal(true); // Show the payment popup
+  };
+
+  const handleConfirmPayment = () => {
+    if (!cardNumber || !cardCode) {
+      alert("Please enter valid card details.");
+      return;
+    }
+    alert("Payment successful!");
+    setShowModal(false); // Close the modal
+    navigate("/payment"); // Example: Redirect to a payment page
+  };
+
+  const handleIncreaseQuantity = (item) => {
+    if (item.quantity < item.amount) {
+      updateQuantity(item.id, 1);
+    } else {
+      alert(`Cannot order more than the available quantity (${item.amount}).`);
+    }
+  };
+
+  const handleDecreaseQuantity = (item) => {
+    if (item.quantity > 1) {
+      updateQuantity(item.id, -1);
+    }
+  };
 
   return (
     <div style={{ padding: "20px" }}>
@@ -26,6 +60,28 @@ const Panier = () => {
                     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                   }}
                 >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "#f8f8f8",
+                      borderBottom: "1px solid #ddd",
+                      padding: "10px",
+                      height: "200px",
+                    }}
+                  >
+                    <Card.Img
+                      variant="top"
+                      src={item.imageUrl}
+                      alt={item.description}
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        objectFit: "contain",
+                      }}
+                    />
+                  </div>
                   <Card.Body>
                     <div
                       style={{
@@ -53,7 +109,7 @@ const Panier = () => {
                     <InputGroup style={{ marginTop: "10px" }}>
                       <Button
                         variant="outline-secondary"
-                        onClick={() => updateQuantity(item.id, -1)}
+                        onClick={() => handleDecreaseQuantity(item)}
                       >
                         -
                       </Button>
@@ -65,11 +121,14 @@ const Panier = () => {
                       />
                       <Button
                         variant="outline-secondary"
-                        onClick={() => updateQuantity(item.id, 1)}
+                        onClick={() => handleIncreaseQuantity(item)}
                       >
                         +
                       </Button>
                     </InputGroup>
+                    <p style={{ marginTop: "10px", color: "#7f8c8d" }}>
+                      Available Quantity: {item.amount}
+                    </p>
                   </Card.Body>
                 </Card>
               </Col>
@@ -85,6 +144,65 @@ const Panier = () => {
           >
             <h4>Total: {calculateTotal()}</h4>
           </div>
+          {/* Payer Button */}
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "30px",
+            }}
+          >
+            <Button
+              style={{
+                backgroundColor: "#007bff",
+                color: "#fff",
+                padding: "15px 30px",
+                borderRadius: "10px",
+                fontSize: "1.25rem",
+                fontWeight: "bold",
+                border: "none",
+                transition: "background-color 0.3s ease",
+                width: "200px",
+              }}
+              onClick={handlePayer}
+              onMouseEnter={(e) =>
+                (e.target.style.backgroundColor = "#0056b3")
+              }
+              onMouseLeave={(e) =>
+                (e.target.style.backgroundColor = "#007bff")
+              }
+            >
+              Payer
+            </Button>
+          </div>
+
+          {/* Payment Modal */}
+          <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Enter Payment Details</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <FormControl
+                placeholder="Card Number"
+                value={cardNumber}
+                onChange={(e) => setCardNumber(e.target.value)}
+                style={{ marginBottom: "10px" }}
+              />
+              <FormControl
+                placeholder="Card Code (CVC)"
+                value={cardCode}
+                onChange={(e) => setCardCode(e.target.value)}
+                type="password"
+              />
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowModal(false)}>
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={handleConfirmPayment}>
+                Confirm
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </div>
       )}
     </div>
