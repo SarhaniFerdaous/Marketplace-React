@@ -3,6 +3,9 @@ import {Row, Col,Card,InputGroup, Button,FormControl,Modal,} from "react-bootstr
 import { FaTrashAlt } from "react-icons/fa"; // Import the trash icon from react-icons
 import { useNavigate } from "react-router-dom"; // For navigation
 import { BasketContext } from "../context/BasketContext";
+import { toast } from 'react-toastify';
+
+
 
 const Panier = () => {
   const { basket, updateQuantity, removeFromBasket } = useContext(BasketContext);
@@ -33,9 +36,20 @@ const Panier = () => {
     if (item.quantity < item.amount) {
       updateQuantity(item.id, 1);
     } else {
-      alert(`Cannot order more than the available quantity (${item.amount}).`);
+      toast.error(
+        `Cannot order more than the available quantity (${item.amount}).`,
+        {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        }
+      );
     }
   };
+  
 
   const handleDecreaseQuantity = (item) => {
     if (item.quantity > 1) {

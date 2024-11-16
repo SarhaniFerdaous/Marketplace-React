@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../photo/infoz.jpg';
 import cartIcon from "../photo/chariot.png"; // Path to your chariot.png image
@@ -6,12 +6,12 @@ import searchIcon from "../photo/br.png"; // Path to your br.jpg image
 import profileIcon from "../photo/pr.jpg"; // Path to your pr.jpg image
 import './header.css'; // Custom styles for the header
 import { InputGroup, FormControl, Button } from 'react-bootstrap'; // Importing necessary components from React-Bootstrap
-import { auth } from '../api/firebase.config';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"; // Importing Firebase Auth functions
 
 const Header = () => {
   const [user, setUser] = useState(null); // Track the user's auth status
   const navigate = useNavigate();
+  const auth = getAuth(); // Get Firebase Auth instance
 
   // Monitor auth state changes
   useEffect(() => {
@@ -20,7 +20,7 @@ const Header = () => {
     });
 
     return () => unsubscribe(); // Clean up on unmount
-  }, []);
+  }, [auth]);
 
   // Handle logout
   const handleLogout = async () => {
@@ -30,6 +30,17 @@ const Header = () => {
       navigate('/'); // Redirect to the home page after logout
     } catch (error) {
       console.error('Logout error:', error);
+    }
+  };
+
+  // Handle cart icon click
+  const handleCartClick = () => {
+    if (user) {
+      // If the user is signed in, navigate to the cart page
+      navigate("/panier");
+    } else {
+      // If the user is not signed in, navigate to the register page
+      navigate("/register");
     }
   };
 
@@ -61,8 +72,12 @@ const Header = () => {
         {/* Profile and Cart Section */}
         <div className="header-icons d-flex align-items-center">
           {/* Cart Icon */}
-          <div className="cart-section" onClick={() => navigate('/panier')}>
-            <img src={cartIcon} alt="Cart" style={{ height: '50px', marginRight: '10px' }} />
+          <div className="cart-section" onClick={handleCartClick}>
+            <img
+              src={cartIcon}
+              alt="Cart"
+              style={{ height: "50px", marginRight: "10px" }}
+            />
           </div>
 
           {/* Conditional rendering of Profile or Logout */}

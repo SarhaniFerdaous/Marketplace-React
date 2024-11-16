@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
+import { getAuth } from "firebase/auth";  // Import Firebase Authentication
 import { db } from "../api/firebase.config";
 import { collection, addDoc } from "firebase/firestore";
 
@@ -64,7 +65,15 @@ const AddProductForm = () => {
     setMessage({ type: "", text: "Processing your product..." });
 
     try {
-      // Save the product data to Firestore
+      const auth = getAuth(); // Get Firebase Authentication instance
+      const user = auth.currentUser; // Get the current logged-in user
+
+      if (!user) {
+        setMessage({ type: "danger", text: "You must be logged in to add a product." });
+        return;
+      }
+
+      // Create the product data
       const productData = {
         productType,
         description,
@@ -74,6 +83,7 @@ const AddProductForm = () => {
         brand,
         imageUrl, // Save the image URL (base64 or external URL)
         createdAt: new Date(),
+        userId: user.uid, // Add the userId field to associate product with the user
       };
 
       // Add the product data to Firestore

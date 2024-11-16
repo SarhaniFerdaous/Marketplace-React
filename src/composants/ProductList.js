@@ -11,7 +11,7 @@ const ProductList = ({ productType }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { addToBasket } = useContext(BasketContext);
+  const { addToBasket } = useContext(BasketContext); 
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "products"), (snapshot) => {
