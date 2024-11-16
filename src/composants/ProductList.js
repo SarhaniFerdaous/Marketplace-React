@@ -4,12 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { db } from "../api/firebase.config";
 import { collection, onSnapshot } from "firebase/firestore";
 import { BasketContext } from "../context/BasketContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ProductList = ({ productType }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { addToBasket } = useContext(BasketContext); // Using the BasketContext
+  const { addToBasket } = useContext(BasketContext);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "products"), (snapshot) => {
@@ -29,9 +31,19 @@ const ProductList = ({ productType }) => {
 
   const handleAddToBasket = (productId) => {
     const product = products.find((p) => p.id === productId);
-    const quantity = 1; // Default to 1 since quantity buttons are removed
+    const quantity = 1;
 
-    addToBasket(product, quantity); // Add to basket using context
+    addToBasket(product, quantity);
+
+    // Display a success message
+    toast.success(`${product.brand} added to the basket!`, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
   };
 
   const styles = {
@@ -124,6 +136,7 @@ const ProductList = ({ productType }) => {
 
   return (
     <div style={styles.container}>
+      <ToastContainer />
       {loading ? (
         <p>Loading products...</p>
       ) : (
