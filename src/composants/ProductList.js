@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Card, Row, Col, Button, InputGroup, FormControl } from "react-bootstrap";
+import React, { useEffect, useState, useContext } from "react";
+import { Card, Row, Col, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { db } from "../api/firebase.config";
 import { collection, onSnapshot } from "firebase/firestore";
-import "./ProductList.css";
+import { BasketContext } from "../context/BasketContext";
 
 const ProductList = ({ productType }) => {
   const [products, setProducts] = useState([]);
-  const [quantities, setQuantities] = useState({}); // State to track quantities
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { addToBasket } = useContext(BasketContext); // Using the BasketContext
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "products"), (snapshot) => {
@@ -27,27 +27,103 @@ const ProductList = ({ productType }) => {
     return () => unsubscribe();
   }, [productType]);
 
-  const handleQuantityChange = (productId, delta) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [productId]: Math.max(0, (prev[productId] || 0) + delta), // Ensure quantity doesn't go below 0
-    }));
-  };
-
   const handleAddToBasket = (productId) => {
     const product = products.find((p) => p.id === productId);
-    const quantity = quantities[productId] || 1; // Default to 1 if no quantity set
+    const quantity = 1; // Default to 1 since quantity buttons are removed
 
-    if (quantity > 0) {
-      // Navigate to the basket with product details and quantity
-      navigate("/basket", {
-        state: { product, quantity },
-      });
-    }
+    addToBasket(product, quantity); // Add to basket using context
+  };
+
+  const styles = {
+    container: {
+      padding: "3rem 2rem",
+      backgroundColor: "#f7f7f7",
+      fontFamily: "'Roboto', sans-serif",
+    },
+    card: {
+      backgroundColor: "#ffffff",
+      border: "1px solid #e0e0e0",
+      borderRadius: "10px",
+      overflow: "hidden",
+      transition: "box-shadow 0.3s ease, transform 0.3s ease",
+      marginBottom: "2rem",
+    },
+    cardHover: {
+      transform: "translateY(-5px)",
+      boxShadow: "0 8px 15px rgba(0, 0, 0, 0.1)",
+    },
+    imageContainer: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      width: "100%",
+      backgroundColor: "#f4f4f4",
+      borderBottom: "1px solid #eaeaea",
+      overflow: "hidden",
+      height: "auto",
+    },
+    image: {
+      width: "100%",
+      height: "auto",
+      objectFit: "contain",
+      transition: "transform 0.3s ease",
+    },
+    cardBody: {
+      padding: "1.5rem",
+      textAlign: "left",
+    },
+    cardTitle: {
+      fontSize: "1.2rem",
+      fontWeight: "bold",
+      color: "#2c3e50",
+      marginBottom: "0.5rem",
+    },
+    cardText: {
+      fontSize: "1rem",
+      color: "#7f8c8d",
+      marginBottom: "1rem",
+      lineHeight: "1.5",
+    },
+    info: {
+      margin: "0.3rem 0",
+      fontSize: "0.95rem",
+      color: "#34495e",
+    },
+    button: {
+      backgroundColor: "#3498db",
+      color: "#ffffff",
+      fontSize: "0.9rem",
+      fontWeight: "bold",
+      padding: "0.5rem 1rem",
+      border: "none",
+      borderRadius: "5px",
+      transition: "background-color 0.3s ease, transform 0.2s ease",
+      width: "100%",
+    },
+    buttonHover: {
+      backgroundColor: "#2980b9",
+      transform: "translateY(-2px)",
+    },
+    responsive: {
+      "@media (max-width: 768px)": {
+        card: {
+          marginBottom: "1.5rem",
+        },
+        imageContainer: {
+          height: "200px",
+        },
+        cardTitle: {
+          fontSize: "1rem",
+        },
+        button: {
+          fontSize: "0.85rem",
+        },
+      },
+    },
   };
 
   return (
-    <div className="product-list-container">
+    <div style={styles.container}>
       {loading ? (
         <p>Loading products...</p>
       ) : (
@@ -59,51 +135,36 @@ const ProductList = ({ productType }) => {
             ) : (
               products.map((product) => (
                 <Col key={product.id} sm={12} md={6} lg={4}>
-                  <Card className="product-card">
-                    <div className="product-image-container">
+                  <Card
+                    className="product-card"
+                    style={styles.card}
+                    onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-5px)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+                  >
+                    <div style={styles.imageContainer}>
                       <Card.Img
                         className="product-image"
+                        style={styles.image}
                         src={product.imageUrl}
                         alt={product.brand}
                       />
                     </div>
-                    <Card.Body className="product-card-body">
-                      <Card.Title className="product-card-title">
+                    <Card.Body style={styles.cardBody}>
+                      <Card.Title style={styles.cardTitle}>
                         {product.brand} - {product.productType}
                       </Card.Title>
-                      <Card.Text className="product-card-text">
+                      <Card.Text style={styles.cardText}>
                         {product.description}
                       </Card.Text>
                       <Row>
-                        <Col className="product-card-info">
+                        <Col style={styles.info}>
                           <p>Price: {product.price} {product.currency}</p>
                           <p>Available Quantity: {product.amount}</p>
                         </Col>
                       </Row>
-                      <InputGroup className="quantity-input-group mt-3">
-                        <Button
-                          variant="outline-secondary"
-                          onClick={() => handleQuantityChange(product.id, -1)}
-                        >
-                          -
-                        </Button>
-                        <FormControl
-                          type="text"
-                          value={quantities[product.id] || 0}
-                          readOnly
-                          style={{ textAlign: "center", maxWidth: "50px" }}
-                        />
-                        <Button
-                          variant="outline-secondary"
-                          onClick={() => handleQuantityChange(product.id, 1)}
-                        >
-                          +
-                        </Button>
-                      </InputGroup>
                       <Button
-                        className="add-to-basket-button mt-3"
+                        style={styles.button}
                         onClick={() => handleAddToBasket(product.id)}
-                        style={{ backgroundColor: "#5DADE2", border: "none" }}
                       >
                         Add to Basket
                       </Button>
