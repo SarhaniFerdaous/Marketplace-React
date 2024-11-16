@@ -14,6 +14,7 @@ import EcranPage from './composants/EcranPage';
 import ChairGamerPage from './composants/ChairGamerPage'; 
 import ProductList from './composants/ProductList'; 
 import Panier from './composants/panier'; 
+import UserProfile from './composants/profile'; 
 
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -40,6 +41,7 @@ const App = () => {
               <Route path="/ChairGamer" element={<ProductList productType="Chair Gamer" />} />
               <Route path="/ajouterProduits" element={<AddProductForm />} />
               <Route path="/panier" element={<Panier />} />
+              <Route path="/profile" element={<UserProfile/>} />
               <Route path="*" element={<div>404 Not Found</div>} />
             </Routes>
           </main>
