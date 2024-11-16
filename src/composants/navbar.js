@@ -3,7 +3,6 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import { useUser } from '../context/UserContext'; // Ensure correct path to UserContext
 
-// NavBar Component
 const NavBar = () => {
   const [showCategories, setShowCategories] = useState(false);
   const dropdownRef = useRef(null);
@@ -12,7 +11,13 @@ const NavBar = () => {
   const location = useLocation(); // Use the location hook to get the current route
 
   const handleToggle = () => {
-    setShowCategories(!showCategories);
+    if (!userData) {
+      // If the user is not signed in, navigate to the register page
+      navigate('/register');
+    } else {
+      // If the user is signed in, toggle the categories dropdown
+      setShowCategories(!showCategories);
+    }
   };
 
   const handleClose = () => {
