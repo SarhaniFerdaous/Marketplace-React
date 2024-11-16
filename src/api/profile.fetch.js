@@ -1,6 +1,7 @@
 import { getAuth } from "firebase/auth";
 import { db } from './firebase.config'; // Import Firebase Firestore instance
 import { collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, deleteDoc } from "firebase/firestore"; // Import deleteDoc to delete documents from Firestore
 
 // Function to get the current user's ID (userId) from Firebase Authentication
 const getUserId = () => {
@@ -50,12 +51,13 @@ export const deleteProduct = async (productId) => {
   }
 
   try {
-    // Delete the product from Firestore
+    // Delete the product from Firestore using its ID
     const productRef = doc(db, "products", productId); // Get a reference to the product document
     await deleteDoc(productRef); // Delete the document from Firestore
-    return true;
+
+    return true; // Successfully deleted
   } catch (error) {
     console.error("Error deleting product:", error);
-    throw error;
+    throw error; // Re-throw the error for further handling
   }
 };

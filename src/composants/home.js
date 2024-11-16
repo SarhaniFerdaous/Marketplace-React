@@ -30,7 +30,7 @@ const HomePage = () => {
 
   const productLinks = [
     { image: pcImage1, title: 'PC', path: '/pc' },
-    { image: ecImage1, title: 'Ecran', path: '/ecran' },
+    { image: ecImage1, title: 'Screen', path: '/ecran' },
     { image: ecImage3, title: 'Chair Gamer', path: '/ChairGamer' },
   ];
 

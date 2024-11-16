@@ -28,19 +28,24 @@ const UserProfile = () => {
 
   const handleRemoveProduct = async (productId) => {
     try {
-      const result = await deleteProduct(productId); // No need to pass userId, API handles it
+      const result = await deleteProduct(productId); // API call to delete product
       if (result) {
-        setProducts(products.filter((product) => product.id !== productId));
+        // Remove the deleted product from the state
+        setProducts((prevProducts) => prevProducts.filter((product) => product.id !== productId));
         toast.success("Product removed successfully.");
+      } else {
+        toast.error("Product removal failed.");
       }
     } catch (err) {
       toast.error("Error removing product.");
+      console.error(err); // Log any error
     }
   };
+  
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>User Profile</h2>
+      <h2>My products</h2>
       {loading ? (
         <p>Loading products...</p>
       ) : products.length === 0 ? (

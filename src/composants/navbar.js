@@ -66,7 +66,7 @@ const NavBar = () => {
           {showCategories && (
             <div className="categories-list" ref={dropdownRef}>
               <Nav.Link as={NavLink} to="/pc" onClick={handleClose}>PC</Nav.Link>
-              <Nav.Link as={NavLink} to="/ecran" onClick={handleClose}>Ecran</Nav.Link>
+              <Nav.Link as={NavLink} to="/ecran" onClick={handleClose}>Screen</Nav.Link>
               <Nav.Link as={NavLink} to="/ChairGamer" onClick={handleClose}>Chair Gamer</Nav.Link>
             </div>
           )}
@@ -84,7 +84,7 @@ const NavBar = () => {
         {/* Conditionally Render Ajouter Produit Button */}
         {userData && !isOnAddProductPage && (
           <Button variant="primary" className="add-product-button" onClick={handleAddProductClick}>
-            Ajouter Produit
+            Add Product
           </Button>
         )}
       </Navbar.Collapse>

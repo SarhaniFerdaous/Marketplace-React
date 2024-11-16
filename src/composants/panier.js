@@ -59,7 +59,7 @@ const Panier = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Panier</h2>
+      <h2>Basket</h2>
       {basket.length === 0 ? (
         <p>Votre panier est vide.</p>
       ) : (
@@ -185,7 +185,7 @@ const Panier = () => {
                 (e.target.style.backgroundColor = "#007bff")
               }
             >
-              Payer
+              Checkout
             </Button>
           </div>
 

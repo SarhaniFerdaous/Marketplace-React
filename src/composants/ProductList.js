@@ -141,7 +141,7 @@ const ProductList = ({ productType }) => {
         <p>Loading products...</p>
       ) : (
         <div>
-          <h2>{productType} Products</h2>
+          <h2>{productType} </h2>
           <Row>
             {products.length === 0 ? (
               <p>No products found in this category.</p>
