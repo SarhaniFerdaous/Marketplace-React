@@ -111,53 +111,64 @@ const Panier = () => {
                     />
                   </div>
                   <Card.Body>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Card.Title>
-                        {item.brand} - {item.description}
-                      </Card.Title>
-                      <FaTrashAlt
-                        style={{
-                          color: "#e74c3c",
-                          cursor: "pointer",
-                          fontSize: "30px",
-                        }}
-                        onClick={() => removeFromBasket(item.id)}
-                      />
-                    </div>
-                    <Card.Text>
-                      Price: {item.price} x {item.quantity} ={" "}
-                      {item.price * item.quantity}
-                    </Card.Text>
-                    <InputGroup style={{ marginTop: "10px" }}>
-                      <Button
-                        variant="outline-secondary"
-                        onClick={() => handleDecreaseQuantity(item)}
-                      >
-                        -
-                      </Button>
-                      <FormControl
-                        type="text"
-                        value={item.quantity}
-                        readOnly
-                        style={{ textAlign: "center", maxWidth: "50px" }}
-                      />
-                      <Button
-                        variant="outline-secondary"
-                        onClick={() => handleIncreaseQuantity(item)}
-                      >
-                        +
-                      </Button>
-                    </InputGroup>
-                    <p style={{ marginTop: "10px", color: "#7f8c8d" }}>
-                      Available Quantity: {item.amount}
-                    </p>
-                  </Card.Body>
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+    }}
+  >
+    <Card.Title>
+      {item.brand} - {item.description}
+    </Card.Title>
+    <div
+      style={{
+        width: "40px",
+        height: "40px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexShrink: 0,
+      }}
+    >
+      <FaTrashAlt
+        style={{
+          color: "#e74c3c",
+          cursor: "pointer",
+          fontSize: "30px",
+        }}
+        onClick={() => removeFromBasket(item.id)}
+      />
+    </div>
+  </div>
+  <Card.Text>
+    Price: {item.price} x {item.quantity} = {item.price * item.quantity}
+  </Card.Text>
+  <InputGroup style={{ marginTop: "10px" }}>
+    <Button
+      variant="outline-secondary"
+      onClick={() => handleDecreaseQuantity(item)}
+    >
+      -
+    </Button>
+    <FormControl
+      type="text"
+      value={item.quantity}
+      readOnly
+      style={{ textAlign: "center", maxWidth: "50px" }}
+    />
+    <Button
+      variant="outline-secondary"
+      onClick={() => handleIncreaseQuantity(item)}
+    >
+      +
+    </Button>
+  </InputGroup>
+  <p style={{ marginTop: "10px", color: "#7f8c8d" }}>
+    Available Quantity: {item.amount}
+  </p>
+</Card.Body>
+
                 </Card>
               </Col>
             ))}

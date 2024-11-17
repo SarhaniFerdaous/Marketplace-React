@@ -7,27 +7,34 @@ import { BasketContext } from "../context/BasketContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const ProductList = ({ productType }) => {
+const ProductList = ({ productType, searchText }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { addToBasket } = useContext(BasketContext); 
+  const { addToBasket } = useContext(BasketContext);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "products"), (snapshot) => {
       const productList = [];
       snapshot.docs.forEach((doc) => {
         const data = doc.data();
+        // Only add products of the selected type
         if (data.productType === productType) {
           productList.push({ id: doc.id, ...data });
         }
       });
-      setProducts(productList);
+      // Filter products based on searchText input
+      const filteredProducts = productList.filter((product) =>
+        (!searchText ||
+          product.brand.toLowerCase().includes(searchText.toLowerCase()) ||
+          product.description.toLowerCase().includes(searchText.toLowerCase()))
+      );
+      setProducts(filteredProducts);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [productType]);
+  }, [productType, searchText]); // Re-run effect when searchText changes
 
   const handleAddToBasket = (productId) => {
     const product = products.find((p) => p.id === productId);
@@ -137,11 +144,12 @@ const ProductList = ({ productType }) => {
   return (
     <div style={styles.container}>
       <ToastContainer />
+      
       {loading ? (
         <p>Loading products...</p>
       ) : (
         <div>
-          <h2>{productType} </h2>
+          <h2>{productType}</h2>
           <Row>
             {products.length === 0 ? (
               <p>No products found in this category.</p>

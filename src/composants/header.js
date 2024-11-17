@@ -1,77 +1,78 @@
 import React, { useState, useEffect } from 'react'; 
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../photo/infoz.jpg';
-import cartIcon from "../photo/chariot.png"; // Path to your chariot.png image
-import searchIcon from "../photo/br.png"; // Path to your br.jpg image
-import profileIcon from "../photo/pr.jpg"; // Path to your pr.jpg image
-import './header.css'; // Custom styles for the header
-import { InputGroup, FormControl, Button } from 'react-bootstrap'; // Importing necessary components from React-Bootstrap
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"; // Importing Firebase Auth functions
+import cartIcon from "../photo/chariot.png";
+import searchIcon from "../photo/br.png";
+import profileIcon from "../photo/pr.jpg"; 
+import './header.css'; 
+import { InputGroup, FormControl, Button } from 'react-bootstrap'; 
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"; 
 
 const Header = () => {
-  const [user, setUser] = useState(null); // Track the user's auth status
+  const [user, setUser] = useState(null); 
+  const [searchText, setSearchText] = useState(""); 
   const navigate = useNavigate();
-  const auth = getAuth(); // Get Firebase Auth instance
+  const auth = getAuth();
 
-  // Monitor auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser); // Set the current user
+      setUser(currentUser);
     });
 
-    return () => unsubscribe(); // Clean up on unmount
+    return () => unsubscribe();
   }, [auth]);
 
-  // Handle logout
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      console.log('Logged out successfully');
-      navigate('/'); // Redirect to the home page after logout
+      navigate('/');
     } catch (error) {
       console.error('Logout error:', error);
     }
   };
 
-  // Handle cart icon click
   const handleCartClick = () => {
     if (user) {
-      // If the user is signed in, navigate to the cart page
       navigate("/panier");
     } else {
-      // If the user is not signed in, navigate to the register page
       navigate("/register");
+    }
+  };
+
+  const handleSearch = () => {
+    if (searchText.trim() !== "") {
+      console.log("Search text:", searchText);
+      navigate(`/search/${searchText}`);
+    } else {
+      console.log("Search text is empty!");
     }
   };
 
   return (
     <header className="custom-header">
       <div className="container d-flex align-items-center justify-content-between">
-        
-        {/* Logo Section - Wrapped in Link to redirect to home */}
         <div className="logo-section">
           <Link to="/">
             <img src={logo} alt="InfoZone Logo" className="infoz-image" />
           </Link>
         </div>
 
-        {/* Search Bar Section using React-Bootstrap */}
         <div className="search-section d-flex">
           <InputGroup className="mb-3 search-bar">
             <FormControl
               placeholder="Search for products, brands, and more..."
               aria-label="Search"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}  
               className="search-input"
             />
-            <Button variant="outline-secondary" className="search-btn">
+            <Button variant="outline-secondary" className="search-btn" onClick={handleSearch}>
               <img src={searchIcon} alt="Search" className="search-icon" />
             </Button>
           </InputGroup>
         </div>
 
-        {/* Profile and Cart Section */}
         <div className="header-icons d-flex align-items-center">
-          {/* Cart Icon */}
           <div className="cart-section" onClick={handleCartClick}>
             <img
               src={cartIcon}
@@ -80,10 +81,8 @@ const Header = () => {
             />
           </div>
 
-          {/* Conditional rendering of Profile or Logout */}
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
             {user ? (
-              // Display Profile Icon and Logout Button side by side if user is logged in
               <div className="d-flex align-items-center">
                 <li className="nav-item d-flex align-items-center me-3">
                   <img
@@ -95,7 +94,7 @@ const Header = () => {
                       borderRadius: '50%',
                       cursor: 'pointer',
                     }}
-                    onClick={() => navigate('/profile')} // Optionally add navigation to profile page
+                    onClick={() => navigate('/profile')}
                   />
                 </li>
                 <li className="nav-item logout-btn">
@@ -108,7 +107,7 @@ const Header = () => {
                       border: 'none',
                       padding: '10px 20px',
                       borderRadius: '5px',
-                      marginLeft: '10px', // Add margin to space out the buttons
+                      marginLeft: '10px',
                     }}
                   >
                     Logout
@@ -116,7 +115,6 @@ const Header = () => {
                 </li>
               </div>
             ) : (
-              // Display profile icon (pr.jpg) if user is not logged in
               <li className="nav-item d-flex align-items-center me-3">
                 <Link to="/register">
                   <img

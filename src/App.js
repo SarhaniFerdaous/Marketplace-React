@@ -25,7 +25,7 @@ const App = () => {
     <BasketProvider>
       <Router>
         <div className="App layout-container">
-          <ToastContainer /> {/* Add ToastContainer here */}
+          <ToastContainer />
           <Header />
           <NavBar />
           <main className="content">
