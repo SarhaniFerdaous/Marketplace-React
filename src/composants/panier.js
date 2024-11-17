@@ -125,7 +125,7 @@ const Panier = () => {
                         style={{
                           color: "#e74c3c",
                           cursor: "pointer",
-                          fontSize: "65px",
+                          fontSize: "30px",
                         }}
                         onClick={() => removeFromBasket(item.id)}
                       />
