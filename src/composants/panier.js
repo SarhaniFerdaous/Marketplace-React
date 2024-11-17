@@ -1,35 +1,50 @@
 import React, { useContext, useState } from "react";
-import {Row, Col,Card,InputGroup, Button,FormControl,Modal,} from "react-bootstrap"; // Import Bootstrap components
-import { FaTrashAlt } from "react-icons/fa"; // Import the trash icon from react-icons
-import { useNavigate } from "react-router-dom"; // For navigation
-import { BasketContext } from "../context/BasketContext";
+import { Row, Col, Card, InputGroup, Button, FormControl, Modal } from "react-bootstrap"; 
+import { FaTrashAlt } from "react-icons/fa"; 
+import { useNavigate } from "react-router-dom"; 
+import { BasketContext } from "../context/BasketContext"; 
 import { toast } from 'react-toastify';
-
-
 
 const Panier = () => {
   const { basket, updateQuantity, removeFromBasket } = useContext(BasketContext);
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate(); 
 
-  const [showModal, setShowModal] = useState(false); // Modal visibility state
-  const [cardNumber, setCardNumber] = useState(""); // Card number state
-  const [cardCode, setCardCode] = useState(""); // Card code state
+  const [showFirstModal, setShowFirstModal] = useState(false); // First modal for payment method selection
+  const [showPaymentModal, setShowPaymentModal] = useState(false); // Modal for entering card details
+  const [showDeliveryModal, setShowDeliveryModal] = useState(false); // Modal for entering delivery details
+  const [paymentMethod, setPaymentMethod] = useState(""); // Store the selected payment method
+  const [cardNumber, setCardNumber] = useState(""); 
+  const [cardCode, setCardCode] = useState(""); 
+  const [deliveryAddress, setDeliveryAddress] = useState(""); // Store delivery address
+  const [phoneNumber, setPhoneNumber] = useState(""); // Store phone number for delivery
 
   const calculateTotal = () =>
     basket.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handlePayer = () => {
-    setShowModal(true); // Show the payment popup
+    setShowFirstModal(true); // Show the first modal to select payment method
   };
 
   const handleConfirmPayment = () => {
-    if (!cardNumber || !cardCode) {
-      alert("Please enter valid card details.");
-      return;
+    if (paymentMethod === "online") {
+      if (!cardNumber || !cardCode) {
+        alert("Please enter valid card details.");
+        return;
+      }
+      alert("Online payment successful!");
+      setShowPaymentModal(false); // Close the payment modal
+      setShowFirstModal(false); // Close the first modal
+      navigate("/payment"); // Example: Redirect to a payment page
+    } else if (paymentMethod === "delivery") {
+      if (!deliveryAddress || !phoneNumber) {
+        alert("Please enter valid delivery details.");
+        return;
+      }
+      alert("Payment on delivery confirmed!");
+      setShowFirstModal(false); // Close the first modal
+      setShowDeliveryModal(false); // Close the delivery details modal
+      navigate("/order-confirmation"); // Redirect to order confirmation page
     }
-    alert("Payment successful!");
-    setShowModal(false); // Close the modal
-    navigate("/payment"); // Example: Redirect to a payment page
   };
 
   const handleIncreaseQuantity = (item) => {
@@ -49,7 +64,6 @@ const Panier = () => {
       );
     }
   };
-  
 
   const handleDecreaseQuantity = (item) => {
     if (item.quantity > 1) {
@@ -158,7 +172,7 @@ const Panier = () => {
           >
             <h4>Total: {calculateTotal()}</h4>
           </div>
-          {/* Payer Button */}
+          {/* Checkout Button */}
           <div
             style={{
               textAlign: "center",
@@ -189,8 +203,39 @@ const Panier = () => {
             </Button>
           </div>
 
-          {/* Payment Modal */}
-          <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+          {/* First Modal (Payment method selection) */}
+          <Modal show={showFirstModal} onHide={() => setShowFirstModal(false)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Select Payment Method</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Button
+                variant="outline-primary"
+                style={{ width: "100%", marginBottom: "10px" }}
+                onClick={() => {
+                  setPaymentMethod("online");
+                  setShowFirstModal(false);
+                  setShowPaymentModal(true);
+                }}
+              >
+                Online Payment
+              </Button>
+              <Button
+                variant="outline-success"
+                style={{ width: "100%" }}
+                onClick={() => {
+                  setPaymentMethod("delivery");
+                  setShowFirstModal(false);
+                  setShowDeliveryModal(true); // Show delivery modal
+                }}
+              >
+                Payment on Delivery
+              </Button>
+            </Modal.Body>
+          </Modal>
+
+          {/* Payment Modal (Card details entry) */}
+          <Modal show={showPaymentModal} onHide={() => setShowPaymentModal(false)} centered>
             <Modal.Header closeButton>
               <Modal.Title>Enter Payment Details</Modal.Title>
             </Modal.Header>
@@ -209,11 +254,39 @@ const Panier = () => {
               />
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowModal(false)}>
+              <Button variant="secondary" onClick={() => setShowPaymentModal(false)}>
                 Cancel
               </Button>
               <Button variant="primary" onClick={handleConfirmPayment}>
-                Confirm
+                Confirm Payment
+              </Button>
+            </Modal.Footer>
+          </Modal>
+
+          {/* Delivery Modal (Enter delivery details) */}
+          <Modal show={showDeliveryModal} onHide={() => setShowDeliveryModal(false)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Enter Delivery Details</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <FormControl
+                placeholder="Delivery Address"
+                value={deliveryAddress}
+                onChange={(e) => setDeliveryAddress(e.target.value)}
+                style={{ marginBottom: "10px" }}
+              />
+              <FormControl
+                placeholder="Phone Number"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+              />
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowDeliveryModal(false)}>
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={handleConfirmPayment}>
+                Confirm Delivery
               </Button>
             </Modal.Footer>
           </Modal>
