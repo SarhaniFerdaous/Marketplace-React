@@ -15,7 +15,7 @@ import ChairGamerPage from './composants/ChairGamerPage';
 import ProductList from './composants/ProductList'; 
 import Panier from './composants/panier'; 
 import UserProfile from './composants/profile'; 
-
+import AdminPage from './composants/AdminPage'; // Import your AdminPage component
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -43,6 +43,7 @@ const App = () => {
               <Route path="/panier" element={<Panier />} />
               <Route path="/profile" element={<UserProfile/>} />
               <Route path="*" element={<div>404 Not Found</div>} />
+              <Route path="/admin" component={AdminPage} />
             </Routes>
           </main>
           <Footer />

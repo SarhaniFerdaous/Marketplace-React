@@ -6,10 +6,13 @@ import searchIcon from "../photo/br.png";
 import profileIcon from "../photo/pr.jpg"; 
 import './header.css'; 
 import { InputGroup, FormControl, Button } from 'react-bootstrap'; 
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"; 
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 const Header = () => {
   const [user, setUser] = useState(null); 
+  const [isAdmin, setIsAdmin] = useState(false);
   const [searchText, setSearchText] = useState(""); 
   const navigate = useNavigate();
   const auth = getAuth();
@@ -17,6 +20,23 @@ const Header = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        const userId = currentUser.uid;
+        // Fetch user document from Firestore
+        const userRef = firebase.firestore().collection('users').doc(userId);
+        userRef.get().then((doc) => {
+          if (doc.exists) {
+            const userData = doc.data();
+            if (userData.isAdmin) {
+              setIsAdmin(true); // User is an admin
+            } else {
+              setIsAdmin(false); // Not an admin
+            }
+          }
+        });
+      } else {
+        setIsAdmin(false); // Reset isAdmin when user is logged out
+      }
     });
 
     return () => unsubscribe();
@@ -46,6 +66,10 @@ const Header = () => {
     } else {
       console.log("Search text is empty!");
     }
+  };
+
+  const handleAdminButtonClick = () => {
+    navigate('/admin'); // Navigate to the AdminPage.js
   };
 
   return (
@@ -97,6 +121,13 @@ const Header = () => {
                     onClick={() => navigate('/profile')}
                   />
                 </li>
+                {isAdmin && (
+                  <li className="nav-item">
+                    <Button variant="dark" onClick={handleAdminButtonClick}>
+                      Admin
+                    </Button>
+                  </li>
+                )}
                 <li className="nav-item logout-btn">
                   <Button
                     variant="dark"
