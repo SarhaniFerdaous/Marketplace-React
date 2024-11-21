@@ -43,7 +43,7 @@ const App = () => {
               <Route path="/panier" element={<Panier />} />
               <Route path="/profile" element={<UserProfile/>} />
               <Route path="*" element={<div>404 Not Found</div>} />
-              <Route path="/admin" component={AdminPage} />
+              <Route path="/AdminPage" element={<AdminPage />} />
             </Routes>
           </main>
           <Footer />
