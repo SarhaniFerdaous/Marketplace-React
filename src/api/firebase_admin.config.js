@@ -1,5 +1,6 @@
 import { db, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from './firebase.config'; 
 
+
 // Product Collection reference
 const productCollection = collection(db, 'products');
 // User Collection reference

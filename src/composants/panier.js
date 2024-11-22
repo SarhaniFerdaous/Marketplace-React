@@ -1,49 +1,100 @@
 import React, { useContext, useState } from "react";
-import { Row, Col, Card, InputGroup, Button, FormControl, Modal } from "react-bootstrap"; 
-import { FaTrashAlt } from "react-icons/fa"; 
-import { useNavigate } from "react-router-dom"; 
-import { BasketContext } from "../context/BasketContext"; 
-import { toast } from 'react-toastify';
+import { Row,Col,Card,InputGroup,Button, FormControl,Modal,
+} from "react-bootstrap";
+import { FaTrashAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { BasketContext } from "../context/BasketContext";
+import { toast } from "react-toastify";
+import emailjs from "emailjs-com";
+import { getAuth } from "firebase/auth";
 
 const Panier = () => {
   const { basket, updateQuantity, removeFromBasket } = useContext(BasketContext);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-  const [showFirstModal, setShowFirstModal] = useState(false); // First modal for payment method selection
-  const [showPaymentModal, setShowPaymentModal] = useState(false); // Modal for entering card details
-  const [showDeliveryModal, setShowDeliveryModal] = useState(false); // Modal for entering delivery details
-  const [paymentMethod, setPaymentMethod] = useState(""); // Store the selected payment method
-  const [cardNumber, setCardNumber] = useState(""); 
-  const [cardCode, setCardCode] = useState(""); 
-  const [deliveryAddress, setDeliveryAddress] = useState(""); // Store delivery address
-  const [phoneNumber, setPhoneNumber] = useState(""); // Store phone number for delivery
+  const [showFirstModal, setShowFirstModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showDeliveryModal, setShowDeliveryModal] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardCode, setCardCode] = useState("");
+  const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const calculateTotal = () =>
     basket.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handlePayer = () => {
-    setShowFirstModal(true); // Show the first modal to select payment method
+    setShowFirstModal(true);
   };
 
   const handleConfirmPayment = () => {
     if (paymentMethod === "online") {
       if (!cardNumber || !cardCode) {
-        alert("Please enter valid card details.");
+        toast.error("Please enter valid card details.");
         return;
       }
-      alert("Online payment successful!");
-      setShowPaymentModal(false); // Close the payment modal
-      setShowFirstModal(false); // Close the first modal
-      navigate("/payment"); // Example: Redirect to a payment page
+      toast.success("Online payment successful!");
+      sendEmail();
+      setShowPaymentModal(false);
+      setShowFirstModal(false);
+      navigate("/payment");
     } else if (paymentMethod === "delivery") {
       if (!deliveryAddress || !phoneNumber) {
-        alert("Please enter valid delivery details.");
+        toast.error("Please enter valid delivery details.");
         return;
       }
-      alert("Payment on delivery confirmed!");
-      setShowFirstModal(false); // Close the first modal
-      setShowDeliveryModal(false); // Close the delivery details modal
-      navigate("/order-confirmation"); // Redirect to order confirmation page
+      toast.success("Payment on delivery confirmed!");
+      sendEmail();
+      setShowFirstModal(false);
+      setShowDeliveryModal(false);
+      navigate("/order-confirmation");
+    }
+  };
+
+  const getUserEmail = () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    return user ? user.email : null;
+  };
+
+  const sendEmail = () => {
+    const userEmail = getUserEmail(); // Retrieve the email of the currently logged-in user
+    if (!userEmail) {
+      console.error("User not logged in or email not available");
+      return;
+    }
+  
+    const emailParams = {
+      to_email: userEmail, // Pass the user's email dynamically
+      to_name: "Customer",
+      from_name: "Marketplace",
+      basket_details: basket
+        .map(
+          (item) =>
+            `${item.brand} - ${item.description} x ${item.quantity} = ${
+              item.price * item.quantity
+            }`
+        )
+        .join("\n"),
+      total: calculateTotal(),
+    };
+  
+    emailjs
+      .send("service_p9yhwfl", "template_pqgjogc", emailParams, "KOjUfnsD82D1TWITH")
+      .then(
+        (result) => {
+          console.log("Email sent successfully:", result.text);
+        },
+        (error) => {
+          console.error("Error sending email:", error.text);
+        }
+      );
+  };
+
+  const handleDecreaseQuantity = (item) => {
+    if (item.quantity > 1) {
+      updateQuantity(item.id, -1);
     }
   };
 
@@ -62,12 +113,6 @@ const Panier = () => {
           draggable: true,
         }
       );
-    }
-  };
-
-  const handleDecreaseQuantity = (item) => {
-    if (item.quantity > 1) {
-      updateQuantity(item.id, -1);
     }
   };
 
@@ -111,64 +156,64 @@ const Panier = () => {
                     />
                   </div>
                   <Card.Body>
-  <div
-    style={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-    }}
-  >
-    <Card.Title>
-      {item.brand} - {item.description}
-    </Card.Title>
-    <div
-      style={{
-        width: "40px",
-        height: "40px",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexShrink: 0,
-      }}
-    >
-      <FaTrashAlt
-        style={{
-          color: "#e74c3c",
-          cursor: "pointer",
-          fontSize: "30px",
-        }}
-        onClick={() => removeFromBasket(item.id)}
-      />
-    </div>
-  </div>
-  <Card.Text>
-    Price: {item.price} x {item.quantity} = {item.price * item.quantity}
-  </Card.Text>
-  <InputGroup style={{ marginTop: "10px" }}>
-    <Button
-      variant="outline-secondary"
-      onClick={() => handleDecreaseQuantity(item)}
-    >
-      -
-    </Button>
-    <FormControl
-      type="text"
-      value={item.quantity}
-      readOnly
-      style={{ textAlign: "center", maxWidth: "50px" }}
-    />
-    <Button
-      variant="outline-secondary"
-      onClick={() => handleIncreaseQuantity(item)}
-    >
-      +
-    </Button>
-  </InputGroup>
-  <p style={{ marginTop: "10px", color: "#7f8c8d" }}>
-    Available Quantity: {item.amount}
-  </p>
-</Card.Body>
-
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Card.Title>
+                        {item.brand} - {item.description}
+                      </Card.Title>
+                      <div
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          flexShrink: 0,
+                        }}
+                      >
+                        <FaTrashAlt
+                          style={{
+                            color: "#e74c3c",
+                            cursor: "pointer",
+                            fontSize: "30px",
+                          }}
+                          onClick={() => removeFromBasket(item.id)}
+                        />
+                      </div>
+                    </div>
+                    <Card.Text>
+                      Price: {item.price} x {item.quantity} ={" "}
+                      {item.price * item.quantity}
+                    </Card.Text>
+                    <InputGroup style={{ marginTop: "10px" }}>
+                      <Button
+                        variant="outline-secondary"
+                        onClick={() => handleDecreaseQuantity(item)}
+                      >
+                        -
+                      </Button>
+                      <FormControl
+                        type="text"
+                        value={item.quantity}
+                        readOnly
+                        style={{ textAlign: "center", maxWidth: "50px" }}
+                      />
+                      <Button
+                        variant="outline-secondary"
+                        onClick={() => handleIncreaseQuantity(item)}
+                      >
+                        +
+                      </Button>
+                    </InputGroup>
+                    <p style={{ marginTop: "10px", color: "#7f8c8d" }}>
+                      Available Quantity: {item.amount}
+                    </p>
+                  </Card.Body>
                 </Card>
               </Col>
             ))}
@@ -183,7 +228,6 @@ const Panier = () => {
           >
             <h4>Total: {calculateTotal()}</h4>
           </div>
-          {/* Checkout Button */}
           <div
             style={{
               textAlign: "center",
@@ -214,92 +258,85 @@ const Panier = () => {
             </Button>
           </div>
 
-          {/* First Modal (Payment method selection) */}
-          <Modal show={showFirstModal} onHide={() => setShowFirstModal(false)} centered>
+          {/* Modals */}
+          <Modal show={showFirstModal} onHide={() => setShowFirstModal(false)}>
             <Modal.Header closeButton>
-              <Modal.Title>Select Payment Method</Modal.Title>
+              <Modal.Title>Choose Payment Method</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <Button
-                variant="outline-primary"
-                style={{ width: "100%", marginBottom: "10px" }}
+                variant="primary"
                 onClick={() => {
                   setPaymentMethod("online");
-                  setShowFirstModal(false);
                   setShowPaymentModal(true);
+                  setShowFirstModal(false);
                 }}
+                block
               >
                 Online Payment
               </Button>
               <Button
-                variant="outline-success"
-                style={{ width: "100%" }}
+                variant="secondary"
                 onClick={() => {
                   setPaymentMethod("delivery");
+                  setShowDeliveryModal(true);
                   setShowFirstModal(false);
-                  setShowDeliveryModal(true); // Show delivery modal
                 }}
+                block
               >
                 Payment on Delivery
               </Button>
             </Modal.Body>
           </Modal>
 
-          {/* Payment Modal (Card details entry) */}
-          <Modal show={showPaymentModal} onHide={() => setShowPaymentModal(false)} centered>
+          <Modal show={showPaymentModal} onHide={() => setShowPaymentModal(false)}>
             <Modal.Header closeButton>
-              <Modal.Title>Enter Payment Details</Modal.Title>
+              <Modal.Title>Enter Card Details</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <FormControl
-                placeholder="Card Number"
-                value={cardNumber}
-                onChange={(e) => setCardNumber(e.target.value)}
-                style={{ marginBottom: "10px" }}
-              />
-              <FormControl
-                placeholder="Card Code (CVC)"
-                value={cardCode}
-                onChange={(e) => setCardCode(e.target.value)}
-                type="password"
-              />
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowPaymentModal(false)}>
-                Cancel
-              </Button>
+              <InputGroup className="mb-3">
+                <FormControl
+                  placeholder="Card Number"
+                  value={cardNumber}
+                  onChange={(e) => setCardNumber(e.target.value)}
+                />
+              </InputGroup>
+              <InputGroup className="mb-3">
+                <FormControl
+                  placeholder="Card Code"
+                  value={cardCode}
+                  onChange={(e) => setCardCode(e.target.value)}
+                />
+              </InputGroup>
               <Button variant="primary" onClick={handleConfirmPayment}>
                 Confirm Payment
               </Button>
-            </Modal.Footer>
+            </Modal.Body>
           </Modal>
 
-          {/* Delivery Modal (Enter delivery details) */}
-          <Modal show={showDeliveryModal} onHide={() => setShowDeliveryModal(false)} centered>
+          <Modal show={showDeliveryModal} onHide={() => setShowDeliveryModal(false)}>
             <Modal.Header closeButton>
-              <Modal.Title>Enter Delivery Details</Modal.Title>
+              <Modal.Title>Delivery Details</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <FormControl
-                placeholder="Delivery Address"
-                value={deliveryAddress}
-                onChange={(e) => setDeliveryAddress(e.target.value)}
-                style={{ marginBottom: "10px" }}
-              />
-              <FormControl
-                placeholder="Phone Number"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-              />
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowDeliveryModal(false)}>
-                Cancel
-              </Button>
+              <InputGroup className="mb-3">
+                <FormControl
+                  placeholder="Delivery Address"
+                  value={deliveryAddress}
+                  onChange={(e) => setDeliveryAddress(e.target.value)}
+                />
+              </InputGroup>
+              <InputGroup className="mb-3">
+                <FormControl
+                  placeholder="Phone Number"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                />
+              </InputGroup>
               <Button variant="primary" onClick={handleConfirmPayment}>
                 Confirm Delivery
               </Button>
-            </Modal.Footer>
+            </Modal.Body>
           </Modal>
         </div>
       )}
