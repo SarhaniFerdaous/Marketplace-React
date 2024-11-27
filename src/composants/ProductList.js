@@ -53,7 +53,7 @@ const ProductList = ({ productType, searchText }) => {
     });
   };
 
-  const styles = {
+  const styles = { 
     container: {
       padding: "3rem 2rem",
       backgroundColor: "#f7f7f7",
@@ -149,7 +149,7 @@ const ProductList = ({ productType, searchText }) => {
         <p>Loading products...</p>
       ) : (
         <div>
-          <h2>{productType}</h2>
+         
           <Row>
             {products.length === 0 ? (
               <p>No products found in this category.</p>

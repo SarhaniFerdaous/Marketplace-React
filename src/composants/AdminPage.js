@@ -108,7 +108,6 @@ const AdminPage = () => {
   return (
     <div style={styles.container}>
       <ToastContainer />
-      <h1 style={styles.header}>Admin Dashboard</h1>
       {loading ? (
         <p>Loading data...</p>
       ) : (
@@ -126,7 +125,7 @@ const AdminPage = () => {
                   >
                     Update Price
                   </button>
-                  <button style={styles.button} onClick={() => handleDeleteProduct(product.id)}>
+                  <button style={styles.deleteButton} onClick={() => handleDeleteProduct(product.id)}>
                     Delete
                   </button>
                 </li>
@@ -159,7 +158,7 @@ const AdminPage = () => {
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
               </select>
-              <button style={styles.button} onClick={handleAddUser}>
+              <button style={styles.addButton} onClick={handleAddUser}>
                 Add User
               </button>
             </form>
@@ -174,7 +173,7 @@ const AdminPage = () => {
                   >
                     Make Admin
                   </button>
-                  <button style={styles.button} onClick={() => handleDeleteUser(user.id)}>
+                  <button style={styles.deleteButton} onClick={() => handleDeleteUser(user.id)}>
                     Delete
                   </button>
                 </li>
@@ -187,65 +186,85 @@ const AdminPage = () => {
   );
 };
 
-
-
-
 const styles = {
-  container: { padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '1200px', margin: '0 auto' },
-  header: { textAlign: 'center', marginBottom: '20px' },
+  container: { 
+    padding: '20px', 
+    fontFamily: 'Arial, sans-serif', 
+    minHeight: '100vh', 
+    display: 'flex', 
+    flexDirection: 'column',
+    justifyContent: 'space-between', 
+    maxWidth: '100%',
+    margin: '0 auto',
+    backgroundColor: '#f4f4f4'
+  },
+  header: { 
+    textAlign: 'center', 
+    marginBottom: '40px', 
+    fontSize: '36px', 
+    color: '#333' 
+  },
   adminSections: { 
-    display: 'flex', // Enable flexbox for horizontal layout
-    gap: '20px', // Add space between the sections
-    flexWrap: 'wrap', // Allow sections to wrap if container is too small
-    justifyContent: 'space-between', // Distribute space evenly between sections
+    display: 'flex',
+    gap: '30px',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    flexGrow: 1,
   },
   section: { 
-    flex: '1 1 calc(50% - 20px)', // Make each section take up 50% of the container width (with some space in between)
+    flex: '1 1 calc(50% - 30px)', 
     marginBottom: '30px',
-    padding: '30px', // Increase padding for a more spacious feel
-    border: '1px solid #ccc', 
+    padding: '30px',
+    border: '1px solid #ddd', 
     borderRadius: '8px',
-    boxSizing: 'border-box',
-    backgroundColor: '#fdfdfd', // Optional: Distinct background color for sections
+    backgroundColor: '#fff',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+    minHeight: '400px',  // Increased size for the section
   },
   form: { display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '20px' },
-  input: { padding: '15px', fontSize: '16px', borderRadius: '4px', border: '1px solid #ccc' },
+  input: { padding: '12px', fontSize: '16px', borderRadius: '4px', border: '1px solid #ddd', transition: 'border-color 0.3s' },
+  addButton: { 
+    padding: '12px 20px',
+    fontSize: '16px',
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
+  },
   button: { 
+    padding: '12px 20px',
+    fontSize: '16px',
+    backgroundColor: '#007BFF',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
+  },
+  deleteButton: { 
     padding: '12px 20px', 
     fontSize: '16px', 
-    backgroundColor: '#4CAF50', 
+    backgroundColor: '#f44336', 
     color: 'white', 
     border: 'none', 
     borderRadius: '5px', 
-    cursor: 'pointer' 
+    cursor: 'pointer', 
+    transition: 'background-color 0.3s ease',
   },
-  // Style for the product and user lists
   list: { 
-    display: 'flex', // Enable flexbox for horizontal layout
-    flexWrap: 'wrap', // Allow wrapping to the next row if space runs out
-    gap: '20px', // Add space between items
-    listStyle: 'none', 
-    padding: 0 
+    listStyleType: 'none', 
+    padding: '0', 
+    margin: '0',
   },
   listItem: { 
-    flex: '1 1 calc(33.33% - 30px)', // Make each card wider and responsive
-    maxWidth: 'calc(33.33% - 30px)', // Ensure card doesn't overflow
-    boxSizing: 'border-box', 
-    margin: '10px 0', 
-    padding: '20px', // Increase padding inside cards for better readability
-    border: '1px solid #ccc', 
+    marginBottom: '20px', 
+    padding: '15px', 
+    backgroundColor: '#fafafa', 
     borderRadius: '8px', 
-    backgroundColor: '#f9f9f9', // Optional background for distinction
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px', // Space out the content inside the card
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
   },
-  buttonContainer: { 
-    display: 'flex', 
-    gap: '10px', // Space buttons apart
-    justifyContent: 'flex-start', 
-  }
 };
 
 export default AdminPage;
- 

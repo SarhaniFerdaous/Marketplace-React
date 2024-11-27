@@ -13,27 +13,37 @@
   z-index: 1000;
   display: flex;
   align-items: center;
+  justify-content: space-between; /* Distribute space between left and right elements */
+  flex-wrap: wrap; /* Allow components to wrap on smaller screens */
 }
 
-/* Logo Styling */
+/* Left Section - Logo and Search Bar */
+.left-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Align both logo and search bar to the left */
+  flex: 1;
+  gap: 20px; /* Adds space between the logo and the search bar */
+  width: 100%; /* Ensure it spans the available width */
+}
+
 .infoz-image {
-  height: 60px;
+  height: 60px; /* Adjust size of logo */
   width: auto;
-  margin-left: -20px;
-  flex: 1; /* Adjusted to occupy minimum required space */
+  margin-right: 20px; /* Adds space between logo and search bar */
 }
 
-/* Search Bar Section */
+/* Search Bar */
 .search-bar-container {
   display: flex;
   align-items: center;
-  flex: 2; /* Takes more space to center within the header */
-  max-width: 600px;
-  margin: 0 20px;
+  flex: 1;
+  max-width: 800px; /* Increase max-width for the search bar */
+  margin: 0;
 }
 
 .search-bar {
-  width: 100%;
+  width: 100%; /* Make the search bar fill available space */
   display: flex;
   border-radius: 30px;
   overflow: hidden;
@@ -68,13 +78,12 @@
   width: 28px;
 }
 
-/* Icons Section (Cart and Profile) */
+/* Right Section - Cart and Profile */
 .header-icons {
   display: flex;
   align-items: center;
   gap: 15px;
-  flex: 1; /* Adjusted to occupy minimum required space */
-  justify-content: flex-end;
+  justify-content: flex-end; /* Align icons to the right */
 }
 
 .header-icons li {
@@ -92,8 +101,9 @@
   margin-top: 80px;
 }
 
+
 /* Responsive Styles */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .custom-header {
     flex-direction: column;
     align-items: stretch;
@@ -101,8 +111,15 @@
     height: auto;
   }
 
+  .left-section {
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
   .infoz-image {
     margin: 0 0 10px;
+    flex: none; /* Prevent logo from expanding */
   }
 
   .search-bar-container {
@@ -124,5 +141,55 @@
     justify-content: center;
     width: 100%;
     gap: 10px;
+    margin-top: 10px; /* Space between icons */
+  }
+}
+
+@media (max-width: 768px) {
+  .infoz-image {
+    height: 50px; /* Smaller logo */
+  }
+
+  .search-input {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .search-btn {
+    height: 40px;
+    width: 40px;
+  }
+
+  .header-icons {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .infoz-image {
+    height: 40px; /* Even smaller logo */
+  }
+
+  .search-bar-container {
+    margin-bottom: 10px;
+  }
+
+  .search-input {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  .search-btn {
+    height: 35px;
+    width: 35px;
+  }
+
+  .header-icons {
+    gap: 8px;
+  }
+
+  .logout-btn {
+    font-size: 12px;
+    padding: 5px 8px;
   }
 }
