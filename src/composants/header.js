@@ -89,7 +89,7 @@ const Header = () => {
           </div>
         </div>
   
-        {/* Right Section - Cart, Profile, Admin, and Logout */}
+        {/* Right Section - Cart, Profile, Admin, Dashboard, and Logout */}
         <div className="right-section d-flex align-items-center">
           <div className="cart-section" onClick={() => user ? navigate("/panier") : navigate("/register")}>
             <img
@@ -116,11 +116,18 @@ const Header = () => {
                   />
                 </li>
                 {isAdmin && (
-                  <li className="nav-item d-flex align-items-center me-3">
-                    <Button variant="outline-secondary" onClick={() => navigate('/AdminPage')}>
-                      Admin
-                    </Button>
-                  </li>
+                  <>
+                    <li className="nav-item d-flex align-items-center me-3">
+                      <Button variant="outline-secondary" onClick={() => navigate('/AdminPage')}>
+                        Admin
+                      </Button>
+                    </li>
+                    <li className="nav-item d-flex align-items-center me-3">
+                      <Button variant="outline-secondary" onClick={() => navigate('/Dashboard')}>
+                        Dashboard
+                      </Button>
+                    </li>
+                  </>
                 )}
                 <li className="nav-item logout-btn">
                   <Button

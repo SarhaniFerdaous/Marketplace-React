@@ -61,61 +61,36 @@ const Panier = () => {
   const sendEmail = () => {
     const userEmail = getUserEmail(); // Retrieve the email of the currently logged-in user
     if (!userEmail) {
-        console.error("User not logged in or email not available");
-        return;
+      console.error("User not logged in or email not available");
+      return;
     }
-
-    if (!basket || basket.length === 0) {
-        console.error("Basket is empty or not defined");
-        return;
-    }
-
-    const total = calculateTotal();
-    if (typeof total !== "number" || total <= 0) {
-        console.error("Total amount is invalid");
-        return;
-    }
-
-    // Show loading indicator (Optional)
-    console.log("Sending email...");
-
+  
     const emailParams = {
-        to_email: userEmail, // Recipient's email
-        to_name: "Customer", // Customize recipient's name if available
-        from_name: "Marketplace", // Sender's name
-        subject: "Your Purchase Details", // Subject of the email
-        basket_details: basket
-            .map(
-                (item) =>
-                    `${item.brand} - ${item.description} x ${item.quantity} = $${(
-                        item.price * item.quantity
-                    ).toFixed(2)}`
-            )
-            .join("\n"),
-        total: `$${total.toFixed(2)}`, // Format total as currency
-    };
-
-    emailjs
-        .send(
-            "service_p9yhwfl", // Replace with your EmailJS service ID
-            "template_pqgjogc", // Replace with your EmailJS template ID
-            emailParams, // Email parameters
-            "KOjUfnsD82D1TWITH" // Replace with your EmailJS public key
+      to_email: userEmail, // Pass the user's email dynamically
+      to_name: "Customer",
+      from_name: "Marketplace",
+      basket_details: basket
+        .map(
+          (item) =>
+            `${item.brand} - ${item.description} x ${item.quantity} = ${
+              item.price * item.quantity
+            }`
         )
-        .then(
-            (result) => {
-                console.log("Email sent successfully:", result.text);
-                // Display success message to the user (Optional)
-                alert("Your email has been sent successfully!");
-            },
-            (error) => {
-                console.error("Error sending email:", error.text);
-                // Display error message to the user (Optional)
-                alert("There was an error sending your email. Please try again.");
-            }
-        );
-};
-
+        .join("\n"),
+      total: calculateTotal(),
+    };
+  
+    emailjs
+      .send("service_p9yhwfl", "template_pqgjogc", emailParams, "KOjUfnsD82D1TWITH")
+      .then(
+        (result) => {
+          console.log("Email sent successfully:", result.text);
+        },
+        (error) => {
+          console.error("Error sending email:", error.text);
+        }
+      );
+  };
 
   const handleDecreaseQuantity = (item) => {
     if (item.quantity > 1) {
