@@ -44,6 +44,7 @@ const App = () => {
               <Route path="/profile" element={<UserProfile/>} />
               <Route path="*" element={<div>404 Not Found</div>} />
               <Route path="/AdminPage" element={<AdminPage />} />
+              <Route path="/search/:searchText" element={<Home />} />
             </Routes>
           </main>
           <Footer />

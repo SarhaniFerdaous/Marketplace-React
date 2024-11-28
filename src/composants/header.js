@@ -7,180 +7,176 @@ import profileIcon from "../photo/pr.jpg";
 import './header.css'; 
 import { InputGroup, FormControl, Button } from 'react-bootstrap'; 
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"; 
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore'; // Updated imports for querying products
 
 const Header = () => {
   const [user, setUser] = useState(null); 
   const [isAdmin, setIsAdmin] = useState(false); // Track if user is admin
   const [searchText, setSearchText] = useState(""); 
+  const [searchResults, setSearchResults] = useState([]); // New state for search results
   const navigate = useNavigate();
   const auth = getAuth();
-
+  
+  // Effect to check auth state and fetch user info (admin status)
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        // Check if user is admin in Firestore
         const db = getFirestore();
-        const userRef = doc(db, 'users', currentUser.uid);
-  
-        getDoc(userRef).then(snapshot => {
+        const userRef = doc(db, 'users', currentUser.uid); // Now doc is defined
+        getDoc(userRef).then(snapshot => { // Now getDoc is defined
           if (snapshot.exists()) {
-            const adminStatus = snapshot.data().isAdmin;
-            console.log('Admin status fetched:', adminStatus); // Debug log
-            setIsAdmin(adminStatus); // Set isAdmin state based on database value
+            setIsAdmin(snapshot.data().isAdmin);
           } else {
-            console.log('No user data found for', currentUser.uid); // Log for missing user data
-            setIsAdmin(false); // Default to false if the user doesn't exist in the DB
+            setIsAdmin(false);
           }
-        }).catch((error) => {
-          console.error("Error fetching admin status:", error); // Catch Firebase error
-          setIsAdmin(false);
         });
       } else {
         setUser(null);
-        setIsAdmin(false); // Reset admin state if user logs out
+        setIsAdmin(false);
       }
     });
   
-    // Cleanup the listener when component unmounts
     return () => unsubscribe();
   }, [auth]);
+  
 
-  // Log user state for debugging
-  useEffect(() => {
-    console.log('Current user:', user);
-    console.log('Is Admin:', isAdmin);
-  }, [user, isAdmin]);
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate('/'); // Redirect after logout
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
-
-  const handleAdminClick = () => {
-    navigate('/AdminPage'); 
-  };
-
-  const handleCartClick = () => {
-    if (user) {
-      navigate("/panier");
-    } else {
-      navigate("/register");
-    }
-  };
-
-  const handleSearch = () => {
+  // Function to handle search
+  const handleSearch = async () => {
     if (searchText.trim() !== "") {
       console.log("Search text:", searchText);
-      navigate(`/search/${searchText}`);
+      const db = getFirestore();
+      const productsRef = collection(db, "products");
+      const q = query(productsRef, where("name", ">=", searchText), where("name", "<=", searchText + "\uf8ff"));
+      
+      try {
+        const querySnapshot = await getDocs(q);
+        const results = querySnapshot.docs.map(doc => doc.data());
+        setSearchResults(results);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
     } else {
-      console.log("Search text is empty!");
+      setSearchResults([]); // Reset results if search text is empty
     }
   };
 
   return (
     <header className="custom-header">
-    <div className="container d-flex align-items-center justify-content-between">
-      {/* Left Section - Logo and Search Bar */}
-      <div className="left-section d-flex align-items-center">
-        <div className="logo-section">
-          <Link to="/">
-            <img src={logo} alt="InfoZone Logo" className="infoz-image" />
-          </Link>
-        </div>
+      <div className="container d-flex align-items-center justify-content-between">
         
-        <div className="search-section d-flex">
-          <InputGroup className="mb-3 search-bar">
-            <FormControl
-              placeholder="Search for products, brands, and more..."
-              aria-label="Search"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}  
-              className="search-input"
+        {/* Left Section - Logo and Search Bar */}
+        <div className="left-section d-flex align-items-center flex-grow-1">
+          <div className="logo-section">
+            <Link to="/">
+              <img src={logo} alt="InfoZone Logo" className="infoz-image" />
+            </Link>
+          </div>
+          
+          <div className="search-section d-flex flex-grow-1">
+            <InputGroup className="mb-3 search-bar w-100">
+              <FormControl
+                placeholder="Search for products, brands, and more..."
+                aria-label="Search"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}  
+                className="search-input"
+              />
+              <Button variant="outline-secondary" className="search-btn" onClick={handleSearch}>
+                <img src={searchIcon} alt="Search" className="search-icon" />
+              </Button>
+            </InputGroup>
+          </div>
+        </div>
+  
+        {/* Right Section - Cart, Profile, Admin, and Logout */}
+        <div className="right-section d-flex align-items-center">
+          <div className="cart-section" onClick={() => user ? navigate("/panier") : navigate("/register")}>
+            <img
+              src={cartIcon}
+              alt="Cart"
+              style={{ height: "50px", marginRight: "10px" }}
             />
-            <Button variant="outline-secondary" className="search-btn" onClick={handleSearch}>
-              <img src={searchIcon} alt="Search" className="search-icon" />
-            </Button>
-          </InputGroup>
-        </div>
-      </div>
+          </div>
   
-      {/* Right Section - Cart, Profile, Admin, and Logout */}
-      <div className="header-icons d-flex align-items-center">
-        <div className="cart-section" onClick={handleCartClick}>
-          <img
-            src={cartIcon}
-            alt="Cart"
-            style={{ height: "50px", marginRight: "10px" }}
-          />
-        </div>
-  
-        <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
-          {user ? (
-            <div className="d-flex align-items-center">
-              <li className="nav-item d-flex align-items-center me-3">
-                <img
-                  src={profileIcon}
-                  alt="Profile Icon"
-                  style={{
-                    height: '50px',
-                    width: '50px',
-                    borderRadius: '50%',
-                    cursor: 'pointer',
-                  }}
-                  onClick={() => navigate('/profile')}
-                />
-              </li>
-              {isAdmin && (
+          <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
+            {user ? (
+              <div className="d-flex align-items-center">
                 <li className="nav-item d-flex align-items-center me-3">
-                  <Button variant="outline-secondary" onClick={handleAdminClick}>
-                    Admin
+                  <img
+                    src={profileIcon}
+                    alt="Profile Icon"
+                    style={{
+                      height: '50px',
+                      width: '50px',
+                      borderRadius: '50%',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => navigate('/profile')}
+                  />
+                </li>
+                {isAdmin && (
+                  <li className="nav-item d-flex align-items-center me-3">
+                    <Button variant="outline-secondary" onClick={() => navigate('/AdminPage')}>
+                      Admin
+                    </Button>
+                  </li>
+                )}
+                <li className="nav-item logout-btn">
+                  <Button
+                    variant="dark"
+                    onClick={async () => {
+                      await signOut(auth);
+                      navigate('/');
+                    }}
+                    style={{
+                      backgroundColor: '#dc3545',
+                      color: '#fff',
+                      border: 'none',
+                      padding: '10px 20px',
+                      borderRadius: '5px',
+                      marginLeft: '10px',
+                    }}
+                  >
+                    Logout
                   </Button>
                 </li>
-              )}
-              <li className="nav-item logout-btn">
-                <Button
-                  variant="dark"
-                  onClick={handleLogout}
-                  style={{
-                    backgroundColor: '#dc3545',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '10px 20px',
-                    borderRadius: '5px',
-                    marginLeft: '10px',
-                  }}
-                >
-                  Logout
-                </Button>
+              </div>
+            ) : (
+              <li className="nav-item d-flex align-items-center me-3">
+                <Link to="/register">
+                  <img
+                    src={profileIcon}
+                    alt="Profile Icon"
+                    style={{
+                      height: '50px',
+                      width: '50px',
+                      borderRadius: '50%',
+                      cursor: 'pointer',
+                    }}
+                  />
+                </Link>
               </li>
-            </div>
-          ) : (
-            <li className="nav-item d-flex align-items-center me-3">
-              <Link to="/register">
-                <img
-                  src={profileIcon}
-                  alt="Profile Icon"
-                  style={{
-                    height: '50px',
-                    width: '50px',
-                    borderRadius: '50%',
-                    cursor: 'pointer',
-                  }}
-                />
-              </Link>
-            </li>
-          )}
-        </ul>
+            )}
+          </ul>
+        </div>
       </div>
-    </div>
-  </header>
-  
+
+      {/* Display search results */}
+      {searchResults.length > 0 && (
+        <div className="search-results">
+          <h3>Search Results</h3>
+          <ul>
+            {searchResults.map((product, index) => (
+              <li key={index}>
+                <h4>{product.name}</h4>
+                <p>{product.description}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </header>
   );
 };
 
