@@ -1,344 +1,233 @@
 import React, { useContext, useState } from "react";
-import { Row,Col,Card,InputGroup,Button, FormControl,Modal,
-} from "react-bootstrap";
+import { Row, Col, Card, InputGroup, Button, FormControl, Modal } from "react-bootstrap";
 import { FaTrashAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { BasketContext } from "../context/BasketContext";
 import { toast } from "react-toastify";
 import emailjs from "emailjs-com";
 import { getAuth } from "firebase/auth";
+import { getFirestore, collection, addDoc, updateDoc, doc, getDoc } from "firebase/firestore"; // Firestore imports
 
 const Panier = () => {
   const { basket, updateQuantity, removeFromBasket } = useContext(BasketContext);
   const navigate = useNavigate();
 
-  const [showFirstModal, setShowFirstModal] = useState(false);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [showDeliveryModal, setShowDeliveryModal] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardCode, setCardCode] = useState("");
-  const [deliveryAddress, setDeliveryAddress] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [showModals, setShowModals] = useState({
+    first: false,
+    payment: false,
+    delivery: false,
+  });
+  const [paymentDetails, setPaymentDetails] = useState({
+    method: "",
+    cardNumber: "",
+    cardCode: "",
+    deliveryAddress: "",
+    phoneNumber: "",
+  });
 
-  const calculateTotal = () =>
-    basket.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const calculateTotal = () => basket.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const handlePayer = () => {
-    setShowFirstModal(true);
-  };
+  const toggleModal = (type, state) => setShowModals({ ...showModals, [type]: state });
 
-  const handleConfirmPayment = () => {
-    if (paymentMethod === "online") {
-      if (!cardNumber || !cardCode) {
-        toast.error("Please enter valid card details.");
-        return;
-      }
-      toast.success("Online payment successful!");
-      sendEmail();
-      setShowPaymentModal(false);
-      setShowFirstModal(false);
-      navigate("/payment");
-    } else if (paymentMethod === "delivery") {
-      if (!deliveryAddress || !phoneNumber) {
-        toast.error("Please enter valid delivery details.");
-        return;
-      }
-      toast.success("Payment on delivery confirmed!");
-      sendEmail();
-      setShowFirstModal(false);
-      setShowDeliveryModal(false);
-      navigate("/order-confirmation");
+  const handleConfirmPayment = async () => {
+    const { method, cardNumber, cardCode, deliveryAddress, phoneNumber } = paymentDetails;
+
+    if (method === "online" && (!cardNumber || !cardCode)) {
+      return toast.error("Invalid card details.");
     }
-  };
+    if (method === "delivery" && (!deliveryAddress || !phoneNumber)) {
+      return toast.error("Invalid delivery details.");
+    }
 
-  const getUserEmail = () => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    return user ? user.email : null;
+    try {
+      // Get the current user
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) {
+        return toast.error("User is not logged in.");
+      }
+
+      // Save the purchase details in Firestore (in the 'ventes' collection)
+      const db = getFirestore();
+      const ventesCollection = collection(db, "ventes");
+
+      // Loop through the basket items and save each purchase
+      for (const item of basket) {
+        // Save each item purchased to 'ventes'
+        await addDoc(ventesCollection, {
+          userId: user.uid,
+          productId: item.id,
+          quantity: item.quantity,
+          total: item.price * item.quantity,
+          paymentMethod: method,
+          status: "confirmed",
+          date: new Date(),
+        });
+
+        // Update the quantity of the product in Firestore
+        const productRef = doc(db, "products", item.id);
+        const productSnap = await getDoc(productRef);
+
+        if (productSnap.exists()) {
+          const productData = productSnap.data();
+          const newAmount = productData.amount - item.quantity;
+
+          // Ensure that quantity doesn't go below 0
+          if (newAmount < 0) {
+            return toast.error("Insufficient stock for product: " + item.description);
+          }
+
+          // Update the product quantity
+          await updateDoc(productRef, { amount: newAmount });
+        } else {
+          return toast.error("Product not found in database.");
+        }
+
+        // Remove the item from the basket after purchase
+        removeFromBasket(item.id);
+      }
+
+      toast.success(method === "online" ? "Online payment successful!" : "Payment on delivery confirmed!");
+      sendEmail();
+      toggleModal("payment", false);
+      toggleModal("delivery", false);
+      toggleModal("first", false);
+      navigate(method === "online" ? "/payment" : "/order-confirmation");
+
+    } catch (error) {
+      toast.error("Error processing payment: " + error.message);
+    }
   };
 
   const sendEmail = () => {
-    const userEmail = getUserEmail(); // Retrieve the email of the currently logged-in user
-    if (!userEmail) {
-      console.error("User not logged in or email not available");
-      return;
-    }
-  
-    const emailParams = {
-      to_email: userEmail, // Pass the user's email dynamically
-      to_name: "Customer",
-      from_name: "Marketplace",
-      basket_details: basket
-        .map(
-          (item) =>
-            `${item.brand} - ${item.description} x ${item.quantity} = ${
-              item.price * item.quantity
-            }`
-        )
-        .join("\n"),
-      total: calculateTotal(),
-    };
-  
-    emailjs
-      .send("service_p9yhwfl", "template_pqgjogc", emailParams, "KOjUfnsD82D1TWITH")
-      .then(
-        (result) => {
-          console.log("Email sent successfully:", result.text);
-        },
-        (error) => {
-          console.error("Error sending email:", error.text);
-        }
-      );
+    const user = getAuth().currentUser;
+    if (!user?.email) return console.error("User not logged in or email unavailable");
+    emailjs.send(
+      "service_p9yhwfl",
+      "template_pqgjogc",
+      {
+        to_email: user.email,
+        to_name: "Customer",
+        from_name: "Marketplace",
+        basket_details: basket.map((item) => `${item.brand} - ${item.description} x ${item.quantity} = ${item.price * item.quantity}`).join("\n"),
+        total: calculateTotal(),
+      },
+      "KOjUfnsD82D1TWITH"
+    );
   };
 
-  const handleDecreaseQuantity = (item) => {
-    if (item.quantity > 1) {
-      updateQuantity(item.id, -1);
+  const updatePaymentDetails = (key, value) => setPaymentDetails({ ...paymentDetails, [key]: value });
+
+  const handleQuantityChange = (item, increment) => {
+    const newQuantity = item.quantity + increment;
+    if (newQuantity < 1 || newQuantity > item.amount) {
+      return toast.error(`Invalid quantity. Max: ${item.amount}`);
     }
+    updateQuantity(item.id, increment);
   };
 
-  const handleIncreaseQuantity = (item) => {
-    if (item.quantity < item.amount) {
-      updateQuantity(item.id, 1);
-    } else {
-      toast.error(
-        `Cannot order more than the available quantity (${item.amount}).`,
-        {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        }
-      );
+  const addToBasket = (item) => {
+    if (item.amount === 0) {
+      return toast.error(`Cannot add ${item.description} to the basket. Out of stock.`);
     }
+    // Proceed with adding item to the basket (existing logic)
+    updateQuantity(item.id, 1);
   };
+
+  const renderCard = (item) => (
+    <Col key={item.id} sm={12} md={6} lg={4}>
+      <Card className="mb-3 shadow-sm">
+        <Card.Img variant="top" src={item.imageUrl} alt={item.description} className="p-3" style={{ height: "200px", objectFit: "contain" }} />
+        <Card.Body>
+          <div className="d-flex justify-content-between align-items-center">
+            <Card.Title>{item.brand} - {item.description}</Card.Title>
+            <FaTrashAlt className="text-danger" style={{ cursor: "pointer" }} onClick={() => removeFromBasket(item.id)} />
+          </div>
+          <Card.Text>Price: {item.price} x {item.quantity} = {item.price * item.quantity}</Card.Text>
+          <InputGroup className="my-2">
+            <Button variant="outline-secondary" onClick={() => handleQuantityChange(item, -1)}>-</Button>
+            <FormControl readOnly value={item.quantity} className="text-center" />
+            <Button variant="outline-secondary" onClick={() => handleQuantityChange(item, 1)} disabled={item.amount === 0}>+</Button>
+          </InputGroup>
+          <small className="text-muted">Available: {item.amount}</small>
+          {item.amount === 0 && <p className="text-danger">Out of stock</p>}
+        </Card.Body>
+      </Card>
+    </Col>
+  );
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="p-3">
       <h2>Basket</h2>
       {basket.length === 0 ? (
-        <p>Votre panier est vide.</p>
+        <p>Your basket is empty.</p>
       ) : (
-        <div>
-          <Row>
-            {basket.map((item) => (
-              <Col key={item.id} sm={12} md={6} lg={4}>
-                <Card
-                  style={{
-                    marginBottom: "20px",
-                    border: "1px solid #e0e0e0",
-                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      backgroundColor: "#f8f8f8",
-                      borderBottom: "1px solid #ddd",
-                      padding: "10px",
-                      height: "200px",
-                    }}
-                  >
-                    <Card.Img
-                      variant="top"
-                      src={item.imageUrl}
-                      alt={item.description}
-                      style={{
-                        maxWidth: "100%",
-                        maxHeight: "100%",
-                        objectFit: "contain",
-                      }}
-                    />
-                  </div>
-                  <Card.Body>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Card.Title>
-                        {item.brand} - {item.description}
-                      </Card.Title>
-                      <div
-                        style={{
-                          width: "40px",
-                          height: "40px",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          flexShrink: 0,
-                        }}
-                      >
-                        <FaTrashAlt
-                          style={{
-                            color: "#e74c3c",
-                            cursor: "pointer",
-                            fontSize: "30px",
-                          }}
-                          onClick={() => removeFromBasket(item.id)}
-                        />
-                      </div>
-                    </div>
-                    <Card.Text>
-                      Price: {item.price} x {item.quantity} ={" "}
-                      {item.price * item.quantity}
-                    </Card.Text>
-                    <InputGroup style={{ marginTop: "10px" }}>
-                      <Button
-                        variant="outline-secondary"
-                        onClick={() => handleDecreaseQuantity(item)}
-                      >
-                        -
-                      </Button>
-                      <FormControl
-                        type="text"
-                        value={item.quantity}
-                        readOnly
-                        style={{ textAlign: "center", maxWidth: "50px" }}
-                      />
-                      <Button
-                        variant="outline-secondary"
-                        onClick={() => handleIncreaseQuantity(item)}
-                      >
-                        +
-                      </Button>
-                    </InputGroup>
-                    <p style={{ marginTop: "10px", color: "#7f8c8d" }}>
-                      Available Quantity: {item.amount}
-                    </p>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-          <div
-            style={{
-              marginTop: "20px",
-              textAlign: "right",
-              fontSize: "20px",
-              fontWeight: "bold",
-            }}
-          >
-            <h4>Total: {calculateTotal()}</h4>
-          </div>
-          <div
-            style={{
-              textAlign: "center",
-              marginTop: "30px",
-            }}
-          >
-            <Button
-              style={{
-                backgroundColor: "#007bff",
-                color: "#fff",
-                padding: "15px 30px",
-                borderRadius: "10px",
-                fontSize: "1.25rem",
-                fontWeight: "bold",
-                border: "none",
-                transition: "background-color 0.3s ease",
-                width: "200px",
-              }}
-              onClick={handlePayer}
-              onMouseEnter={(e) =>
-                (e.target.style.backgroundColor = "#0056b3")
-              }
-              onMouseLeave={(e) =>
-                (e.target.style.backgroundColor = "#007bff")
-              }
-            >
-              Checkout
-            </Button>
-          </div>
+        <>
+          <Row>{basket.map(renderCard)}</Row>
+          <h4 className="text-right mt-4">Total: {calculateTotal()}</h4>
+          <Button className="mt-3 w-100" onClick={() => toggleModal("first", true)} disabled={basket.some(item => item.amount === 0)}>
+            Checkout
+          </Button>
 
           {/* Modals */}
-          <Modal show={showFirstModal} onHide={() => setShowFirstModal(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title>Choose Payment Method</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Button
-                variant="primary"
-                onClick={() => {
-                  setPaymentMethod("online");
-                  setShowPaymentModal(true);
-                  setShowFirstModal(false);
-                }}
-                block
-              >
-                Online Payment
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setPaymentMethod("delivery");
-                  setShowDeliveryModal(true);
-                  setShowFirstModal(false);
-                }}
-                block
-              >
-                Payment on Delivery
-              </Button>
-            </Modal.Body>
-          </Modal>
-
-          <Modal show={showPaymentModal} onHide={() => setShowPaymentModal(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title>Enter Card Details</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <InputGroup className="mb-3">
-                <FormControl
-                  placeholder="Card Number"
-                  value={cardNumber}
-                  onChange={(e) => setCardNumber(e.target.value)}
-                />
-              </InputGroup>
-              <InputGroup className="mb-3">
-                <FormControl
-                  placeholder="Card Code"
-                  value={cardCode}
-                  onChange={(e) => setCardCode(e.target.value)}
-                />
-              </InputGroup>
-              <Button variant="primary" onClick={handleConfirmPayment}>
-                Confirm Payment
-              </Button>
-            </Modal.Body>
-          </Modal>
-
-          <Modal show={showDeliveryModal} onHide={() => setShowDeliveryModal(false)}>
-            <Modal.Header closeButton>
-              <Modal.Title>Delivery Details</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <InputGroup className="mb-3">
-                <FormControl
-                  placeholder="Delivery Address"
-                  value={deliveryAddress}
-                  onChange={(e) => setDeliveryAddress(e.target.value)}
-                />
-              </InputGroup>
-              <InputGroup className="mb-3">
-                <FormControl
-                  placeholder="Phone Number"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                />
-              </InputGroup>
-              <Button variant="primary" onClick={handleConfirmPayment}>
-                Confirm Delivery
-              </Button>
-            </Modal.Body>
-          </Modal>
-        </div>
+          {["first", "payment", "delivery"].map((type) => (
+            <Modal key={type} show={showModals[type]} onHide={() => toggleModal(type, false)}>
+              <Modal.Header closeButton>
+                <Modal.Title>{type === "first" ? "Choose Payment Method" : type === "payment" ? "Card Details" : "Delivery Details"}</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                {type === "first" ? (
+                  <>
+                    <Button className="w-100 mb-2" onClick={() => { toggleModal("payment", true); updatePaymentDetails("method", "online"); }}>Online Payment</Button>
+                    <Button className="w-100" onClick={() => { toggleModal("delivery", true); updatePaymentDetails("method", "delivery"); }}>Payment on Delivery</Button>
+                  </>
+                ) : type === "payment" ? (
+                  <>
+                    <InputGroup className="mb-3">
+                      <FormControl
+                        placeholder="Card Number"
+                        value={paymentDetails.cardNumber}
+                        onChange={(e) => updatePaymentDetails("cardNumber", e.target.value)}
+                      />
+                    </InputGroup>
+                    <InputGroup className="mb-3">
+                      <FormControl
+                        placeholder="Card Code"
+                        value={paymentDetails.cardCode}
+                        onChange={(e) => updatePaymentDetails("cardCode", e.target.value)}
+                      />
+                    </InputGroup>
+                  </>
+                ) : (
+                  <>
+                    <InputGroup className="mb-3">
+                      <FormControl
+                        placeholder="Delivery Address"
+                        value={paymentDetails.deliveryAddress}
+                        onChange={(e) => updatePaymentDetails("deliveryAddress", e.target.value)}
+                      />
+                    </InputGroup>
+                    <InputGroup className="mb-3">
+                      <FormControl
+                        placeholder="Phone Number"
+                        value={paymentDetails.phoneNumber}
+                        onChange={(e) => updatePaymentDetails("phoneNumber", e.target.value)}
+                      />
+                    </InputGroup>
+                  </>
+                )}
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => toggleModal(type, false)}>
+                  Close
+                </Button>
+                <Button variant="primary" onClick={handleConfirmPayment}>
+                  Confirm Payment
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          ))}
+        </>
       )}
     </div>
   );

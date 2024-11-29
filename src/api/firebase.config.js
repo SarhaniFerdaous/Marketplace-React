@@ -1,7 +1,9 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { getFirestore,collection, getDocs, addDoc, updateDoc, deleteDoc, doc,  query,  where,  orderBy } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAhE8x2BVeEZybkd2Bf25TJZpuXZUzOOVA",
   authDomain: "projet-web-react-e8331.firebaseapp.com",
@@ -11,10 +13,16 @@ const firebaseConfig = {
   appId: "1:231353239135:web:1fd15a4be10586acd4bdea"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
+// Firebase services
+const auth = getAuth(app); // Authentication
+const db = getFirestore(app); // Firestore
+const storage = getStorage(app); // Storage
 
-const db = getFirestore(app);
-
-export { auth, db, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, app };
+// Firestore utility functions
+export { 
+  auth, 
+  db, 
+  storage, collection,  getDocs, addDoc,updateDoc,deleteDoc,  doc,  query, where, orderBy,  ref,  uploadBytes,  getDownloadURL,  app };
