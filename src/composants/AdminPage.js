@@ -8,7 +8,6 @@ const AdminPage = () => {
   const [products, setProducts] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [newProduct, setNewProduct] = useState({ name: '', description: '', price: '', quantity: '' });
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'user' });
 
   // Fetch data from Firestore

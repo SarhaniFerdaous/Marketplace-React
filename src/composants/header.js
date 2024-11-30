@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../photo/infoz.png';
 import cartIcon from "../photo/chariot.png";
@@ -7,64 +7,43 @@ import profileIcon from "../photo/pr.jpg";
 import './header.css'; 
 import { InputGroup, FormControl, Button } from 'react-bootstrap'; 
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"; 
-import { getFirestore, collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore'; // Updated imports for querying products
+import { BasketContext } from '../context/BasketContext'; // Import the BasketContext
+import { doc, getFirestore, getDoc } from 'firebase/firestore'; // Ensure correct imports
 
 const Header = () => {
-  const [user, setUser] = useState(null); 
-  const [isAdmin, setIsAdmin] = useState(false); // Track if user is admin
-  const [searchText, setSearchText] = useState(""); 
-  const [searchResults, setSearchResults] = useState([]); // New state for search results
+  const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const { basket } = useContext(BasketContext); // Access the basket from context
+  const cartItemCount = basket.reduce((count, item) => count + item.quantity, 0); // Calculate total cart items
   const navigate = useNavigate();
   const auth = getAuth();
-  
-  // Effect to check auth state and fetch user info (admin status)
+  const db = getFirestore(); // Initialize Firestore correctly
+
+  // Effect to check auth state and fetch user info
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        const db = getFirestore();
-        const userRef = doc(db, 'users', currentUser.uid); // Now doc is defined
-        getDoc(userRef).then(snapshot => { // Now getDoc is defined
-          if (snapshot.exists()) {
-            setIsAdmin(snapshot.data().isAdmin);
-          } else {
-            setIsAdmin(false);
-          }
-        });
+
+        // Check if the user is an admin
+        const userRef = doc(db, 'users', currentUser.uid);
+        const userSnapshot = await getDoc(userRef);
+        if (userSnapshot.exists()) {
+          setIsAdmin(userSnapshot.data().isAdmin);
+        }
       } else {
         setUser(null);
         setIsAdmin(false);
       }
     });
-  
-    return () => unsubscribe();
-  }, [auth]);
-  
 
-  // Function to handle search
-  const handleSearch = async () => {
-    if (searchText.trim() !== "") {
-      console.log("Search text:", searchText);
-      const db = getFirestore();
-      const productsRef = collection(db, "products");
-      const q = query(productsRef, where("name", ">=", searchText), where("name", "<=", searchText + "\uf8ff"));
-      
-      try {
-        const querySnapshot = await getDocs(q);
-        const results = querySnapshot.docs.map(doc => doc.data());
-        setSearchResults(results);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      }
-    } else {
-      setSearchResults([]); // Reset results if search text is empty
-    }
-  };
+    return () => unsubscribe();
+  }, [auth, db]); // Added db as a dependency
 
   return (
     <header className="custom-header">
       <div className="container d-flex align-items-center justify-content-between">
-        
         {/* Left Section - Logo and Search Bar */}
         <div className="left-section d-flex align-items-center flex-grow-1">
           <div className="logo-section">
@@ -72,7 +51,6 @@ const Header = () => {
               <img src={logo} alt="InfoZone Logo" className="infoz-image" />
             </Link>
           </div>
-          
           <div className="search-section d-flex flex-grow-1">
             <InputGroup className="mb-3 search-bar w-100">
               <FormControl
@@ -82,13 +60,12 @@ const Header = () => {
                 onChange={(e) => setSearchText(e.target.value)}  
                 className="search-input"
               />
-              <Button variant="outline-secondary" className="search-btn" onClick={handleSearch}>
+              <Button variant="outline-secondary" className="search-btn">
                 <img src={searchIcon} alt="Search" className="search-icon" />
               </Button>
             </InputGroup>
           </div>
         </div>
-  
         {/* Right Section - Cart, Profile, Admin, Dashboard, and Logout */}
         <div className="right-section d-flex align-items-center">
           <div className="cart-section" onClick={() => user ? navigate("/panier") : navigate("/register")}>
@@ -97,8 +74,10 @@ const Header = () => {
               alt="Cart"
               style={{ height: "50px", marginRight: "10px" }}
             />
+            {user && cartItemCount > 0 && (
+             <span className="cart-badge">{cartItemCount}</span> // Show basket count only if user is authenticated
+            )}
           </div>
-  
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
             {user ? (
               <div className="d-flex align-items-center">
@@ -168,21 +147,6 @@ const Header = () => {
           </ul>
         </div>
       </div>
-
-      {/* Display search results */}
-      {searchResults.length > 0 && (
-        <div className="search-results">
-          <h3>Search Results</h3>
-          <ul>
-            {searchResults.map((product, index) => (
-              <li key={index}>
-                <h4>{product.name}</h4>
-                <p>{product.description}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </header>
   );
 };
