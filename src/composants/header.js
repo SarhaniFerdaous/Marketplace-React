@@ -76,7 +76,7 @@ const Header = () => {
             />
             {user && cartItemCount > 0 && (
              <span className="cart-badge">{cartItemCount}</span> // Show basket count only if user is authenticated
-            )}
+                )}
           </div>
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
             {user ? (
