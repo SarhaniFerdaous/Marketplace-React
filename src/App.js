@@ -10,7 +10,7 @@ import Signin from './composants/Signin';
 import Footer from './composants/footer'; 
 import AddProductForm from './composants/ajouterProduits'; 
 import PCPage from './composants/PCPage'; 
-import EcranPage from './composants/EcranPage'; 
+import AccessoriesPage from './composants/accessoriesPage'; 
 import ChairGamerPage from './composants/ChairGamerPage'; 
 import ProductList from './composants/ProductList'; 
 import Panier from './composants/panier'; 
@@ -34,7 +34,7 @@ const App = () => {
               <Route path="/register" element={<Register />} />
               <Route path="/signin" element={<Signin />} />
               <Route path="/pc" element={<PCPage />} />
-              <Route path="/ecran" element={<EcranPage />} />
+              <Route path="/ecran" element={<accessoriesPage />} />
               <Route path="/chair-gamer" element={<ChairGamerPage />} />
               <Route path="/PC" element={<ProductList productType="PC" />} />
               <Route path="/Ecran" element={<ProductList productType="Ecran" />} />

@@ -96,8 +96,8 @@ const AddProductForm = () => {
       // Navigate to the appropriate page based on product type
       if (productType === "PC") {
         navigate("/pc"); // Navigate to PC page
-      } else if (productType === "Ecran") {
-        navigate("/ecran"); // Navigate to Ecran page
+      } else if (productType === "Accessories") {
+        navigate("/accessories"); // Navigate to Ecran page
       } else if (productType === "Chair Gamer") {
         navigate("/chairgamer"); // Navigate to Chair Gamer page
       }
@@ -131,11 +131,11 @@ const AddProductForm = () => {
             />
             <Form.Check
               type="radio"
-              label="Ecran"
+              label="accessories"
               name="productType"
-              value="Ecran"
+              value="accessories"
               onChange={(e) => setProductType(e.target.value)}
-              checked={productType === "Ecran"}
+              checked={productType === "accessories"}
             />
             <Form.Check
               type="radio"
