@@ -14,7 +14,7 @@ const Header = () => {
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const { basket } = useContext(BasketContext); // Access the basket from context
+  const { basket, clearBasket } = useContext(BasketContext); // Access the basket and clearBasket from context
   const cartItemCount = basket.reduce((count, item) => count + item.quantity, 0); // Calculate total cart items
   const navigate = useNavigate();
   const auth = getAuth();
@@ -112,8 +112,9 @@ const Header = () => {
                   <Button
                     variant="dark"
                     onClick={async () => {
-                      await signOut(auth);
-                      navigate('/');
+                      await signOut(auth); // Sign out the user
+                      clearBasket(); // Clear the basket
+                      navigate('/'); // Navigate to the home page
                     }}
                     style={{
                       backgroundColor: '#dc3545',
