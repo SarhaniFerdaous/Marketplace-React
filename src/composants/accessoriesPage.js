@@ -1,7 +1,7 @@
 import React from 'react';
-import ProductList from '../composants/ProductList';
+import ProductList from './ProductList';
 
-const EcranPage = () => {
+const accessoriesPage = () => {
   return (
     <div>
       <ProductList productType="Ecran" />
@@ -9,4 +9,4 @@ const EcranPage = () => {
   );
 };
 
-export default EcranPage;
+export default accessoriesPage;
