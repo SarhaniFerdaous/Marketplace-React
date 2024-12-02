@@ -41,6 +41,13 @@ const Header = () => {
     return () => unsubscribe();
   }, [auth, db]); // Added db as a dependency
 
+  // Handle search navigation
+  const handleSearch = () => {
+    if (searchText.trim()) {
+      navigate(`/search?search=${encodeURIComponent(searchText.trim())}`);
+    }
+  };
+
   return (
     <header className="custom-header">
       <div className="container d-flex align-items-center justify-content-between">
@@ -60,7 +67,7 @@ const Header = () => {
                 onChange={(e) => setSearchText(e.target.value)}  
                 className="search-input"
               />
-              <Button variant="outline-secondary" className="search-btn">
+              <Button variant="outline-secondary" className="search-btn" onClick={handleSearch}>
                 <img src={searchIcon} alt="Search" className="search-icon" />
               </Button>
             </InputGroup>
@@ -75,8 +82,8 @@ const Header = () => {
               style={{ height: "50px", marginRight: "10px" }}
             />
             {user && cartItemCount > 0 && (
-             <span className="cart-badge">{cartItemCount}</span> // Show basket count only if user is authenticated
-                )}
+              <span className="cart-badge">{cartItemCount}</span> // Show basket count only if user is authenticated
+            )}
           </div>
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
             {user ? (
