@@ -8,7 +8,7 @@ import './home.css';
 
 // Import images
 import pcImage1 from '../photo/pc.jpg';
-import ecImage1 from '../photo/ec.jpg';
+import ecImage1 from '../photo/acc.jpg';
 import ecImage3 from '../photo/ch.jpg';
 import offre from '../photo/offre.png';
 import offre1 from '../photo/offre1.png';
@@ -30,7 +30,7 @@ const HomePage = () => {
 
   const productLinks = [
     { image: pcImage1, title: 'PC', path: '/pc' },
-    { image: ecImage1, title: 'Screen', path: '/ecran' },
+    { image: ecImage1, title: 'Accessories', path: '/accessories' },
     { image: ecImage3, title: 'Chair Gamer', path: '/ChairGamer' },
   ];
 

@@ -18,12 +18,10 @@ const ProductList = ({ productType, searchText }) => {
       const productList = [];
       snapshot.docs.forEach((doc) => {
         const data = doc.data();
-        // Only add products of the selected type
-        if (data.productType === productType) {
+        if (productType === "All" || data.productType === productType) {
           productList.push({ id: doc.id, ...data });
         }
       });
-      // Filter products based on searchText input
       const filteredProducts = productList.filter((product) =>
         (!searchText ||
           product.brand.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -34,7 +32,7 @@ const ProductList = ({ productType, searchText }) => {
     });
 
     return () => unsubscribe();
-  }, [productType, searchText]); // Re-run effect when searchText changes
+  }, [productType, searchText]);
 
   const handleAddToBasket = (productId) => {
     const product = products.find((p) => p.id === productId);
@@ -42,7 +40,6 @@ const ProductList = ({ productType, searchText }) => {
 
     addToBasket(product, quantity);
 
-    // Display a success message
     toast.success(`${product.brand} added to the basket!`, {
       position: "top-right",
       autoClose: 3000,
@@ -149,7 +146,6 @@ const ProductList = ({ productType, searchText }) => {
         <p>Loading products...</p>
       ) : (
         <div>
-         
           <Row>
             {products.length === 0 ? (
               <p>No products found in this category.</p>

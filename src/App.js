@@ -15,7 +15,8 @@ import ChairGamerPage from './composants/ChairGamerPage';
 import ProductList from './composants/ProductList'; 
 import Panier from './composants/panier'; 
 import UserProfile from './composants/profile'; 
-import AdminPage from './composants/AdminPage'; // Import your AdminPage component
+import AdminPage from './composants/AdminPage';
+import Categories from './composants/categories'; // Import Categories
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -34,17 +35,18 @@ const App = () => {
               <Route path="/register" element={<Register />} />
               <Route path="/signin" element={<Signin />} />
               <Route path="/pc" element={<PCPage />} />
-              <Route path="/ecran" element={<accessoriesPage />} />
+              <Route path="/accessories" element={<AccessoriesPage />} />
               <Route path="/chair-gamer" element={<ChairGamerPage />} />
               <Route path="/PC" element={<ProductList productType="PC" />} />
               <Route path="/Ecran" element={<ProductList productType="Ecran" />} />
               <Route path="/ChairGamer" element={<ProductList productType="Chair Gamer" />} />
               <Route path="/ajouterProduits" element={<AddProductForm />} />
               <Route path="/panier" element={<Panier />} />
-              <Route path="/profile" element={<UserProfile/>} />
-              <Route path="*" element={<div>404 Not Found</div>} />
+              <Route path="/profile" element={<UserProfile />} />
               <Route path="/AdminPage" element={<AdminPage />} />
               <Route path="/search/:searchText" element={<Home />} />
+              <Route path="/categories" element={<Categories />} /> {/* Categories Route */}
+              <Route path="*" element={<div>404 Not Found</div>} />
             </Routes>
           </main>
           <Footer />
