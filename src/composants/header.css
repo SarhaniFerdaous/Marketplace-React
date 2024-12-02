@@ -4,35 +4,35 @@
   top: 0;
   left: 0;
   right: 0;
-  background-color: #ffffff;
+  background-color: #D7D3BF;
   border-bottom: 2px solid #e0e0e0;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
-  padding: 10px 40px; /* Increased padding to give more space for the search bar */
+  padding: 10px 40px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   height: 80px;
   z-index: 1000;
   display: flex;
-  justify-content: space-between; /* Space between left and right sections */
-  align-items: center; /* Vertically center the content */
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* Left Section - Logo */
 .left-section {
   display: flex;
-  align-items: center; /* Align logo and search bar */
-  margin-right: auto; /* Pushes the logo slightly to the left */
+  align-items: center;
+  margin-right: auto;
 }
 
 .infoz-image {
-  height: 60px; /* Adjust size of logo */
+  height: 60px;
   width: auto;
-  margin-left: -350px; /* Move the logo a bit more to the left */
+  margin-left: -350px;
 }
 
 /* Center Section - Search Bar */
 .center-section {
   display: flex;
-  justify-content: center; /* Center the search bar */
+  justify-content: center;
   width: 100%;
 }
 
@@ -40,29 +40,35 @@
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 900px; /* Increased the maximum width of the search bar */
+  max-width: 900px; 
 }
 
 .search-input {
   flex: 1;
   border: 2px solid #e0e0e0;
-  padding: 16px 24px;
-  font-size: 18px;
+  padding: 14px 20px; /* Adjusted padding for comfort */
+  font-size: 16px; /* Slightly smaller font size for better readability */
   border-radius: 30px 0 0 30px;
-  max-width: 100%; /* Ensures the input takes up full available space */
+  transition: border-color 0.3s ease-in-out;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #007bff; /* Focus color */
 }
 
 .search-btn {
   background: linear-gradient(90deg, #800080, #007bff);
   border: none;
-  height: 50px;
-  width: 50px;
+  height: 45px; /* Reduced button size */
+  width: 45px; /* Reduced button size */
   display: flex;
   justify-content: center;
   align-items: center;
   transition: background 0.3s;
   border-radius: 0 30px 30px 0;
   margin-left: 10px;
+  cursor: pointer;
 }
 
 .search-btn:hover {
@@ -70,21 +76,21 @@
 }
 
 .search-icon {
-  height: 28px;
-  width: 28px;
+  height: 22px; /* Smaller icon for better ergonomics */
+  width: 22px;
 }
 
 /* Right Section - Cart, Profile Icons, and Logout */
 .right-section {
   display: flex;
-  align-items: center; /* Align icons vertically in the center */
-  justify-content: flex-end; /* Align content to the right */
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .header-icons {
   display: flex;
   align-items: center;
-  gap: 20px; /* Space between profile, admin, and logout buttons */
+  gap: 20px;
 }
 
 .header-icons li {
@@ -93,20 +99,19 @@
 }
 
 .icon {
-  height: 30px; /* Set appropriate size for icons */
+  height: 30px;
   width: auto;
 }
 
 .cart-section img,
 .profile-section img {
-  height: 50px; /* Icon height for cart and profile */
-  width: 50px;  /* Icon width for cart and profile */
+  height: 50px;
+  width: 50px;
   cursor: pointer;
 }
 
 .cart-section {
-  margin-left: 20px; /* Space between profile and cart icon */
-  margin-right: 0; /* Remove any extra margin on the right */
+  margin-left: 20px;
 }
 
 /* Layout Adjustment */
@@ -122,13 +127,13 @@
   border-radius: 5px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
   position: absolute;
-  top: 80px; /* Place it directly below the header */
+  top: 80px;
   left: 50%;
   transform: translateX(-50%);
   width: 80%;
   max-height: 400px;
   overflow-y: scroll;
-  z-index: 999; /* Ensure it stays above other elements */
+  z-index: 999;
 }
 
 .search-results-container ul {
@@ -180,7 +185,7 @@
 
 @media (max-width: 480px) {
   .infoz-image {
-    height: 40px; /* Even smaller logo */
+    height: 40px;
   }
 
   .search-bar-container {
@@ -188,8 +193,8 @@
   }
 
   .search-input {
-    font-size: 12px;
-    padding: 10px 12px; /* Adjust padding for mobile */
+    font-size: 14px;
+    padding: 12px 14px;
   }
 
   .search-btn {

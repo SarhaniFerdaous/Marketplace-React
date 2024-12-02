@@ -41,10 +41,11 @@ const Header = () => {
     return () => unsubscribe();
   }, [auth, db]); // Added db as a dependency
 
-  // Handle search navigation
-  const handleSearch = () => {
-    if (searchText.trim()) {
-      navigate(`/search?search=${encodeURIComponent(searchText.trim())}`);
+  const handleSearch = (e) => {
+    if (e.type === "click" || e.key === "Enter") {
+      if (searchText.trim()) {
+        navigate(`/search?search=${encodeURIComponent(searchText.trim())}`);
+      }
     }
   };
 
@@ -52,27 +53,27 @@ const Header = () => {
     <header className="custom-header">
       <div className="container d-flex align-items-center justify-content-between">
         {/* Left Section - Logo and Search Bar */}
-        <div className="left-section d-flex align-items-center flex-grow-1">
-          <div className="logo-section">
-            <Link to="/">
-              <img src={logo} alt="InfoZone Logo" className="infoz-image" />
-            </Link>
-          </div>
-          <div className="search-section d-flex flex-grow-1">
-            <InputGroup className="mb-3 search-bar w-100">
-              <FormControl
-                placeholder="Search for products, brands, and more..."
-                aria-label="Search"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}  
-                className="search-input"
-              />
-              <Button variant="outline-secondary" className="search-btn" onClick={handleSearch}>
-                <img src={searchIcon} alt="Search" className="search-icon" />
-              </Button>
-            </InputGroup>
-          </div>
-        </div>
+<div className="left-section d-flex align-items-center flex-grow-1">
+  <div className="logo-section">
+    <Link to="/">
+      <img src={logo} alt="InfoZone Logo" className="infoz-image" />
+    </Link>
+  </div>
+  <div className="search-section d-flex flex-grow-1">
+    <InputGroup className="mb-3 search-bar w-100">
+      <FormControl
+        placeholder="Search for products, brands, and more..."
+        aria-label="Search"
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+        className="search-input"
+      />
+      <Button variant="outline-secondary" className="search-btn" onClick={handleSearch}>
+        <img src={searchIcon} alt="Search" className="search-icon" />
+      </Button>
+    </InputGroup>
+  </div>
+</div>
         {/* Right Section - Cart, Profile, Admin, Dashboard, and Logout */}
         <div className="right-section d-flex align-items-center">
           <div className="cart-section" onClick={() => user ? navigate("/panier") : navigate("/register")}>

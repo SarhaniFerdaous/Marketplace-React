@@ -1,36 +1,41 @@
-const db = require("./firebase-admin.config");
+const express = require('express');
+const admin = require('firebase-admin');
+const db = admin.firestore();
+const router = express.Router();
 
-exports.getProducts = async (req, res) => {
-  const { type, search } = req.query;
+// Endpoint to search for products
+router.get("/api/products", async (req, res) => {
+  const { search, type } = req.query;
+  
+  if (!search) {
+    return res.status(400).send("Search query is required");
+  }
 
   try {
+    // Query Firestore for products matching the search text in the searchKeywords field
     const productsRef = db.collection("products");
-    let queryRef = productsRef;
+    const snapshot = await productsRef
+      .where("productType", "==", type) // Filter by product type (optional)
+      .get();
 
-    // Filter by product type if provided
-    if (type) queryRef = queryRef.where("productType", "==", type);
-
-    // Perform search on product name or brand if provided
-    if (search) {
-      const searchLower = search.toLowerCase(); // Normalize search for case insensitivity
-      queryRef = queryRef
-        .where("searchKeywords", "array-contains", searchLower); // Assuming `searchKeywords` is precomputed
-    }
-
-    const snapshot = await queryRef.get();
-    const productsByCategory = {};
+    const matchedProducts = [];
 
     snapshot.forEach((doc) => {
       const product = doc.data();
-      const category = product.productType || "Uncategorized";
-
-      if (!productsByCategory[category]) productsByCategory[category] = [];
-      productsByCategory[category].push({ id: doc.id, ...product });
+      if (product.searchKeywords && product.searchKeywords.some(keyword => keyword.includes(search.toLowerCase()))) {
+        matchedProducts.push({ id: doc.id, ...product });
+      }
     });
 
-    res.json(productsByCategory); // Return products grouped by category
+    if (matchedProducts.length === 0) {
+      return res.status(404).send("No products found.");
+    }
+
+    res.json(matchedProducts);
   } catch (error) {
-    console.error("Error retrieving products:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Error fetching products:", error);
+    res.status(500).send("Error fetching products.");
   }
-};
+});
+
+module.exports = router;

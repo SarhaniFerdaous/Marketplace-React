@@ -1,17 +1,17 @@
 import React from "react";
-import { useSearchProducts } from "../composants/useSearchProducts"; 
 import { useLocation } from "react-router-dom";
-import ProductCard from "../components/ProductCard"; // Assume you have a ProductCard component for display
+import { useSearchProducts } from "../api/useSearchProducts";
+import ProductCard from "../composants/ProductCard";
 
 const SearchPage = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const searchText = queryParams.get("search") || ""; // Get the search query from the URL
+  const searchText = queryParams.get("search") || "";
 
-  const { data: products, isLoading, isError } = useSearchProducts(searchText);
+  const { products, isLoading, isError } = useSearchProducts(searchText);
 
   if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Error fetching products.</p>;
+  if (isError) return <p>Error fetching products. Please try again later.</p>;
 
   return (
     <div className="search-page">
