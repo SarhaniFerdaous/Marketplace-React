@@ -48,19 +48,6 @@ const AdminPage = () => {
     }
   };
 
-  // Confirmation for Update Product
-  const handleUpdateProduct = async (id, updatedData) => {
-    if (window.confirm('Are you sure you want to update this product?')) {
-      try {
-        const productDoc = doc(db, 'products', id);
-        await updateDoc(productDoc, updatedData);
-        toast.success('Product updated successfully');
-      } catch (error) {
-        toast.error('Error updating product');
-        console.error('Error updating product:', error);
-      }
-    }
-  };
 
   // Confirmation for Update User
   const handleUpdateUser = async (id, updatedData) => {
@@ -118,12 +105,6 @@ const AdminPage = () => {
                 <li key={product.id} style={styles.listItem}>
                   <strong>{product.name}</strong>
                   <p>{product.description}</p>
-                  <button
-                    style={styles.button}
-                    onClick={() => handleUpdateProduct(product.id, { price: 50 })}
-                  >
-                    Update Price
-                  </button>
                   <button style={styles.deleteButton} onClick={() => handleDeleteProduct(product.id)}>
                     Delete
                   </button>

@@ -4,7 +4,7 @@ import ProductList from './ProductList';
 const accessoriesPage = () => {
   return (
     <div>
-      <ProductList productType="Ecran" />
+      <ProductList productType="accessories" />
     </div>
   );
 };
