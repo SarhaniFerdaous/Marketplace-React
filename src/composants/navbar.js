@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 import { useUser } from '../context/UserContext'; // Ensure correct path to UserContext
+
 const NavBar = () => {
   const [showCategories, setShowCategories] = useState(false);
   const dropdownRef = useRef(null);
@@ -102,12 +103,15 @@ const NavBar = () => {
   }
 
   .categories-dropdown {
-    cursor: pointer;
-    padding: 10px;
-    font-weight: bold;
-    font-size: 1.4rem;
-    color: #007bff;
-  }
+  cursor: pointer;
+  padding: 10px;
+  font-weight: bold;
+  font-size: 1.4rem;
+  color: #007bff; /* Set text color to blue */
+  border-radius: 5px; /* Optional: to make the button have rounded corners */
+  transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
 
   .greeting-message {
     text-align: center;
@@ -118,8 +122,17 @@ const NavBar = () => {
   }
 
   .add-product-button {
+    background-color: #D7D3BF; /* Set button color */
+    color: black; /* Ensure text color is black */
     margin-right: 15px; /* Adjust spacing as needed */
+    border: none;
+    font-weight: bold;
   }
+
+    .add-product-button:hover {
+     background-color: #D7D3BF; /* Keep the same color on hover */
+     color: black; /* Keep text color black on hover */
+     } 
 
   .categories-list {
     position: absolute;
@@ -140,7 +153,7 @@ const NavBar = () => {
   .categories-list .nav-link {
     padding: 8px 15px;
     font-size: 1rem;
-    color: #333;
+    color: black; /* Set text color to black */
     transition: background-color 0.2s ease;
   }
 
@@ -193,7 +206,6 @@ const NavBar = () => {
     }
   }
 `}</style>
-
 
     </Navbar>
   );

@@ -16,7 +16,8 @@ import ProductList from './composants/ProductList';
 import Panier from './composants/panier'; 
 import UserProfile from './composants/profile'; 
 import AdminPage from './composants/AdminPage';
-import Categories from './composants/categories'; // Import Categories
+import Categories from './composants/categories'; 
+import SearchPage from './composants/searchPage';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -45,7 +46,8 @@ const App = () => {
               <Route path="/profile" element={<UserProfile />} />
               <Route path="/AdminPage" element={<AdminPage />} />
               <Route path="/search/:searchText" element={<Home />} />
-              <Route path="/categories" element={<Categories />} /> {/* Categories Route */}
+              <Route path="/categories" element={<Categories />} /> 
+              <Route path="/search" element={<SearchPage />} />
               <Route path="*" element={<div>404 Not Found</div>} />
             </Routes>
           </main>

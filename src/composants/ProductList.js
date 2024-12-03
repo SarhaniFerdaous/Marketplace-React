@@ -52,7 +52,7 @@ const ProductList = ({ productType, searchText }) => {
 
   const styles = { 
     container: {
-      padding: "3rem 2rem",
+      padding: "2rem 1rem",
       backgroundColor: "#f7f7f7",
       fontFamily: "'Roboto', sans-serif",
     },
@@ -62,7 +62,8 @@ const ProductList = ({ productType, searchText }) => {
       borderRadius: "10px",
       overflow: "hidden",
       transition: "box-shadow 0.3s ease, transform 0.3s ease",
-      marginBottom: "2rem",
+      marginBottom: "1.5rem",
+      padding: "1rem", // Reduced padding
     },
     cardHover: {
       transform: "translateY(-5px)",
@@ -73,44 +74,44 @@ const ProductList = ({ productType, searchText }) => {
       justifyContent: "center",
       alignItems: "center",
       width: "100%",
-      backgroundColor: "#f4f4f4",
+      backgroundColor: "#ffffff",
       borderBottom: "1px solid #eaeaea",
       overflow: "hidden",
-      height: "auto",
+      height: "150px", // Fixed height
     },
     image: {
       width: "100%",
-      height: "auto",
-      objectFit: "contain",
+      height: "100%", // Match container height
+      objectFit: "contain", // Ensure the entire image fits within the container
       transition: "transform 0.3s ease",
     },
     cardBody: {
-      padding: "1.5rem",
+      padding: "0.8rem", // Reduced padding
       textAlign: "left",
     },
     cardTitle: {
-      fontSize: "1.2rem",
+      fontSize: "1rem", // Reduced font size
       fontWeight: "bold",
       color: "#2c3e50",
-      marginBottom: "0.5rem",
+      marginBottom: "0.3rem", // Reduced margin
     },
     cardText: {
-      fontSize: "1rem",
+      fontSize: "0.9rem", // Reduced font size
       color: "#7f8c8d",
-      marginBottom: "1rem",
-      lineHeight: "1.5",
+      marginBottom: "0.8rem", // Reduced margin
+      lineHeight: "1.4",
     },
     info: {
-      margin: "0.3rem 0",
-      fontSize: "0.95rem",
+      margin: "0.2rem 0", // Reduced spacing
+      fontSize: "0.85rem", // Reduced font size
       color: "#34495e",
     },
     button: {
       backgroundColor: "#3498db",
       color: "#ffffff",
-      fontSize: "0.9rem",
+      fontSize: "0.85rem", // Reduced font size
       fontWeight: "bold",
-      padding: "0.5rem 1rem",
+      padding: "0.4rem 0.8rem", // Reduced padding
       border: "none",
       borderRadius: "5px",
       transition: "background-color 0.3s ease, transform 0.2s ease",
@@ -123,20 +124,22 @@ const ProductList = ({ productType, searchText }) => {
     responsive: {
       "@media (max-width: 768px)": {
         card: {
-          marginBottom: "1.5rem",
+          marginBottom: "1rem",
         },
         imageContainer: {
-          height: "200px",
+          height: "120px", // Adjusted for smaller screens
         },
         cardTitle: {
-          fontSize: "1rem",
+          fontSize: "0.9rem", // Smaller for mobile
         },
         button: {
-          fontSize: "0.85rem",
+          fontSize: "0.75rem", // Smaller button text
         },
       },
     },
   };
+  
+  
 
   return (
     <div style={styles.container}>

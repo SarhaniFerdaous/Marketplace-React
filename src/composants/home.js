@@ -8,10 +8,11 @@ import './home.css';
 
 // Import images
 import pcImage1 from '../photo/pc.jpg';
-import ecImage1 from '../photo/acc.jpg';
+import access from '../photo/access.png';
 import ecImage3 from '../photo/ch.jpg';
-import offre from '../photo/offre.png';
-import offre1 from '../photo/offre1.png';
+import slider1 from '../photo/slider1.jpg';
+import slider2 from '../photo/slider2.jpg';
+import slider3 from '../photo/slider3.jpg';
 
 const HomePage = () => {
   const [user, setUser] = useState(null); // State to store user authentication status
@@ -30,7 +31,7 @@ const HomePage = () => {
 
   const productLinks = [
     { image: pcImage1, title: 'PC', path: '/pc' },
-    { image: ecImage1, title: 'Accessories', path: '/accessories' },
+    { image: access, title: 'Accessories', path: '/accessories' },
     { image: ecImage3, title: 'Chair Gamer', path: '/ChairGamer' },
   ];
 
@@ -46,10 +47,13 @@ const HomePage = () => {
     <Container fluid>
       <Carousel>
         <Carousel.Item>
-          <img className="d-block w-100" src={offre} alt="First slide" />
+          <img className="d-block w-100" src={slider1} alt="First slide" />
         </Carousel.Item>
         <Carousel.Item>
-          <img className="d-block w-100" src={offre1} alt="Second slide" />
+          <img className="d-block w-100" src={slider2} alt="Second slide" />
+        </Carousel.Item>
+        <Carousel.Item>
+          <img className="d-block w-100" src={slider3} alt="Second slide" />
         </Carousel.Item>
       </Carousel>
 
