@@ -100,8 +100,8 @@ const AddProductForm = () => {
       // Navigate to the appropriate page based on product type
       if (productType === "PC") {
         navigate("/pc"); // Navigate to PC page
-      } else if (productType === "Accessories") {
-        navigate("/accessories"); // Navigate to Accessories page
+      } else if (productType === "accessories") {
+        navigate("/Accessories"); // Navigate to Accessories page
       } else if (productType === "Chair Gamer") {
         navigate("/chairgamer"); // Navigate to Chair Gamer page
       }
