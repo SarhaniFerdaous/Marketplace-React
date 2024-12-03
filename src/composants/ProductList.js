@@ -5,6 +5,7 @@ import { db } from "../api/firebase.config";
 import { collection, onSnapshot, deleteDoc, doc } from "firebase/firestore";
 import { BasketContext } from "../context/BasketContext";
 import { ToastContainer, toast } from "react-toastify";
+import './ajouterProduits';
 import "react-toastify/dist/ReactToastify.css";
 
 const ProductList = ({ productType, searchText }) => {
