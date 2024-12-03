@@ -1,12 +1,13 @@
-import React from 'react';
-import ProductList from './ProductList';
+import React from "react";
+import ProductList from "./ProductList";
 
-const accessoriesPage = () => {
+const Accessories = () => {
   return (
     <div>
-      <ProductList productType="Ecran" />
+      <h1>Accessories</h1>
+      <ProductList productType="accessories" />
     </div>
   );
 };
 
-export default accessoriesPage;
+export default Accessories;
