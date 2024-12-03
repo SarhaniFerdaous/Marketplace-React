@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
-import { getAuth } from "firebase/auth";  // Import Firebase Authentication
+import { getAuth } from "firebase/auth";
 import { db } from "../api/firebase.config";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+import { generateSearchKeywords } from "../utils/productHelpers";
 
 const AddProductForm = () => {
   const [productType, setProductType] = useState("");
@@ -12,22 +13,23 @@ const AddProductForm = () => {
   const [currency, setCurrency] = useState("TND");
   const [amount, setAmount] = useState("");
   const [image, setImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState(""); // Store the image URL here
+  const [imageUrl, setImageUrl] = useState("");
   const [brand, setBrand] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
+  const [productId, setProductId] = useState("");
 
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImageUrl(reader.result); // Set the data URL of the image
-        setImage(file); // Store the actual file (if needed for validation or future reference)
+        setImageUrl(reader.result);
+        setImage(file);
       };
-      reader.readAsDataURL(file); // This converts the image file to a base64 string
+      reader.readAsDataURL(file);
     }
   };
 
@@ -38,15 +40,15 @@ const AddProductForm = () => {
     setCurrency("TND");
     setAmount("");
     setImage(null);
-    setImageUrl(""); // Clear the image URL
+    setImageUrl("");
     setBrand("");
+    setProductId("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check for required fields
-    if (!productType || !description || !price || !amount || !brand || !imageUrl) {
+    if (!productType || !description || !price || !amount || !brand || !imageUrl || !productId) {
       setMessage({ type: "danger", text: "Please fill all required fields." });
       return;
     }
@@ -65,15 +67,14 @@ const AddProductForm = () => {
     setMessage({ type: "", text: "Processing your product..." });
 
     try {
-      const auth = getAuth(); // Get Firebase Authentication instance
-      const user = auth.currentUser; // Get the current logged-in user
+      const auth = getAuth();
+      const user = auth.currentUser;
 
       if (!user) {
         setMessage({ type: "danger", text: "You must be logged in to add a product." });
         return;
       }
 
-      // Create the product data
       const productData = {
         productType,
         description,
@@ -81,25 +82,26 @@ const AddProductForm = () => {
         currency,
         amount,
         brand,
-        imageUrl, // Save the image URL (base64 or external URL)
+        imageUrl,
         createdAt: new Date(),
-        userId: user.uid, // Add the userId field to associate product with the user
+        userId: user.uid,
       };
 
-      // Add the product data to Firestore
-      await addDoc(collection(db, "products"), productData);
+      const productRef = await addDoc(collection(db, "products"), productData);
 
-      // Success message and reset form
+      const keywords = await generateSearchKeywords(productData.productType, brand, description, productRef.id);
+
+      await setDoc(doc(db, "products", productRef.id), { searchKeywords: keywords }, { merge: true });
+
       setMessage({ type: "success", text: "Product added successfully!" });
       resetForm();
 
-      // Navigate to the appropriate page based on product type
       if (productType === "PC") {
-        navigate("/pc"); // Navigate to PC page
+        navigate("/pc");
       } else if (productType === "Accessories") {
-        navigate("/accessories"); // Navigate to Ecran page
+        navigate("/accessories");
       } else if (productType === "Chair Gamer") {
-        navigate("/chairgamer"); // Navigate to Chair Gamer page
+        navigate("/chairgamer");
       }
     } catch (error) {
       console.error("Error adding product: ", error);
@@ -110,17 +112,13 @@ const AddProductForm = () => {
   };
 
   return (
-    <Container>
-      {/* Display success or error messages */}
+    <Container className="py-4">
       {message.text && <Alert variant={message.type}>{message.text}</Alert>}
 
       <Form onSubmit={handleSubmit}>
-        {/* Product Type Radio Buttons */}
-        <Form.Group as={Row}>
-          <Form.Label as="legend" column sm={2}>
-            Type de Produit
-          </Form.Label>
-          <Col sm={10}>
+        <Row className="mb-4">
+          <Col sm={12} lg={6}>
+            <Form.Label as="legend" className="d-block">Type de Produit</Form.Label>
             <Form.Check
               type="radio"
               label="PC"
@@ -131,11 +129,11 @@ const AddProductForm = () => {
             />
             <Form.Check
               type="radio"
-              label="accessories"
+              label="Accessories"
               name="productType"
-              value="accessories"
+              value="Accessories"
               onChange={(e) => setProductType(e.target.value)}
-              checked={productType === "accessories"}
+              checked={productType === "Accessories"}
             />
             <Form.Check
               type="radio"
@@ -146,10 +144,9 @@ const AddProductForm = () => {
               checked={productType === "Chair Gamer"}
             />
           </Col>
-        </Form.Group>
+        </Row>
 
-        {/* Description Input */}
-        <Form.Group controlId="description">
+        <Form.Group controlId="description" className="mb-3">
           <Form.Label>Description</Form.Label>
           <Form.Control
             as="textarea"
@@ -160,30 +157,32 @@ const AddProductForm = () => {
           />
         </Form.Group>
 
-        {/* Price and Amount Inputs */}
-        <Form.Group as={Row}>
-          <Col sm={6}>
-            <Form.Label>Price</Form.Label>
-            <Form.Control
-              type="number"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              required
-            />
+        <Row className="mb-4">
+          <Col sm={12} md={6}>
+            <Form.Group controlId="price">
+              <Form.Label>Price</Form.Label>
+              <Form.Control
+                type="number"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                required
+              />
+            </Form.Group>
           </Col>
-          <Col sm={6}>
-            <Form.Label>Amount</Form.Label>
-            <Form.Control
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              required
-            />
+          <Col sm={12} md={6}>
+            <Form.Group controlId="amount">
+              <Form.Label>Amount</Form.Label>
+              <Form.Control
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                required
+              />
+            </Form.Group>
           </Col>
-        </Form.Group>
+        </Row>
 
-        {/* Brand Input */}
-        <Form.Group controlId="brand">
+        <Form.Group controlId="brand" className="mb-3">
           <Form.Label>Brand</Form.Label>
           <Form.Control
             type="text"
@@ -193,19 +192,17 @@ const AddProductForm = () => {
           />
         </Form.Group>
 
-        {/* Image Input */}
-        <Form.Group controlId="image">
+        <Form.Group controlId="image" className="mb-4">
           <Form.Label>Product Image</Form.Label>
           <Form.Control type="file" onChange={handleFileChange} required />
           {imageUrl && (
-            <div>
-              <img src={imageUrl} alt="Product Preview" width={100} />
+            <div className="mt-3">
+              <img src={imageUrl} alt="Product Preview" width={150} className="rounded" />
             </div>
           )}
         </Form.Group>
 
-        {/* Submit Button */}
-        <Button variant="primary" type="submit" disabled={loading}>
+        <Button variant="primary" type="submit" disabled={loading} className="w-100">
           {loading ? "Submitting..." : "Add Product"}
         </Button>
       </Form>
