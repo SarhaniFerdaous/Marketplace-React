@@ -1,11 +1,11 @@
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 
 /**
  * Utility function to generate search keywords for a product.
  * These keywords include prefixes and combinations of name, brand, description, and productId.
  * 
  * @param {string} productId - The unique product ID to retrieve from Firestore.
- * @returns {Promise<string[]>} A promise that resolves to an array of unique keywords optimized for search.
+ * @returns {Promise<void>} A promise that resolves once the keywords are added to Firestore.
  */
 export const generateSearchKeywords = async (productId) => {
   const db = getFirestore();
@@ -16,7 +16,7 @@ export const generateSearchKeywords = async (productId) => {
 
     if (!productDoc.exists()) {
       console.error("Product not found!");
-      return [];
+      return;
     }
 
     const productData = productDoc.data();
@@ -49,11 +49,15 @@ export const generateSearchKeywords = async (productId) => {
     if (description) keywords.add(description.toLowerCase());
     if (productId) keywords.add(productId);
 
-    return Array.from(keywords); // Convert Set to Array and return
+    // Convert Set to Array and add the keywords field to the document
+    const keywordArray = Array.from(keywords);
+
+    // Update the product document with the new keywords
+    await setDoc(productDocRef, { searchKeywords: keywordArray }, { merge: true });
+
+    console.log("Keywords added to product:", keywordArray);
+
   } catch (error) {
     console.error("Error fetching product from Firestore:", error);
-    return [];
   }
 };
-
-
