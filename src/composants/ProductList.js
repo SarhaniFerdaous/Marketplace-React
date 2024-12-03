@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { Card, Row, Col, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { db } from "../api/firebase.config";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, deleteDoc, doc } from "firebase/firestore";
 import { BasketContext } from "../context/BasketContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,18 +14,22 @@ const ProductList = ({ productType, searchText }) => {
   const { addToBasket } = useContext(BasketContext);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "products"), (snapshot) => {
+    const unsubscribe = onSnapshot(collection(db, "products"), async (snapshot) => {
       const productList = [];
-      snapshot.docs.forEach((doc) => {
-        const data = doc.data();
-        if (productType === "All" || data.productType === productType) {
-          productList.push({ id: doc.id, ...data });
+      for (const docSnap of snapshot.docs) {
+        const data = docSnap.data();
+        if (data.amount === 0) {
+          // Delete the product if available quantity is 0
+          await deleteDoc(doc(db, "products", docSnap.id));
+        } else if (productType === "All" || data.productType === productType) {
+          productList.push({ id: docSnap.id, ...data });
         }
-      });
+      }
+
       const filteredProducts = productList.filter((product) =>
-        (!searchText ||
-          product.brand.toLowerCase().includes(searchText.toLowerCase()) ||
-          product.description.toLowerCase().includes(searchText.toLowerCase()))
+        !searchText ||
+        product.brand.toLowerCase().includes(searchText.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchText.toLowerCase())
       );
       setProducts(filteredProducts);
       setLoading(false);
@@ -50,7 +54,7 @@ const ProductList = ({ productType, searchText }) => {
     });
   };
 
-  const styles = { 
+  const styles = {
     container: {
       padding: "2rem 1rem",
       backgroundColor: "#f7f7f7",
@@ -138,13 +142,11 @@ const ProductList = ({ productType, searchText }) => {
       },
     },
   };
-  
-  
 
   return (
     <div style={styles.container}>
       <ToastContainer />
-      
+
       {loading ? (
         <p>Loading products...</p>
       ) : (
@@ -158,8 +160,12 @@ const ProductList = ({ productType, searchText }) => {
                   <Card
                     className="product-card"
                     style={styles.card}
-                    onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-5px)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.transform = "translateY(-5px)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.transform = "translateY(0)")
+                    }
                   >
                     <div style={styles.imageContainer}>
                       <Card.Img

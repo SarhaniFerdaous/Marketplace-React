@@ -53,105 +53,105 @@ const Header = () => {
 
   return (
     <>
-      <style>
-        {`
-          .custom-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background-color: #D7D3BF;
-            border-bottom: 2px solid #e0e0e0;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
-            padding: 10px 40px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            height: 80px;
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          }
+     <style>
+  {`
+    .custom-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: #D7D3BF;
+      border-bottom: 2px solid #e0e0e0;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.05);
+      padding: 10px 40px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 80px;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-          .infoz-image {
-            height: 60px;
-            width: auto;
-            margin-left: -350px;
-          }
+    .infoz-image {
+      height: 60px;
+      width: auto;
+      margin-left: -350px;
+    }
 
-          .search-bar-container {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            max-width: 900px;
-          }
+    .search-bar-container {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 900px;
+    }
 
-          .search-input {
-            flex: 1;
-            border: 2px solid #e0e0e0;
-            padding: 14px 20px;
-            font-size: 16px;
-            border-radius: 30px 0 0 30px;
-            transition: border-color 0.3s ease-in-out;
-          }
+    .search-input {
+      flex: 1;
+      border: 2px solid #e0e0e0;
+      padding: 10px 20px; /* Adjusted for consistent size */
+      font-size: 16px;
+      border-radius: 30px 0 0 30px;
+      height: 45px; /* Same height as the button */
+      transition: border-color 0.3s ease-in-out;
+    }
 
-          .search-input:focus {
-            outline: none;
-            border-color: #007bff;
-          }
+    .search-input:focus {
+      outline: none;
+      border-color: #007bff;
+    }
 
-          .search-btn {
-            background: black;
-            border: none;
-            height: 45px;
-            width: 45px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: background 0.3s;
-            border-radius: 0 30px 30px 0;
-            margin-left: 10px;
-            cursor: pointer;
-          }
+    .search-btn {
+      background: black;
+      border: none;
+      height: 45px; /* Match the height of the search input */
+      width: 45px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.3s;
+      border-radius: 0 30px 30px 0;
+      cursor: pointer;
+    }
 
-          .search-icon {
-            height: 22px;
-            width: 22px;
-          }
+    .search-icon {
+      height: 22px;
+      width: 22px;
+    }
 
-          .header-icons {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-          }
+    .header-icons {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
 
-          .header-icons li {
-            display: flex;
-            align-items: center;
-          }
+    .header-icons li {
+      display: flex;
+      align-items: center;
+    }
 
-          .icon {
-            height: 30px;
-            width: auto;
-          }
+    .icon {
+      height: 30px;
+      width: auto;
+    }
 
-          .cart-section {
-            margin-left: 20px;
-          }
+    .cart-section {
+      margin-left: 20px;
+    }
 
-          .layout-container {
-            margin-top: 80px;
-          }
+    .layout-container {
+      margin-top: 80px;
+    }
 
-          /* Custom button style for all buttons with black, bold text and no background */
-          .custom-button {
-            color: black; /* Set text color to black */
-            font-weight: bold; /* Make the text bold */
-            background-color: transparent; /* No background */
-            border: none; /* No border */
-            text-decoration: none; /* Remove text decoration */
-          }
-        `}
-      </style>
+    .custom-button {
+      color: black;
+      font-weight: bold;
+      background-color: transparent;
+      border: none;
+      text-decoration: none;
+    }
+  `}
+</style>
+
       
       <header className="custom-header">
         <div className="container d-flex align-items-center justify-content-between">
