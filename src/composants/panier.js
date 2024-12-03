@@ -169,17 +169,38 @@ const Panier = () => {
             Checkout
           </Button>
 
-          {/* Modals */}
-          {["first", "payment", "delivery"].map((type) => (
+          {/* Modals */}{["first", "payment", "delivery"].map((type) => (
             <Modal key={type} show={showModals[type]} onHide={() => toggleModal(type, false)}>
               <Modal.Header closeButton>
-                <Modal.Title>{type === "first" ? "Choose Payment Method" : type === "payment" ? "Card Details" : "Delivery Details"}</Modal.Title>
+                <Modal.Title>
+                  {type === "first"
+                    ? "Choose Payment Method"
+                    : type === "payment"
+                    ? "Card Details"
+                    : "Delivery Details"}
+                </Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 {type === "first" ? (
                   <>
-                    <Button className="w-100 mb-2" onClick={() => { toggleModal("payment", true); updatePaymentDetails("method", "online"); }}>Online Payment</Button>
-                    <Button className="w-100" onClick={() => { toggleModal("delivery", true); updatePaymentDetails("method", "delivery"); }}>Payment on Delivery</Button>
+                    <Button
+                      className="w-100 mb-2"
+                      onClick={() => {
+                        toggleModal("payment", true);
+                        updatePaymentDetails("method", "online");
+                      }}
+                    >
+                      Online Payment
+                    </Button>
+                    <Button
+                      className="w-100"
+                      onClick={() => {
+                        toggleModal("delivery", true);
+                        updatePaymentDetails("method", "delivery");
+                      }}
+                    >
+                      Payment on Delivery
+                    </Button>
                   </>
                 ) : type === "payment" ? (
                   <>
@@ -192,6 +213,7 @@ const Panier = () => {
                     </InputGroup>
                     <InputGroup className="mb-3">
                       <FormControl
+                        type="password"  // Change to password type
                         placeholder="Card Code"
                         value={paymentDetails.cardCode}
                         onChange={(e) => updatePaymentDetails("cardCode", e.target.value)}
@@ -221,9 +243,14 @@ const Panier = () => {
                 <Button variant="secondary" onClick={() => toggleModal(type, false)}>
                   Close
                 </Button>
-                <Button variant="primary" onClick={handleConfirmPayment}>
-                  Confirm Payment
-                </Button>
+                {type === "delivery" || type === "payment" ? (
+                  <Button
+                    variant="primary"
+                    onClick={handleConfirmPayment}
+                  >
+                    Confirm Payment
+                  </Button>
+                ) : null}
               </Modal.Footer>
             </Modal>
           ))}
