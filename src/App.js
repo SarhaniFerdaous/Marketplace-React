@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { BasketProvider } from "./context/BasketContext";
 import { ToastContainer } from 'react-toastify';
+import { logEvent } from 'firebase/analytics';
+import { getAnalytics } from 'firebase/analytics'; 
 import Header from './composants/header';
 import NavBar from './composants/navbar'; 
 import Home from './composants/home'; 
@@ -18,11 +20,17 @@ import UserProfile from './composants/profile';
 import AdminPage from './composants/AdminPage';
 import Categories from './composants/categories'; 
 import SearchPage from './composants/searchPage';
+import Dashboard from './composants/Dashboard';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
+  useEffect(() => {
+    const analytics = getAnalytics(); // Initialize Firebase Analytics
+    logEvent(analytics, 'notification_received'); // Log the event
+  }, []); 
+
   return (
     <BasketProvider>
       <Router>
@@ -48,6 +56,7 @@ const App = () => {
               <Route path="/search/:searchText" element={<Home />} />
               <Route path="/categories" element={<Categories />} /> 
               <Route path="/search" element={<SearchPage />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="*" element={<div>404 Not Found</div>} />
             </Routes>
           </main>

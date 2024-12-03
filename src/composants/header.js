@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../photo/infoz.png';
-import cartIcon from "../photo/chariot.png";
 import searchIcon from "../photo/br.png";
-import profileIcon from "../photo/pr.jpg"; 
 import { InputGroup, FormControl, Button } from 'react-bootstrap'; 
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"; 
 import { BasketContext } from '../context/BasketContext'; 
@@ -57,7 +55,6 @@ const Header = () => {
     <>
       <style>
         {`
-          /* Header Container */
           .custom-header {
             position: fixed;
             top: 0;
@@ -74,13 +71,6 @@ const Header = () => {
             justify-content: space-between;
             align-items: center;
           }
-          
-          /* Left Section - Logo */
-          .left-section {
-            display: flex;
-            align-items: center;
-            margin-right: auto;
-          }
 
           .infoz-image {
             height: 60px;
@@ -88,18 +78,11 @@ const Header = () => {
             margin-left: -350px;
           }
 
-          /* Center Section - Search Bar */
-          .center-section {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-          }
-
           .search-bar-container {
             display: flex;
             align-items: center;
             width: 100%;
-            max-width: 900px; 
+            max-width: 900px;
           }
 
           .search-input {
@@ -117,7 +100,7 @@ const Header = () => {
           }
 
           .search-btn {
-            background: linear-gradient(90deg, #800080, #007bff);
+            background: black;
             border: none;
             height: 45px;
             width: 45px;
@@ -130,19 +113,9 @@ const Header = () => {
             cursor: pointer;
           }
 
-          .search-btn:hover {
-            background: linear-gradient(90deg, #6f007d, #0056b3);
-          }
-
           .search-icon {
             height: 22px;
             width: 22px;
-          }
-
-          .right-section {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
           }
 
           .header-icons {
@@ -161,13 +134,6 @@ const Header = () => {
             width: auto;
           }
 
-          .cart-section img,
-          .profile-section img {
-            height: 50px;
-            width: 50px;
-            cursor: pointer;
-          }
-
           .cart-section {
             margin-left: 20px;
           }
@@ -176,63 +142,20 @@ const Header = () => {
             margin-top: 80px;
           }
 
-          .search-results-container {
-            padding: 10px;
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            position: absolute;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            max-height: 400px;
-            overflow-y: scroll;
-            z-index: 999;
-          }
-
-          .search-results-container ul {
-            list-style-type: none;
-            padding: 0;
-          }
-
-          .search-results-container li {
-            padding: 10px 0;
-            border-bottom: 1px solid #ddd;
-          }
-
-          .search-results-container li h4 {
-            font-size: 16px;
-            margin-bottom: 5px;
-          }
-
-          .search-results-container li p {
-            font-size: 14px;
-            color: #555;
-          }
-
-          /* Custom Logout Button Style */
-          .logout-btn {
-            background-color: #1A1A1D;
-            color: white;
-            border: none;
-            transition: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-          }
-
-          .logout-btn:hover {
-            background-color: black;
-            color: white;
+          /* Custom button style for all buttons with black, bold text and no background */
+          .custom-button {
+            color: black; /* Set text color to black */
+            font-weight: bold; /* Make the text bold */
+            background-color: transparent; /* No background */
+            border: none; /* No border */
+            text-decoration: none; /* Remove text decoration */
           }
         `}
       </style>
       
       <header className="custom-header">
         <div className="container d-flex align-items-center justify-content-between">
-          <div className="left-section d-flex align-items-center flex-grow-1">
+          <div className="d-flex align-items-center flex-grow-1">
             <div className="logo-section">
               <Link to="/">
                 <img src={logo} alt="InfoZone Logo" className="infoz-image" />
@@ -253,43 +176,69 @@ const Header = () => {
               </InputGroup>
             </div>
           </div>
-          <div className="right-section d-flex align-items-center">
-            <div className="cart-section" onClick={handleCartClick}>
-              <img
-                src={cartIcon}
-                alt="Cart"
-                style={{ height: "50px", marginRight: "10px" }}
-              />
+          <div className="d-flex align-items-center">
+            <div className="cart-section" onClick={handleCartClick} style={{ position: "relative" }}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="30"
+                height="30"
+                fill="#1A1A1D"
+                className="bi bi-cart"
+                viewBox="0 0 16 16"
+              >
+                <path d="M0 1.5A.5.5 0 0 1 .5 1h1.11l.401 2.005L4.601 5.5H12.5a.5.5 0 0 1 .491.592l-1 5A.5.5 0 0 1 11.5 11H4a.5.5 0 0 1-.491-.408L1.61 2H.5a.5.5 0 0 1-.5-.5zm3.14 3h7.691l.88 4.5H4.02L3.14 4.5z" />
+                <path d="M4.5 12a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm8 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+              </svg>
               {user && cartItemCount > 0 && (
-                <span className="cart-badge">{cartItemCount}</span> 
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "-5px",
+                    right: "-5px",
+                    backgroundColor: "#1A1A1D",
+                    color: "white",
+                    borderRadius: "50%",
+                    padding: "5px 8px",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    lineHeight: 1,
+                  }}
+                >
+                  {cartItemCount}
+                </span>
               )}
             </div>
+
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center">
               {user ? (
                 <div className="d-flex align-items-center">
                   <li className="nav-item d-flex align-items-center me-3">
-                    <img
-                      src={profileIcon}
-                      alt="Profile Icon"
-                      style={{
-                        height: '50px',
-                        width: '50px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => navigate('/profile')}
-                    />
+                    <Button
+                      variant="link" // This ensures no background and the text is black
+                      className="custom-button"
+                      onClick={() => navigate('/profile')} // You can change the route accordingly
+                    >
+                      My Products
+                    </Button>
                   </li>
                   {isAdmin && (
                     <>
                       <li className="nav-item d-flex align-items-center me-3">
-                        <Button variant="outline-secondary" onClick={() => navigate('/AdminPage')}>
+                        <Button
+                          variant="outline-secondary"
+                          className="custom-button"
+                          onClick={() => navigate('/AdminPage')}
+                        >
                           Admin
                         </Button>
                       </li>
                       <li className="nav-item d-flex align-items-center me-3">
-                        <Button variant="outline-secondary" onClick={() => navigate('/admin')}>
-                          Admin dashboard
+                        <Button
+                          variant="outline-secondary"
+                          className="custom-button"
+                          onClick={() => navigate('/dashboard')}
+                        >
+                          Statistics
                         </Button>
                       </li>
                     </>
@@ -297,7 +246,7 @@ const Header = () => {
                   <li className="nav-item d-flex align-items-center me-3">
                     <Button
                       variant="outline-secondary"
-                      className="logout-btn"
+                      className="custom-button"
                       onClick={() => {
                         signOut(auth);
                         navigate("/");
@@ -308,9 +257,9 @@ const Header = () => {
                   </li>
                 </div>
               ) : (
-                <li className="nav-item d-flex align-items-center">
+                <li className="nav-item align-items-center">
                   <Button
-                    variant="outline-primary"
+                    className="custom-button"
                     onClick={() => navigate('/register')}
                   >
                     Register

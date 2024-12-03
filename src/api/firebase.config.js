@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app';
+import { getAnalytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
 import { getFirestore,collection, getDocs, addDoc, updateDoc, deleteDoc, doc,  query,  where,  orderBy } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -17,6 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Firebase services
+const analytics = getAnalytics(app);
 const auth = getAuth(app); // Authentication
 const db = getFirestore(app); // Firestore
 const storage = getStorage(app); // Storage
