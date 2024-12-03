@@ -37,12 +37,18 @@ const Header = () => {
 
   const handleSearch = (e) => {
     if (e.type === "click" || e.key === "Enter") {
-      if (searchText.trim()) {
-        navigate(`/search?search=${encodeURIComponent(searchText.trim())}`);
+      if (user) {
+        if (searchText.trim()) {
+          navigate(`/search?search=${encodeURIComponent(searchText.trim())}`);
+          setSearchText(""); // Clear the search input after navigating
+        }
+      } else {
+        navigate("/register");
       }
     }
   };
-
+  
+  
   const handleCartClick = () => {
     if (user) {
       navigate("/panier");
