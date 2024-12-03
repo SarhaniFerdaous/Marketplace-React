@@ -1,7 +1,58 @@
-import React from "react";
-import ppImage from "../photo/pp.png"; // Import the image
+import React, { useState } from "react";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { initializeApp } from "firebase/app"; // Import Firebase App initialization
+
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAhE8x2BVeEZybkd2Bf25TJZpuXZUzOOVA",
+  authDomain: "projet-web-react-e8331.firebaseapp.com",
+  projectId: "projet-web-react-e8331",
+  storageBucket: "projet-web-react-e8331.appspot.com",
+  messagingSenderId: "231353239135",
+  appId: "1:231353239135:web:1fd15a4be10586acd4bdea"
+};
+
+// Initialize Firebase
+const firebaseApp = initializeApp(firebaseConfig); // Initialize Firebase app
 
 const Footer = () => {
+  const [paragraph, setParagraph] = useState(""); // State to hold the paragraph input
+  const [error, setError] = useState(""); // State to hold error messages
+  const db = getFirestore(firebaseApp); // Firestore database reference
+  const auth = getAuth(firebaseApp); // Firebase Auth reference
+
+  // Function to handle form submission
+  const handleSubscribe = async () => {
+    const user = auth.currentUser; // Get the currently authenticated user
+
+    // Validate if user is logged in and paragraph is not empty
+    if (!user) {
+      setError("Veuillez vous connecter avant de vous abonner.");
+      return;
+    }
+
+    if (paragraph.trim() === "") {
+      setError("Veuillez entrer un texte avant de soumettre.");
+      return;
+    }
+
+    try {
+      // Add the paragraph, user's email, and userId to the Firestore 'newsletter' collection
+      await addDoc(collection(db, "newsletter"), {
+        userId: user.uid, // Store the user's UID
+        email: user.email, // Store the user's email
+        paragraph: paragraph.trim(), // Store the paragraph entered by the user
+      });
+      alert("Vous êtes abonné à la newsletter !");
+      setParagraph(""); // Clear the input field after submission
+      setError(""); // Reset the error message
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      setError("Une erreur est survenue. Veuillez réessayer.");
+    }
+  };
+
   const styles = {
     footer: {
       backgroundColor: "#D7D3BF",
@@ -59,6 +110,11 @@ const Footer = () => {
       borderRadius: "0 4px 4px 0",
       cursor: "pointer",
     },
+    error: {
+      color: "red",
+      fontSize: "12px",
+      marginTop: "10px",
+    },
     contactInfo: {
       lineHeight: "1.5",
     },
@@ -102,21 +158,22 @@ const Footer = () => {
 
         {/* Newsletter Section */}
         <div style={styles.column}>
-          <h5 style={styles.header}>Newsletter</h5>
+          <h5 style={styles.header}>Réclamation </h5>
           <div>
-            <p>Recevez nos mises à jour</p>
+            <p>There is always room for improvment ! Send your reclamations ❤️</p>
             <div style={styles.inputGroup}>
               <input
-                type="email"
-                placeholder="Votre email"
+                type="text"
+                placeholder="your message"
+                value={paragraph}
+                onChange={(e) => setParagraph(e.target.value)} // Update the paragraph state
                 style={styles.input}
               />
-              <button style={styles.button}>Souscrire</button>
+              <button onClick={handleSubscribe} style={styles.button}>Submit</button>
             </div>
+            {error && <p style={styles.error}>{error}</p>}
           </div>
         </div>
-
-       
       </div>
     </footer>
   );
