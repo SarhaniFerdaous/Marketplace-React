@@ -73,14 +73,21 @@ const NavBar = () => {
           )}
         </Nav>
 
-        {/* Centered Greeting Message */}
+        
         <div className="greeting-message">
-          {userData ? (
-            <h1>Hello, {userData.name}!</h1> // Display user's name
-          ) : (
-            <h1>Welcome to the Home Page!</h1>
-          )}
-        </div>
+  {userData ? (
+    userData.isAdmin ? (
+      // If the user is an admin
+      <h1>What a surprise!</h1>
+    ) : (
+      // If the user is not an admin
+      <h1>Happy shopping, {userData.name}!</h1>
+    )
+  ) : (
+    <h1>Become an InfoZoner!</h1>
+  )}
+</div>
+
 
         {/* Conditionally Render Ajouter Produit Button */}
         {userData && !isOnAddProductPage && (

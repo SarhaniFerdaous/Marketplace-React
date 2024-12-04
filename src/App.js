@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react'; // Import useState and useEffect
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { BasketProvider } from "./context/BasketContext";
 import { ToastContainer } from 'react-toastify';
@@ -21,11 +21,18 @@ import AdminPage from './composants/AdminPage';
 import Categories from './composants/categories'; 
 import SearchPage from './composants/searchPage';
 import Dashboard from './composants/Dashboard';
+import LoadingPage from "./composants/loadingScreen"; // Import the LoadingPage component
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
+  const [isPageLoaded, setIsPageLoaded] = useState(false); // Define isPageLoaded state
+
+  useEffect(() => {
+    setIsPageLoaded(true);
+  }, []);
+
   useEffect(() => {
     const analytics = getAnalytics(); // Initialize Firebase Analytics
     logEvent(analytics, 'notification_received'); // Log the event
@@ -40,7 +47,6 @@ const App = () => {
           <NavBar />
           <main className="content">
             <Routes>
-              <Route path="/" element={<Home />} />
               <Route path="/register" element={<Register />} />
               <Route path="/signin" element={<Signin />} />
               <Route path="/pc" element={<PCPage />} />
@@ -57,6 +63,8 @@ const App = () => {
               <Route path="/categories" element={<Categories />} /> 
               <Route path="/search" element={<SearchPage />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/loading" element={<LoadingPage />} />
+              <Route path="/" exact element={isPageLoaded ? <Home /> : <LoadingPage />} />
               <Route path="*" element={<div>404 Not Found</div>} />
             </Routes>
           </main>

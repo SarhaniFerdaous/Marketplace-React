@@ -136,7 +136,7 @@ const Footer = () => {
         <div style={styles.column}>
           <h5 style={styles.header}>InfoZone</h5>
           <ul style={styles.list}>
-            {["À propos", "Politique de Confidentialité", "Contact"].map((item) => (
+            {["À propos"].map((item) => (
               <li key={item} style={styles.listItem}>
                 <a href="#" style={styles.link}>
                   {item}
@@ -158,9 +158,9 @@ const Footer = () => {
 
         {/* Newsletter Section */}
         <div style={styles.column}>
-          <h5 style={styles.header}>Réclamation </h5>
+          <h5 style={styles.header}>Reclamations </h5>
           <div>
-            <p>There is always room for improvment ! Send your reclamations ❤️</p>
+            <p>There is always room for improvments ! Send your reclamations ❤️</p>
             <div style={styles.inputGroup}>
               <input
                 type="text"

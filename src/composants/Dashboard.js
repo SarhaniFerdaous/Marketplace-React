@@ -114,7 +114,6 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard" style={{ padding: '20px', backgroundColor: '#f9f9f9' }}>
-      <h1 style={{ textAlign: 'center' }}>Admin Dashboard</h1>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
         {/* Statistics Cards */}

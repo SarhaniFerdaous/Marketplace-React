@@ -45,7 +45,7 @@ const UserProfile = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>My products</h2>
+      <h2>Products you want to sell</h2>
       {loading ? (
         <p>Loading products...</p>
       ) : products.length === 0 ? (
@@ -97,8 +97,7 @@ const UserProfile = () => {
                       }}
                     />
                   </div>
-                  <Card.Text>Price: ${product.price}</Card.Text>
-                  <Card.Text>Quantity: {product.quantity}</Card.Text>
+                  <Card.Text>Price: {product.price} TND</Card.Text>
                 </Card.Body>
               </Card>
             </Col>
