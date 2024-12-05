@@ -7,33 +7,34 @@ import 'react-toastify/dist/ReactToastify.css';
 const AdminPage = () => {
   const [products, setProducts] = useState([]);
   const [users, setUsers] = useState([]);
+  const [ventes, setVentes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newUser, setNewUser] = useState({ name: '', email: '', role: 'user' });
 
-  // Fetch data from Firestore
   useEffect(() => {
     const fetchData = async () => {
       try {
         const productCollection = collection(db, 'products');
         const userCollection = collection(db, 'users');
-
+        const ventesCollection = collection(db, 'ventes');
+  
         const productSnapshot = await getDocs(productCollection);
         const userSnapshot = await getDocs(userCollection);
-
+        const ventesSnapshot = await getDocs(ventesCollection);
+  
         setProducts(productSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
         setUsers(userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-
+        setVentes(ventesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
         setLoading(false);
       } catch (error) {
         toast.error('Error fetching data');
         console.error('Error fetching data:', error);
       }
     };
-
+  
     fetchData();
   }, []);
 
-  // Confirmation for Add User
   const handleAddUser = async () => {
     if (window.confirm('Are you sure you want to add this user?')) {
       try {
@@ -48,8 +49,6 @@ const AdminPage = () => {
     }
   };
 
-
-  // Confirmation for Update User
   const handleUpdateUser = async (id, updatedData) => {
     if (window.confirm('Are you sure you want to update this user?')) {
       try {
@@ -63,7 +62,6 @@ const AdminPage = () => {
     }
   };
 
-  // Confirmation for Delete Product
   const handleDeleteProduct = async (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
@@ -77,7 +75,6 @@ const AdminPage = () => {
     }
   };
 
-  // Confirmation for Delete User
   const handleDeleteUser = async (id) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
@@ -91,6 +88,21 @@ const AdminPage = () => {
     }
   };
 
+  // Map product IDs to their brand names
+  const getProductBrand = (productId) => {
+    const product = products.find(p => p.id === productId);
+    return product ? product.brand : 'Unknown Brand';
+  };
+
+  // Helper function to split products into pairs for display
+  const chunkProducts = (products) => {
+    const chunks = [];
+    for (let i = 0; i < products.length; i += 2) {
+      chunks.push(products.slice(i, i + 2));
+    }
+    return chunks;
+  };
+
   return (
     <div style={styles.container}>
       <ToastContainer />
@@ -100,17 +112,21 @@ const AdminPage = () => {
         <div style={styles.adminSections}>
           <section style={styles.section}>
             <h2>Manage Products</h2>
-            <ul style={styles.list}>
-              {products.map((product) => (
-                <li key={product.id} style={styles.listItem}>
-                  <strong>{product.name}</strong>
-                  <p>{product.description}</p>
-                  <button style={styles.deleteButton} onClick={() => handleDeleteProduct(product.id)}>
-                    Delete
-                  </button>
-                </li>
+            <div style={styles.productsGrid}>
+              {chunkProducts(products).map((productPair, index) => (
+                <div key={index} style={styles.productRow}>
+                  {productPair.map((product) => (
+                    <div key={product.id} style={styles.productItem}>
+                      <strong>{product.name}</strong>
+                      <p>{product.description}</p>
+                      <button style={styles.deleteButton} onClick={() => handleDeleteProduct(product.id)}>
+                        Delete
+                      </button>
+                    </div>
+                  ))}
+                </div>
               ))}
-            </ul>
+            </div>
           </section>
   
           <section style={styles.section}>
@@ -160,6 +176,29 @@ const AdminPage = () => {
               ))}
             </ul>
           </section>
+
+          {/* Ventes Table without delete button */}
+          <section style={styles.section}>
+            <h2>Manage Ventes</h2>
+            <table style={styles.table}>
+              <thead>
+                <tr>
+                  <th>Brand</th>
+                  <th>Quantity</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ventes.map((vente) => (
+                  <tr key={vente.id} style={styles.tableRow}>
+                    <td>{getProductBrand(vente.productId)}</td>
+                    <td>{vente.quantity}</td>
+                    <td>{vente.total}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
         </div>
       )}
     </div>
@@ -178,12 +217,6 @@ const styles = {
     margin: '0 auto',
     backgroundColor: '#f4f4f4'
   },
-  header: { 
-    textAlign: 'center', 
-    marginBottom: '40px', 
-    fontSize: '36px', 
-    color: '#333' 
-  },
   adminSections: { 
     display: 'flex',
     gap: '30px',
@@ -199,7 +232,7 @@ const styles = {
     borderRadius: '8px',
     backgroundColor: '#fff',
     boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-    minHeight: '400px',  // Increased size for the section
+    minHeight: '400px',
   },
   form: { display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '20px' },
   input: { padding: '12px', fontSize: '16px', borderRadius: '4px', border: '1px solid #ddd', transition: 'border-color 0.3s' },
@@ -209,41 +242,58 @@ const styles = {
     backgroundColor: '#4CAF50',
     color: 'white',
     border: 'none',
-    borderRadius: '5px',
+    borderRadius: '4px',
     cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
   },
   button: { 
-    padding: '12px 20px',
-    fontSize: '16px',
-    backgroundColor: '#007BFF',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
-  },
-  deleteButton: { 
-    padding: '12px 20px', 
-    fontSize: '16px', 
-    backgroundColor: '#f44336', 
+    padding: '6px 12px', 
+    backgroundColor: '#f39c12', 
     color: 'white', 
     border: 'none', 
-    borderRadius: '5px', 
-    cursor: 'pointer', 
-    transition: 'background-color 0.3s ease',
+    borderRadius: '4px', 
+    cursor: 'pointer',
   },
-  list: { 
-    listStyleType: 'none', 
-    padding: '0', 
-    margin: '0',
+  deleteButton: { 
+    padding: '6px 12px', 
+    backgroundColor: '#e74c3c', 
+    color: 'white', 
+    border: 'none', 
+    borderRadius: '4px', 
+    cursor: 'pointer',
   },
-  listItem: { 
-    marginBottom: '20px', 
-    padding: '15px', 
-    backgroundColor: '#fafafa', 
+  productsGrid: {
+    display: 'flex', 
+    flexWrap: 'wrap', 
+    gap: '20px',
+  },
+  productRow: {
+    display: 'flex', 
+    gap: '20px',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  productItem: { 
+    flex: '1', 
+    padding: '20px', 
+    border: '1px solid #ddd', 
     borderRadius: '8px', 
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+    backgroundColor: '#f9f9f9',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)', 
+  },
+  table: { 
+    width: '100%', 
+    borderCollapse: 'collapse', 
+    marginTop: '20px',
+  },
+  tableRow: { 
+    borderBottom: '1px solid #ddd', 
+  },
+  list: { listStyleType: 'none', padding: '0' },
+  listItem: { 
+    display: 'flex', 
+    justifyContent: 'space-between', 
+    padding: '10px 0', 
+    borderBottom: '1px solid #ddd',
   },
 };
 

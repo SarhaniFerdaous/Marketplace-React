@@ -31,14 +31,14 @@ const Panier = () => {
 
   const handleConfirmPayment = async () => {
     const { method, cardNumber, cardCode, deliveryAddress, phoneNumber } = paymentDetails;
-
+  
     if (method === "online" && (!cardNumber || !cardCode)) {
       return toast.error("Invalid card details.");
     }
     if (method === "delivery" && (!deliveryAddress || !phoneNumber)) {
       return toast.error("Invalid delivery details.");
     }
-
+  
     try {
       // Get the current user
       const auth = getAuth();
@@ -46,58 +46,69 @@ const Panier = () => {
       if (!user) {
         return toast.error("User is not logged in.");
       }
-
+  
       // Save the purchase details in Firestore (in the 'ventes' collection)
       const db = getFirestore();
       const ventesCollection = collection(db, "ventes");
-
+  
       // Loop through the basket items and save each purchase
       for (const item of basket) {
         // Save each item purchased to 'ventes'
-        await addDoc(ventesCollection, {
+        const purchaseData = {
           userId: user.uid,
+          email: user.email,
           productId: item.id,
           quantity: item.quantity,
           total: item.price * item.quantity,
           paymentMethod: method,
           status: "confirmed",
           date: new Date(),
-        });
-
+        };
+  
+        // If payment is on delivery, add delivery address and phone number
+        if (method === "delivery") {
+          purchaseData.deliveryAddress = deliveryAddress;
+          purchaseData.phoneNumber = phoneNumber;
+        }
+  
+        // Add the purchase data to Firestore
+        await addDoc(ventesCollection, purchaseData);
+  
         // Update the quantity of the product in Firestore
         const productRef = doc(db, "products", item.id);
         const productSnap = await getDoc(productRef);
-
+  
         if (productSnap.exists()) {
           const productData = productSnap.data();
           const newAmount = productData.amount - item.quantity;
-
+  
           // Ensure that quantity doesn't go below 0
           if (newAmount < 0) {
             return toast.error("Insufficient stock for product: " + item.description);
           }
-
+  
           // Update the product quantity
           await updateDoc(productRef, { amount: newAmount });
         } else {
           return toast.error("Product not found in database.");
         }
-
+  
         // Remove the item from the basket after purchase
         removeFromBasket(item.id);
       }
-
+  
       toast.success(method === "online" ? "Online payment successful!" : "Payment on delivery confirmed!");
       sendEmail();
       toggleModal("payment", false);
       toggleModal("delivery", false);
       toggleModal("first", false);
       navigate(method === "online" ? "/payment" : "/order-confirmation");
-
+  
     } catch (error) {
       toast.error("Error processing payment: " + error.message);
     }
   };
+  
 
   const sendEmail = () => {
     const user = getAuth().currentUser;

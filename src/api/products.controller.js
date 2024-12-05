@@ -38,4 +38,31 @@ router.get("/api/products", async (req, res) => {
   }
 });
 
+// Endpoint to process the order and save delivery information if "Payment on Delivery"
+router.post("/api/orders", async (req, res) => {
+  const { paymentMethod, deliveryAddress, phoneNumber, otherOrderDetails } = req.body;
+
+  // Check if payment method is 'Payment on Delivery'
+  if (paymentMethod === 'Payment on Delivery') {
+    try {
+      // Save the order with delivery address and phone number in the 'vente' collection
+      const venteRef = db.collection('vente').doc(); // Creates a new document in the 'vente' collection
+      await venteRef.set({
+        ...otherOrderDetails,
+        paymentMethod,
+        deliveryAddress,
+        phoneNumber,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      });
+
+      res.status(201).send('Order saved successfully!');
+    } catch (error) {
+      console.error('Error saving order:', error);
+      res.status(500).send('Error saving order.');
+    }
+  } else {
+    res.status(400).send('Invalid payment method.');
+  }
+});
+
 module.exports = router;
