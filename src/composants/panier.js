@@ -102,7 +102,9 @@ const Panier = () => {
       toggleModal("payment", false);
       toggleModal("delivery", false);
       toggleModal("first", false);
-      navigate(method === "online" ? "/payment" : "/order-confirmation");
+  
+      // Redirect to the home page after successful payment
+      navigate("/");
   
     } catch (error) {
       toast.error("Error processing payment: " + error.message);
