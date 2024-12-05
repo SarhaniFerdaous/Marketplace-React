@@ -17,7 +17,6 @@ import slider3 from '../photo/slider3.jpg';
 const HomePage = () => {
   const [user, setUser] = useState(null); // State to store user authentication status
   const navigate = useNavigate();
-  const { userData } = useUser(); // Retrieve user data from context
 
   // Monitor authentication state using Firebase
   useEffect(() => {
@@ -53,8 +52,9 @@ const HomePage = () => {
           <img className="d-block w-100" src={slider2} alt="Second slide" />
         </Carousel.Item>
         <Carousel.Item>
-          <img className="d-block w-100" src={slider3} alt="Second slide" />
+          <img className="d-block w-100" src={slider3} alt="third slide" />
         </Carousel.Item>
+        
       </Carousel>
 
       <div className="product-grid">

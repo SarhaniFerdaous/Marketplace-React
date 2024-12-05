@@ -118,11 +118,11 @@ const AddProductForm = () => {
       {/* Display success or error messages */}
       {message.text && <Alert variant={message.type}>{message.text}</Alert>}
 
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} style={styles.formContainer}>
         {/* Product Type Radio Buttons */}
-        <Form.Group as={Row}>
-          <Form.Label as="legend" column sm={2}>
-            Type de Produit
+        <Form.Group as={Row} style={styles.formGroup}>
+          <Form.Label as="legend" column sm={2} style={styles.formLabel}>
+            Type of product
           </Form.Label>
           <Col sm={10}>
             <Form.Check
@@ -132,14 +132,16 @@ const AddProductForm = () => {
               value="PC"
               onChange={(e) => setProductType(e.target.value)}
               checked={productType === "PC"}
+              style={styles.formCheck}
             />
             <Form.Check
               type="radio"
-              label="accessories"
+              label="Accessories"
               name="productType"
               value="accessories"
               onChange={(e) => setProductType(e.target.value)}
               checked={productType === "accessories"}
+              style={styles.formCheck}
             />
             <Form.Check
               type="radio"
@@ -148,73 +150,119 @@ const AddProductForm = () => {
               value="Chair Gamer"
               onChange={(e) => setProductType(e.target.value)}
               checked={productType === "Chair Gamer"}
+              style={styles.formCheck}
             />
           </Col>
         </Form.Group>
 
         {/* Description Input */}
-        <Form.Group controlId="description">
-          <Form.Label>Description</Form.Label>
+        <Form.Group controlId="description" style={styles.formGroup}>
+          <Form.Label style={styles.formLabel}>Description</Form.Label>
           <Form.Control
             as="textarea"
             rows={3}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
+            style={styles.formControl}
           />
         </Form.Group>
 
         {/* Price and Amount Inputs */}
-        <Form.Group as={Row}>
+        <Form.Group as={Row} style={styles.formGroup}>
           <Col sm={6}>
-            <Form.Label>Price</Form.Label>
+            <Form.Label style={styles.formLabel}>Price</Form.Label>
             <Form.Control
               type="number"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               required
+              style={styles.formControl}
             />
           </Col>
           <Col sm={6}>
-            <Form.Label>Amount</Form.Label>
+            <Form.Label style={styles.formLabel}>Amount</Form.Label>
             <Form.Control
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               required
+              style={styles.formControl}
             />
           </Col>
         </Form.Group>
 
         {/* Brand Input */}
-        <Form.Group controlId="brand">
-          <Form.Label>Brand</Form.Label>
+        <Form.Group controlId="brand" style={styles.formGroup}>
+          <Form.Label style={styles.formLabel}>Brand</Form.Label>
           <Form.Control
             type="text"
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
             required
+            style={styles.formControl}
           />
         </Form.Group>
 
         {/* Image Input */}
-        <Form.Group controlId="image">
-          <Form.Label>Product Image</Form.Label>
-          <Form.Control type="file" onChange={handleFileChange} required />
+        <Form.Group controlId="image" style={styles.formGroup}>
+          <Form.Label style={styles.formLabel}>Product Image</Form.Label>
+          <Form.Control
+            type="file"
+            onChange={handleFileChange}
+            required
+            style={styles.formControl}
+          />
           {imageUrl && (
-            <div>
+            <div style={styles.imagePreview}>
               <img src={imageUrl} alt="Product Preview" width={100} />
             </div>
           )}
         </Form.Group>
 
         {/* Submit Button */}
-        <Button variant="primary" type="submit" disabled={loading}>
+        <Button variant="primary" type="submit" disabled={loading} style={styles.submitButton}>
           {loading ? "Submitting..." : "Add Product"}
         </Button>
       </Form>
     </Container>
   );
+};
+
+const styles = {
+  formContainer: {
+    padding: "20px",
+    backgroundColor: "#f8f9fa",
+    borderRadius: "8px",
+    boxShadow: "0 0 15px rgba(0, 0, 0, 0.1)",
+  },
+  formGroup: {
+    marginBottom: "15px",
+  },
+  formLabel: {
+    fontWeight: "bold",
+    fontSize: "16px",
+  },
+  formCheck: {
+    marginBottom: "10px",
+  },
+  formControl: {
+    padding: "10px",
+    borderRadius: "8px",
+    border: "1px solid #ced4da",
+  },
+  imagePreview: {
+    marginTop: "10px",
+  },
+  submitButton: {
+    width: "100%",
+    padding: "12px",
+    fontSize: "16px",
+    backgroundColor: "#28a745",
+    borderColor: "#28a745",
+    borderRadius: "5px",
+    cursor: "pointer",
+  },
 };
 
 export default AddProductForm;

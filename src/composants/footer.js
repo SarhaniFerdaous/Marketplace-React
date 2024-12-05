@@ -123,7 +123,7 @@ const Footer = () => {
           {/* Recommendations Section */}
           <div style={styles.column}>
             <h5 style={styles.header}>Recommendations</h5>
-            <p>There is always room for improvement ❤️</p>
+            <p>There is always room for improvements !</p>
             <div style={styles.inputGroup}>
               <input
                 type="text"
@@ -144,7 +144,7 @@ const Footer = () => {
           </div>
         </div>
       </footer>
-      <ToastContainer /> {/* Include the ToastContainer for notifications */}
+      <ToastContainer /> 
     </>
   );
   

@@ -92,7 +92,7 @@ const NavBar = () => {
         {/* Conditionally Render Ajouter Produit Button */}
         {userData && !isOnAddProductPage && (
           <Button variant="primary" className="add-product-button" onClick={handleAddProductClick}>
-            Ajouter Produit
+            Sell your goods
           </Button>
         )}
       </Navbar.Collapse>

@@ -29,6 +29,27 @@ const Dashboard = () => {
   const [weeklySales, setWeeklySales] = useState(0);
   const [productTypes, setProductTypes] = useState({ chairGamer: 0, pc: 0, accessories: 0 });
   const [userCount, setUserCount] = useState(0);
+  const [weeklySalesChartData, setWeeklySalesChartData] = useState({
+    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+    datasets: [
+      {
+        label: 'Weekly Sales (Products Sold)',
+        data: [0, 0, 0, 0],
+        backgroundColor: '#36A2EB',
+      },
+    ],
+  });
+
+  const [userProductData, setUserProductData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: 'Products Added by Users',
+        data: [],
+        backgroundColor: '#FF6384',
+      },
+    ],
+  });
 
   const db = getFirestore();
   const currentWeek = getWeek(new Date());
@@ -42,13 +63,12 @@ const Dashboard = () => {
         deliveryCount = 0,
         onlineCount = 0,
         weeklySalesAmount = 0;
-
+      const weeklySalesData = { 1: 0, 2: 0, 3: 0, 4: 0 };
       const productTypeCounts = {};
 
       ventesSnapshot.forEach((doc) => {
         const data = doc.data();
-        const saleDate = data.date ? new Date(data.date) : null;
-
+        const saleDate = data.date ? new Date(data.date.seconds * 1000) : null; // Firestore timestamps
         totalSales += data.total || 0;
         totalQuantity += data.quantity || 0;
 
@@ -64,8 +84,9 @@ const Dashboard = () => {
 
         // Weekly sales calculation
         if (saleDate && isValid(saleDate)) {
-          const saleWeek = getWeek(saleDate);
-          if (saleWeek === currentWeek) {
+          const weekNumber = Math.ceil((saleDate.getDate() - 1) / 7); // Calculate week of the month
+          weeklySalesData[weekNumber] += data.quantity || 0;
+          if (getWeek(saleDate) === currentWeek) {
             weeklySalesAmount += data.total || 0;
           }
         }
@@ -75,7 +96,17 @@ const Dashboard = () => {
       setProductsBought(totalQuantity);
       setPaymentMethods({ delivery: deliveryCount, online: onlineCount });
       setWeeklySales(weeklySalesAmount);
-      setProductTypes(productTypeCounts);
+
+      setWeeklySalesChartData({
+        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+        datasets: [
+          {
+            label: 'Weekly Sales (Products Sold)',
+            data: Object.values(weeklySalesData),
+            backgroundColor: '#36A2EB',
+          },
+        ],
+      });
 
       // Fetch products data
       const productsSnapshot = await getDocs(collection(db, 'products'));
@@ -83,11 +114,35 @@ const Dashboard = () => {
         pcCount = 0,
         accessoriesCount = 0;
 
+      const userProductCounts = {};
+      const labels = [];
+      const data = [];
+
       productsSnapshot.forEach((doc) => {
-        const { productType } = doc.data();
+        const { productType, brand, name } = doc.data();
         if (productType === 'Chair Gamer') chairGamerCount++;
         if (productType === 'PC') pcCount++;
         if (productType === 'accessories') accessoriesCount++;
+
+        // Count products added by users
+        const key = `${name} - ${brand}`;
+        userProductCounts[key] = (userProductCounts[key] || 0) + 1;
+      });
+
+      Object.entries(userProductCounts).forEach(([key, count]) => {
+        labels.push(key);
+        data.push(count);
+      });
+
+      setUserProductData({
+        labels,
+        datasets: [
+          {
+            label: 'Products Added by Users',
+            data,
+            backgroundColor: '#FF6384',
+          },
+        ],
       });
 
       setProductTypes({
@@ -116,18 +171,6 @@ const Dashboard = () => {
     ],
   };
 
-  // Chart Data for Weekly Sales
-  const weeklySalesData = {
-    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'], // Replace with dynamic week labels if needed
-    datasets: [
-      {
-        label: 'Weekly Sales ($)',
-        data: [500, 1200, 900, weeklySales], // Example data; replace as needed
-        backgroundColor: '#36A2EB',
-      },
-    ],
-  };
-
   // Chart Data for Payment Methods
   const paymentData = {
     labels: ['Delivery', 'Online'],
@@ -141,13 +184,13 @@ const Dashboard = () => {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#f9fafb' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>Marketplace Dashboard</h1>
+      <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>Visualise numbers</h1>
 
       {/* Cards Section */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '30px' }}>
         <div style={cardStyle}>
           <h3>Total Sales</h3>
-          <p style={cardDataStyle}>${salesTotal.toFixed(2)}</p>
+          <p style={cardDataStyle}>{salesTotal.toFixed(2)}TND</p>
         </div>
         <div style={cardStyle}>
           <h3>Total Users</h3>
@@ -159,15 +202,7 @@ const Dashboard = () => {
         </div>
         <div style={cardStyle}>
           <h3>Sales This Week</h3>
-          <p style={cardDataStyle}>${weeklySales.toFixed(2)}</p>
-        </div>
-        <div style={cardStyle}>
-          <h3>Payment by Delivery</h3>
-          <p style={cardDataStyle}>{paymentMethods.delivery}</p>
-        </div>
-        <div style={cardStyle}>
-          <h3>Payment by Online</h3>
-          <p style={cardDataStyle}>{paymentMethods.online}</p>
+          <p style={cardDataStyle}>{weeklySales.toFixed(2)}TND</p>
         </div>
       </div>
 
@@ -182,8 +217,22 @@ const Dashboard = () => {
           <Bar data={productData} />
         </div>
         <div style={cardStyle}>
-          <h3>Sales on Every Week</h3>
-          <Bar data={weeklySalesData} />
+          <h3>Weekly Sales</h3>
+          <Bar data={weeklySalesChartData} />
+        </div>
+        <div style={cardStyle}>
+          <h3>Products Added by Users</h3>
+          <Bar
+            data={userProductData}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: {
+                  position: 'top',
+                },
+              },
+            }}
+          />
         </div>
       </div>
     </div>
@@ -193,15 +242,45 @@ const Dashboard = () => {
 const cardStyle = {
   background: '#ffffff',
   borderRadius: '8px',
-  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
   padding: '20px',
   textAlign: 'center',
+  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
 };
 
 const cardDataStyle = {
-  fontSize: '24px',
+  fontSize: '28px',
   fontWeight: 'bold',
+  color: '#2C3E50',
   marginTop: '10px',
 };
+
+const dashboardContainerStyle = {
+  padding: '40px',
+  fontFamily: 'Arial, sans-serif',
+  backgroundColor: '#f5f7fa',
+  minHeight: '100vh',
+};
+
+const cardsContainerStyle = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+  gap: '30px',
+  marginBottom: '40px',
+};
+
+const chartsContainerStyle = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+  gap: '40px',
+};
+
+const cardHoverStyle = {
+  ':hover': {
+    transform: 'scale(1.03)',
+    boxShadow: '0 6px 10px rgba(0, 0, 0, 0.15)',
+  },
+};
+
 
 export default Dashboard;

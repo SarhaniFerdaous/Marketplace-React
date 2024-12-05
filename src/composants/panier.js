@@ -30,13 +30,35 @@ const Panier = () => {
   const toggleModal = (type, state) => setShowModals({ ...showModals, [type]: state });
 
   const handleConfirmPayment = async () => {
-    const { method, cardNumber, cardCode, deliveryAddress, phoneNumber } = paymentDetails;
+    const { method, cardNumber, cardCode, expirationDate, deliveryAddress, phoneNumber } = paymentDetails;
   
-    if (method === "online" && (!cardNumber || !cardCode)) {
-      return toast.error("Invalid card details.");
+    // Card Number Validation: Should be exactly 16 digits
+    const cardNumberRegex = /^[0-9]{16}$/;
+    if (method === "online" && (!cardNumber || !cardNumberRegex.test(cardNumber))) {
+      return toast.error("Card number must be exactly 16 digits.");
     }
+
+    // Card Code Validation: Should be exactly 4 digits
+    const cardCodeRegex = /^[0-9]{3,4}$/; // CVV is usually 3 digits, but some cards may use 4 digits.
+    if (method === "online" && (!cardCode || !cardCodeRegex.test(cardCode))) {
+      return toast.error("Card code must be 3 or 4 digits.");
+    }
+
+    // Expiration Date Validation: Should be in the format MM/YY (numbers only)
+    const expirationDateRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+    if (method === "online" && (!expirationDate || !expirationDateRegex.test(expirationDate))) {
+      return toast.error("Expiration date must be in the format MM/YY.");
+    }
+
+    // Delivery Details Validation (for delivery method): Address and Phone Number
     if (method === "delivery" && (!deliveryAddress || !phoneNumber)) {
       return toast.error("Invalid delivery details.");
+    }
+
+    // Phone Number Validation: Should contain exactly 8 digits and no spaces
+    const phoneNumberRegex = /^[0-9]{8}$/;
+    if (method === "delivery" && (!phoneNumber || !phoneNumberRegex.test(phoneNumber))) {
+      return toast.error("Phone number must be exactly 8 digits and cannot contain spaces.");
     }
   
     try {
@@ -109,8 +131,8 @@ const Panier = () => {
     } catch (error) {
       toast.error("Error processing payment: " + error.message);
     }
-  };
-  
+};
+
 
   const sendEmail = () => {
     const user = getAuth().currentUser;
@@ -148,7 +170,7 @@ const Panier = () => {
             <Card.Title>{item.brand} - {item.description}</Card.Title>
             <FaTrashAlt className="text-danger" style={{ cursor: "pointer" }} onClick={() => removeFromBasket(item.id)} />
           </div>
-          <Card.Text>Price: {item.price} x {item.quantity} = {item.price * item.quantity}</Card.Text>
+          <Card.Text>Price: {item.price} TND x {item.quantity} = {item.price * item.quantity} TND</Card.Text>
           <InputGroup className="my-2">
             <Button variant="outline-secondary" onClick={() => handleQuantityChange(item, -1)}>-</Button>
             <FormControl readOnly value={item.quantity} className="text-center" />
@@ -169,7 +191,7 @@ const Panier = () => {
       ) : (
         <>
           <Row>{basket.map(renderCard)}</Row>
-          <h4 className="text-right mt-4">Total: {calculateTotal()}</h4>
+          <h4 className="text-right mt-4">Total: {calculateTotal()} TND</h4>
           <Button className="mt-3 w-100" onClick={() => toggleModal("first", true)} disabled={basket.some(item => item.amount === 0)}>
             Checkout
           </Button>
@@ -222,6 +244,13 @@ const Panier = () => {
                         placeholder="Card Code"
                         value={paymentDetails.cardCode}
                         onChange={(e) => updatePaymentDetails("cardCode", e.target.value)}
+                      />
+                    </InputGroup>
+                    <InputGroup className="mb-3">
+                      <FormControl
+                        placeholder="Expiration Date"
+                        value={paymentDetails.expirationDate}
+                        onChange={(e) => updatePaymentDetails("expirationDate", e.target.value)}
                       />
                     </InputGroup>
                   </>
