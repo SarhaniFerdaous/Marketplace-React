@@ -57,6 +57,7 @@ const Footer = () => {
       padding: "20px",
       borderTop: "1px solid #e0e0e0",
       fontSize: "14px",
+      position: "relative", // To ensure the copyright stays at the bottom
     },
     row: {
       display: "flex",
@@ -92,20 +93,23 @@ const Footer = () => {
       borderRadius: "0 4px 4px 0",
       cursor: "pointer",
     },
+    copyrightContainer: {
+      marginTop: "20px", // Add space between the main content and the copyright
+      padding: "5px 0", // Reduced padding for a smaller section
+      borderTop: "1px solid #e0e0e0", // Create a visual separation with a border
+      backgroundColor: "#343a40", // Darker background for the copyright section
+      textAlign: "center",
+    },
+    copyright: {
+      fontSize: "10px", // Smaller text size
+      color: "#ffffff", // White text color for contrast against dark background
+    }
   };
-
+  
   return (
     <>
       <footer style={styles.footer}>
         <div style={styles.row}>
-          {/* Information Section */}
-          <div style={styles.column}>
-            <h5 style={styles.header}>InfoZone</h5>
-            <ul>
-              <li><a href="#" style={{ color: "#007bff" }}>About Us</a></li>
-            </ul>
-          </div>
-
           {/* Contact Section */}
           <div style={styles.column}>
             <h5 style={styles.header}>Contact</h5>
@@ -115,7 +119,7 @@ const Footer = () => {
               <p><i className="fas fa-envelope"></i> infozone.devis@gmail.com</p>
             </div>
           </div>
-
+  
           {/* Recommendations Section */}
           <div style={styles.column}>
             <h5 style={styles.header}>Recommendations</h5>
@@ -132,10 +136,18 @@ const Footer = () => {
             </div>
           </div>
         </div>
+        
+        {/* Copyright Container */}
+        <div style={styles.copyrightContainer}>
+          <div style={styles.copyright}>
+            Copyright © 2024-present InfoZone, Inc. All rights reserved.
+          </div>
+        </div>
       </footer>
       <ToastContainer /> {/* Include the ToastContainer for notifications */}
     </>
   );
+  
 };
 
 export default Footer;
