@@ -126,14 +126,6 @@ const Panier = () => {
     updateQuantity(item.id, increment);
   };
 
-  const addToBasket = (item) => {
-    if (item.amount === 0) {
-      return toast.error(`Cannot add ${item.description} to the basket. Out of stock.`);
-    }
-    // Proceed with adding item to the basket (existing logic)
-    updateQuantity(item.id, 1);
-  };
-
   const renderCard = (item) => (
     <Col key={item.id} sm={12} md={6} lg={4}>
       <Card className="mb-3 shadow-sm">

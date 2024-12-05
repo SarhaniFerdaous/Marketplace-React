@@ -1,55 +1,53 @@
 import React, { useState } from "react";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import { initializeApp } from "firebase/app"; // Import Firebase App initialization
-
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAhE8x2BVeEZybkd2Bf25TJZpuXZUzOOVA",
-  authDomain: "projet-web-react-e8331.firebaseapp.com",
-  projectId: "projet-web-react-e8331",
-  storageBucket: "projet-web-react-e8331.appspot.com",
-  messagingSenderId: "231353239135",
-  appId: "1:231353239135:web:1fd15a4be10586acd4bdea"
-};
-
-// Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig); // Initialize Firebase app
+import { useNavigate } from "react-router-dom"; // To handle redirection
+import { collection, addDoc } from "firebase/firestore";
+import { auth, db } from "../api/firebase.config"; 
+import { toast, ToastContainer } from "react-toastify"; // Import Toastify
+import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
 
 const Footer = () => {
-  const [paragraph, setParagraph] = useState(""); // State to hold the paragraph input
-  const [error, setError] = useState(""); // State to hold error messages
-  const db = getFirestore(firebaseApp); // Firestore database reference
-  const auth = getAuth(firebaseApp); // Firebase Auth reference
+  const [paragraph, setParagraph] = useState(""); // State to hold the recommendation
+  const navigate = useNavigate(); // Hook to handle navigation
 
-  // Function to handle form submission
-  const handleSubscribe = async () => {
+  const handleSubmit = async () => {
     const user = auth.currentUser; // Get the currently authenticated user
 
-    // Validate if user is logged in and paragraph is not empty
+    // Redirect to registration page if the user is not logged in
     if (!user) {
-      setError("Veuillez vous connecter avant de vous abonner.");
+      toast.warning("Please log in to submit your recommendation.", {
+        position: "top-center", // Correctly use the string
+        autoClose: 3000,
+      });
+      navigate("/register"); // Adjust the path to match your registration page route
       return;
     }
 
+    // Validate that the input is not empty
     if (paragraph.trim() === "") {
-      setError("Veuillez entrer un texte avant de soumettre.");
+      toast.error("Please type in a recommendation before submitting.", {
+        position: "top-center", // Correctly use the string
+        autoClose: 3000,
+      });
       return;
     }
 
     try {
-      // Add the paragraph, user's email, and userId to the Firestore 'newsletter' collection
-      await addDoc(collection(db, "newsletter"), {
-        userId: user.uid, // Store the user's UID
-        email: user.email, // Store the user's email
-        paragraph: paragraph.trim(), // Store the paragraph entered by the user
+      // Add the recommendation to the Firestore 'recommendations' collection
+      await addDoc(collection(db, "recommendations"), {
+        userId: user.uid, // Link the recommendation to the user's UID
+        recommendation: paragraph.trim(), // Save the recommendation text
       });
-      alert("Vous êtes abonné à la newsletter !");
+      toast.success("Your recommendation has been submitted successfully!", {
+        position: "top-center", // Correctly use the string
+        autoClose: 3000,
+      });
       setParagraph(""); // Clear the input field after submission
-      setError(""); // Reset the error message
     } catch (error) {
       console.error("Error adding document: ", error);
-      setError("Une erreur est survenue. Veuillez réessayer.");
+      toast.error("An error occurred. Please try again.", {
+        position: "top-center", // Correctly use the string
+        autoClose: 3000,
+      });
     }
   };
 
@@ -76,22 +74,6 @@ const Footer = () => {
       fontWeight: "bold",
       color: "#343a40",
     },
-    list: {
-      listStyle: "none",
-      padding: 0,
-      margin: 0,
-    },
-    listItem: {
-      marginBottom: "8px",
-    },
-    link: {
-      color: "#007bff",
-      textDecoration: "none",
-      transition: "color 0.3s",
-    },
-    linkHover: {
-      color: "#0056b3",
-    },
     inputGroup: {
       display: "flex",
       marginTop: "10px",
@@ -110,72 +92,49 @@ const Footer = () => {
       borderRadius: "0 4px 4px 0",
       cursor: "pointer",
     },
-    error: {
-      color: "red",
-      fontSize: "12px",
-      marginTop: "10px",
-    },
-    contactInfo: {
-      lineHeight: "1.5",
-    },
-    paymentIcons: {
-      display: "flex",
-      marginTop: "10px",
-      alignItems: "center",
-    },
-    paymentImage: {
-      height: "40px",
-      width: "auto",
-    },
   };
 
   return (
-    <footer style={styles.footer}>
-      <div style={styles.row}>
-        {/* Information Section */}
-        <div style={styles.column}>
-          <h5 style={styles.header}>InfoZone</h5>
-          <ul style={styles.list}>
-            {["À propos"].map((item) => (
-              <li key={item} style={styles.listItem}>
-                <a href="#" style={styles.link}>
-                  {item}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Contact Section */}
-        <div style={styles.column}>
-          <h5 style={styles.header}>Contact</h5>
-          <div style={styles.contactInfo}>
-            <p><i className="fas fa-phone"></i> (+216) 23 606 003</p>
-            <p><i className="fas fa-phone"></i> (+216) 20 162 414</p>
-            <p><i className="fas fa-envelope"></i> infozone.devis@gmail.com</p>
+    <>
+      <footer style={styles.footer}>
+        <div style={styles.row}>
+          {/* Information Section */}
+          <div style={styles.column}>
+            <h5 style={styles.header}>InfoZone</h5>
+            <ul>
+              <li><a href="#" style={{ color: "#007bff" }}>About Us</a></li>
+            </ul>
           </div>
-        </div>
 
-        {/* Newsletter Section */}
-        <div style={styles.column}>
-          <h5 style={styles.header}>Reclamations </h5>
-          <div>
-            <p>There is always room for improvments ! Send your reclamations ❤️</p>
+          {/* Contact Section */}
+          <div style={styles.column}>
+            <h5 style={styles.header}>Contact</h5>
+            <div>
+              <p><i className="fas fa-phone"></i> (+216) 23 606 003</p>
+              <p><i className="fas fa-phone"></i> (+216) 20 162 414</p>
+              <p><i className="fas fa-envelope"></i> infozone.devis@gmail.com</p>
+            </div>
+          </div>
+
+          {/* Recommendations Section */}
+          <div style={styles.column}>
+            <h5 style={styles.header}>Recommendations</h5>
+            <p>There is always room for improvement ❤️</p>
             <div style={styles.inputGroup}>
               <input
                 type="text"
-                placeholder="your message"
+                placeholder="Your recommendation"
                 value={paragraph}
                 onChange={(e) => setParagraph(e.target.value)} // Update the paragraph state
                 style={styles.input}
               />
-              <button onClick={handleSubscribe} style={styles.button}>Submit</button>
+              <button onClick={handleSubmit} style={styles.button}>Submit</button>
             </div>
-            {error && <p style={styles.error}>{error}</p>}
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+      <ToastContainer /> {/* Include the ToastContainer for notifications */}
+    </>
   );
 };
 
