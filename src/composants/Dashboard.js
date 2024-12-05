@@ -1,149 +1,207 @@
 import React, { useEffect, useState } from 'react';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, BarController, Title, Tooltip, Legend } from 'chart.js';
-import { Bar } from 'react-chartjs-2';  // Importing Bar chart from react-chartjs-2
-import ReactECharts from 'echarts-for-react';  // For ECharts component
-import echarts from 'echarts';
+import { format, isValid, getWeek } from 'date-fns';
+import { Bar, Doughnut } from 'react-chartjs-2';
 
-// Registering required components for Chart.js
-ChartJS.register(
+import {
+  Chart as ChartJS,
+  ArcElement,
+  BarElement,
   CategoryScale,
   LinearScale,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(
+  ArcElement,
   BarElement,
-  BarController,
-  Title,
+  CategoryScale,
+  LinearScale,
   Tooltip,
   Legend
 );
 
 const Dashboard = () => {
+  const [salesTotal, setSalesTotal] = useState(0);
+  const [productsBought, setProductsBought] = useState(0);
+  const [paymentMethods, setPaymentMethods] = useState({ delivery: 0, online: 0 });
+  const [weeklySales, setWeeklySales] = useState(0);
+  const [productTypes, setProductTypes] = useState({ chairGamer: 0, pc: 0, accessories: 0 });
   const [userCount, setUserCount] = useState(0);
-  const [productCount, setProductCount] = useState(0);
-  const [orderCount, setOrderCount] = useState(0);
-  const [userSex, setUserSex] = useState({ male: 0, female: 0, other: 0 });
-  const [userProductData, setUserProductData] = useState([]); // Store user product count data
 
   const db = getFirestore();
+  const currentWeek = getWeek(new Date());
 
-  // Fetch data once on component mount
   useEffect(() => {
     const fetchData = async () => {
-      // Fetch users and calculate user count and sex distribution
-      const usersSnapshot = await getDocs(collection(db, 'users'));
-      setUserCount(usersSnapshot.size);
+      // Fetch ventes data
+      const ventesSnapshot = await getDocs(collection(db, 'ventes'));
+      let totalSales = 0,
+        totalQuantity = 0,
+        deliveryCount = 0,
+        onlineCount = 0,
+        weeklySalesAmount = 0;
 
-      let maleCount = 0;
-      let femaleCount = 0;
-      let otherCount = 0;
+      const productTypeCounts = {};
 
-      usersSnapshot.forEach((user) => {
-        const userGender = user.data().gender; // Assuming gender data exists
-        if (userGender === 'male') maleCount++;
-        else if (userGender === 'female') femaleCount++;
-        else otherCount++;
-      });
+      ventesSnapshot.forEach((doc) => {
+        const data = doc.data();
+        const saleDate = data.date ? new Date(data.date) : null;
 
-      setUserSex({ male: maleCount, female: femaleCount, other: otherCount });
+        totalSales += data.total || 0;
+        totalQuantity += data.quantity || 0;
 
-      // Fetch product data and calculate product usage by user
-      const usersProductData = [];
-      usersSnapshot.forEach((user) => {
-        const userId = user.id;
-        const products = user.data().products; // Assuming products field is an array of product IDs
-        if (products) {
-          usersProductData.push({ userId, productCount: products.length });
+        // Count payment methods
+        if (data.paymentMethod === 'delivery') deliveryCount++;
+        if (data.paymentMethod === 'online') onlineCount++;
+
+        // Count product types
+        const { productType } = data;
+        if (productType) {
+          productTypeCounts[productType] = (productTypeCounts[productType] || 0) + 1;
+        }
+
+        // Weekly sales calculation
+        if (saleDate && isValid(saleDate)) {
+          const saleWeek = getWeek(saleDate);
+          if (saleWeek === currentWeek) {
+            weeklySalesAmount += data.total || 0;
+          }
         }
       });
 
-      setUserProductData(usersProductData);
+      setSalesTotal(totalSales);
+      setProductsBought(totalQuantity);
+      setPaymentMethods({ delivery: deliveryCount, online: onlineCount });
+      setWeeklySales(weeklySalesAmount);
+      setProductTypes(productTypeCounts);
 
-      // Fetch products and orders data
+      // Fetch products data
       const productsSnapshot = await getDocs(collection(db, 'products'));
-      setProductCount(productsSnapshot.size);
+      let chairGamerCount = 0,
+        pcCount = 0,
+        accessoriesCount = 0;
 
-      const ordersSnapshot = await getDocs(collection(db, 'orders'));
-      setOrderCount(ordersSnapshot.size);
+      productsSnapshot.forEach((doc) => {
+        const { productType } = doc.data();
+        if (productType === 'Chair Gamer') chairGamerCount++;
+        if (productType === 'PC') pcCount++;
+        if (productType === 'accessories') accessoriesCount++;
+      });
+
+      setProductTypes({
+        chairGamer: chairGamerCount,
+        pc: pcCount,
+        accessories: accessoriesCount,
+      });
+
+      // Fetch users data
+      const usersSnapshot = await getDocs(collection(db, 'users'));
+      setUserCount(usersSnapshot.size);
     };
 
     fetchData();
-  }, [db]);
+  }, [db, currentWeek]);
 
-  // Chart.js data for the user product count
-  const chartData = {
-    labels: userProductData.map((data) => data.userId),  // User IDs as the labels
+  // Chart Data for Product Types
+  const productData = {
+    labels: ['Chair Gamer', 'PC', 'Accessories'],
     datasets: [
       {
-        label: 'Number of Products Added',
-        data: userProductData.map((data) => data.productCount), // Product count for each user
+        label: 'Products Sold',
+        data: [productTypes.chairGamer, productTypes.pc, productTypes.accessories],
+        backgroundColor: ['#FFCE56', '#36A2EB', '#FF6384'],
+      },
+    ],
+  };
+
+  // Chart Data for Weekly Sales
+  const weeklySalesData = {
+    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'], // Replace with dynamic week labels if needed
+    datasets: [
+      {
+        label: 'Weekly Sales ($)',
+        data: [500, 1200, 900, weeklySales], // Example data; replace as needed
         backgroundColor: '#36A2EB',
       },
     ],
   };
 
-  // ECharts pie chart for user sex distribution
-  const sexDistributionOptions = {
-    title: {
-      text: 'User Sex Distribution',
-      subtext: 'Based on User Data',
-      left: 'center',
-    },
-    tooltip: {
-      trigger: 'item',
-      formatter: '{a} <br/>{b}: {c} ({d}%)',
-    },
-    series: [
+  // Chart Data for Payment Methods
+  const paymentData = {
+    labels: ['Delivery', 'Online'],
+    datasets: [
       {
-        name: 'Sex Distribution',
-        type: 'pie',
-        radius: '50%',
-        data: [
-          { value: userSex.male, name: 'Male' },
-          { value: userSex.female, name: 'Female' },
-          { value: userSex.other, name: 'Other' },
-        ],
-        emphasis: {
-          itemStyle: {
-            shadowBlur: 10,
-            shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)',
-          },
-        },
+        data: [paymentMethods.delivery, paymentMethods.online],
+        backgroundColor: ['#FF6384', '#36A2EB'],
       },
     ],
   };
 
   return (
-    <div className="dashboard" style={{ padding: '20px', backgroundColor: '#f9f9f9' }}>
+    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#f9fafb' }}>
+      <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>Marketplace Dashboard</h1>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-        {/* Statistics Cards */}
-        <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', width: '30%' }}>
-          <h3>User Count</h3>
-          <p>{userCount}</p>
+      {/* Cards Section */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '30px' }}>
+        <div style={cardStyle}>
+          <h3>Total Sales</h3>
+          <p style={cardDataStyle}>${salesTotal.toFixed(2)}</p>
         </div>
-        <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', width: '30%' }}>
-          <h3>Product Count</h3>
-          <p>{productCount}</p>
+        <div style={cardStyle}>
+          <h3>Total Users</h3>
+          <p style={cardDataStyle}>{userCount}</p>
         </div>
-        <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)', width: '30%' }}>
-          <h3>Order Count</h3>
-          <p>{orderCount}</p>
+        <div style={cardStyle}>
+          <h3>Total Products Bought</h3>
+          <p style={cardDataStyle}>{productsBought}</p>
+        </div>
+        <div style={cardStyle}>
+          <h3>Sales This Week</h3>
+          <p style={cardDataStyle}>${weeklySales.toFixed(2)}</p>
+        </div>
+        <div style={cardStyle}>
+          <h3>Payment by Delivery</h3>
+          <p style={cardDataStyle}>{paymentMethods.delivery}</p>
+        </div>
+        <div style={cardStyle}>
+          <h3>Payment by Online</h3>
+          <p style={cardDataStyle}>{paymentMethods.online}</p>
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{ width: '48%' }}>
-          <h2>Number of Products Added by Each User</h2>
-          <Bar data={chartData} options={{ responsive: true }} />
+      {/* Charts Section */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+        <div style={cardStyle}>
+          <h3>Payment Methods</h3>
+          <Doughnut data={paymentData} />
         </div>
-
-        <div style={{ width: '48%' }}>
-          <h2>Gender Distribution</h2>
-          <ReactECharts option={sexDistributionOptions} />
+        <div style={cardStyle}>
+          <h3>Product Types</h3>
+          <Bar data={productData} />
+        </div>
+        <div style={cardStyle}>
+          <h3>Sales on Every Week</h3>
+          <Bar data={weeklySalesData} />
         </div>
       </div>
     </div>
   );
+};
+
+const cardStyle = {
+  background: '#ffffff',
+  borderRadius: '8px',
+  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+  padding: '20px',
+  textAlign: 'center',
+};
+
+const cardDataStyle = {
+  fontSize: '24px',
+  fontWeight: 'bold',
+  marginTop: '10px',
 };
 
 export default Dashboard;

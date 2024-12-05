@@ -17,6 +17,7 @@
     "compressorjs": "^1.2.1",
     "crypto-browserify": "^3.12.1",
     "customize-cra": "^1.0.0",
+    "date-fns": "^4.1.0",
     "echarts": "^5.5.1",
     "echarts-for-react": "^3.0.2",
     "emailjs-com": "^3.2.0",
@@ -42,12 +43,11 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-  "start": "SET NODE_OPTIONS=--max-old-space-size=4096 && react-scripts start",
-  "build": "react-scripts build",
-  "test": "react-scripts test",
-  "eject": "react-scripts eject"
-}
-,
+    "start": "SET NODE_OPTIONS=--max-old-space-size=4096 && react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
