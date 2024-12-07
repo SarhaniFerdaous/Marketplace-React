@@ -61,7 +61,7 @@ const Dashboard = () => {
 
       ventesSnapshot.forEach((doc) => {
         const data = doc.data();
-        const saleDate = data.date ? new Date(data.date.seconds * 1000) : null; // Firestore timestamps
+        const saleDate = data.date ? new Date(data.date.seconds * 1000) : null; 
         totalSales += data.total || 0;
         totalQuantity += data.quantity || 0;
 
