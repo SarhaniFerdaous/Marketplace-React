@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Carousel, Container } from 'react-bootstrap';
 import { auth } from '../api/firebase.config';
 import { onAuthStateChanged } from 'firebase/auth';
-import { useUser } from '../context/UserContext'; // Ensure correct path to UserContext
+import { useUser } from '../context/UserContext'; 
 import './home.css';
 
 // Import images
@@ -15,16 +15,16 @@ import slider2 from '../photo/slider2.jpg';
 import slider3 from '../photo/slider3.jpg';
 
 const HomePage = () => {
-  const [user, setUser] = useState(null); // State to store user authentication status
+  const [user, setUser] = useState(null); 
   const navigate = useNavigate();
 
-  // Monitor authentication state using Firebase
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser); // Set the authenticated user
+      setUser(currentUser); 
     });
 
-    // Cleanup subscription on unmount
+   
     return () => unsubscribe();
   }, []);
 
@@ -36,9 +36,9 @@ const HomePage = () => {
 
   const handleProductClick = (path) => {
     if (!user) {
-      navigate('/register'); // Redirect to register page if not authenticated
+      navigate('/register'); 
     } else {
-      navigate(path); // Navigate to the product page
+      navigate(path); 
     }
   };
 

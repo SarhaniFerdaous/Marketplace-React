@@ -1,12 +1,9 @@
 import { db, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from './firebase.config'; 
 
-
-// Product Collection reference
 const productCollection = collection(db, 'products');
-// User Collection reference
+
 const userCollection = collection(db, 'users');
 
-// Fetch Products
 export const getProducts = async () => {
   try {
     const querySnapshot = await getDocs(productCollection);
@@ -16,7 +13,6 @@ export const getProducts = async () => {
   }
 };
 
-// Fetch Users
 export const getUsers = async () => {
   try {
     const querySnapshot = await getDocs(userCollection);
@@ -26,7 +22,6 @@ export const getUsers = async () => {
   }
 };
 
-// Add Product
 export const addProduct = async (product) => {
   try {
     await addDoc(productCollection, product);
@@ -35,7 +30,6 @@ export const addProduct = async (product) => {
   }
 };
 
-// Add User
 export const addUser = async (user) => {
   try {
     await addDoc(userCollection, user);
@@ -44,7 +38,6 @@ export const addUser = async (user) => {
   }
 };
 
-// Update Product
 export const updateProduct = async (productId, updatedData) => {
   try {
     const productRef = doc(db, 'products', productId);
@@ -54,7 +47,6 @@ export const updateProduct = async (productId, updatedData) => {
   }
 };
 
-// Update User
 export const updateUser = async (userId, updatedData) => {
   try {
     const userRef = doc(db, 'users', userId);
@@ -64,7 +56,6 @@ export const updateUser = async (userId, updatedData) => {
   }
 };
 
-// Delete Product
 export const deleteProduct = async (productId) => {
   try {
     const productRef = doc(db, 'products', productId);
@@ -74,7 +65,6 @@ export const deleteProduct = async (productId) => {
   }
 };
 
-// Delete User
 export const deleteUser = async (userId) => {
   try {
     const userRef = doc(db, 'users', userId);

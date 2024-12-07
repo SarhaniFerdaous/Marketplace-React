@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'; // Import useState and useEffect
+import React, { useEffect, useState } from 'react'; 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { BasketProvider } from "./context/BasketContext";
 import { ToastContainer } from 'react-toastify';
@@ -21,21 +21,21 @@ import AdminPage from './composants/AdminPage';
 import Categories from './composants/categories'; 
 import SearchPage from './composants/searchPage';
 import Dashboard from './composants/Dashboard';
-import LoadingPage from "./composants/loadingScreen"; // Import the LoadingPage component
+import LoadingPage from "./composants/loadingScreen"; 
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
-  const [isPageLoaded, setIsPageLoaded] = useState(false); // Define isPageLoaded state
+  const [isPageLoaded, setIsPageLoaded] = useState(false); 
 
   useEffect(() => {
     setIsPageLoaded(true);
   }, []);
 
   useEffect(() => {
-    const analytics = getAnalytics(); // Initialize Firebase Analytics
-    logEvent(analytics, 'notification_received'); // Log the event
+    const analytics = getAnalytics(); 
+    logEvent(analytics, 'notification_received'); 
   }, []); 
 
   return (

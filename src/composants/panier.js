@@ -6,7 +6,7 @@ import { BasketContext } from "../context/BasketContext";
 import { toast } from "react-toastify";
 import emailjs from "emailjs-com";
 import { getAuth } from "firebase/auth";
-import { getFirestore, collection, addDoc, updateDoc, doc, getDoc } from "firebase/firestore"; // Firestore imports
+import { getFirestore, collection, addDoc, updateDoc, doc, getDoc } from "firebase/firestore"; 
 
 const Panier = () => {
   const { basket, updateQuantity, removeFromBasket } = useContext(BasketContext);
@@ -32,50 +32,46 @@ const Panier = () => {
   const handleConfirmPayment = async () => {
     const { method, cardNumber, cardCode, expirationDate, deliveryAddress, phoneNumber } = paymentDetails;
   
-    // Card Number Validation: Should be exactly 16 digits
+   
     const cardNumberRegex = /^[0-9]{16}$/;
     if (method === "online" && (!cardNumber || !cardNumberRegex.test(cardNumber))) {
       return toast.error("Card number must be exactly 16 digits.");
     }
 
-    // Card Code Validation: Should be exactly 4 digits
-    const cardCodeRegex = /^[0-9]{3,4}$/; // CVV is usually 3 digits, but some cards may use 4 digits.
+    const cardCodeRegex = /^[0-9]{3,4}$/; 
     if (method === "online" && (!cardCode || !cardCodeRegex.test(cardCode))) {
       return toast.error("Card code must be 3 or 4 digits.");
     }
 
-    // Expiration Date Validation: Should be in the format MM/YY (numbers only)
     const expirationDateRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
     if (method === "online" && (!expirationDate || !expirationDateRegex.test(expirationDate))) {
       return toast.error("Expiration date must be in the format MM/YY.");
     }
 
-    // Delivery Details Validation (for delivery method): Address and Phone Number
     if (method === "delivery" && (!deliveryAddress || !phoneNumber)) {
       return toast.error("Invalid delivery details.");
     }
 
-    // Phone Number Validation: Should contain exactly 8 digits and no spaces
     const phoneNumberRegex = /^[0-9]{8}$/;
     if (method === "delivery" && (!phoneNumber || !phoneNumberRegex.test(phoneNumber))) {
       return toast.error("Phone number must be exactly 8 digits and cannot contain spaces.");
     }
   
     try {
-      // Get the current user
+
       const auth = getAuth();
       const user = auth.currentUser;
       if (!user) {
         return toast.error("User is not logged in.");
       }
   
-      // Save the purchase details in Firestore (in the 'ventes' collection)
+      
       const db = getFirestore();
       const ventesCollection = collection(db, "ventes");
   
-      // Loop through the basket items and save each purchase
+     
       for (const item of basket) {
-        // Save each item purchased to 'ventes'
+        
         const purchaseData = {
           userId: user.uid,
           email: user.email,
@@ -87,16 +83,15 @@ const Panier = () => {
           date: new Date(),
         };
   
-        // If payment is on delivery, add delivery address and phone number
+       
         if (method === "delivery") {
           purchaseData.deliveryAddress = deliveryAddress;
           purchaseData.phoneNumber = phoneNumber;
         }
   
-        // Add the purchase data to Firestore
+    
         await addDoc(ventesCollection, purchaseData);
   
-        // Update the quantity of the product in Firestore
         const productRef = doc(db, "products", item.id);
         const productSnap = await getDoc(productRef);
   
@@ -104,18 +99,15 @@ const Panier = () => {
           const productData = productSnap.data();
           const newAmount = productData.amount - item.quantity;
   
-          // Ensure that quantity doesn't go below 0
           if (newAmount < 0) {
             return toast.error("Insufficient stock for product: " + item.description);
           }
   
-          // Update the product quantity
           await updateDoc(productRef, { amount: newAmount });
         } else {
           return toast.error("Product not found in database.");
         }
   
-        // Remove the item from the basket after purchase
         removeFromBasket(item.id);
       }
   
@@ -125,7 +117,6 @@ const Panier = () => {
       toggleModal("delivery", false);
       toggleModal("first", false);
   
-      // Redirect to the home page after successful payment
       navigate("/");
   
     } catch (error) {
@@ -196,7 +187,7 @@ const Panier = () => {
             Checkout
           </Button>
 
-          {/* Modals */}{["first", "payment", "delivery"].map((type) => (
+          {["first", "payment", "delivery"].map((type) => (
             <Modal key={type} show={showModals[type]} onHide={() => toggleModal(type, false)}>
               <Modal.Header closeButton>
                 <Modal.Title>
@@ -240,7 +231,7 @@ const Panier = () => {
                     </InputGroup>
                     <InputGroup className="mb-3">
                       <FormControl
-                        type="password"  // Change to password type
+                        type="password"  
                         placeholder="Card Code"
                         value={paymentDetails.cardCode}
                         onChange={(e) => updatePaymentDetails("cardCode", e.target.value)}

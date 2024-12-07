@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from '../api/firebase.config'; // Ensure both auth and db are imported
-import { setDoc, doc } from 'firebase/firestore'; // Import Firestore methods
+import { auth, db } from '../api/firebase.config'; 
+import { setDoc, doc } from 'firebase/firestore'; 
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -17,7 +17,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic validation
+   
     if (!name || !email || !password) {
       setError('Please fill in all fields');
       return;
@@ -28,7 +28,6 @@ const Register = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Store additional user information in Firestore
       await setDoc(doc(db, 'users', user.uid), {
         name: name,
         email: email,
@@ -36,7 +35,7 @@ const Register = () => {
 
       setSuccess(true);
       setError(null);
-      setTimeout(() => navigate('/'), 2000); // Redirect to the home page
+      setTimeout(() => navigate('/'), 2000); 
     } catch (err) {
       setError('Registration failed. Please try again.');
       console.error(err);
@@ -46,10 +45,9 @@ const Register = () => {
   };
 
   const handleSignInRedirect = () => {
-    navigate('/signin'); // Navigate to the Sign In page
+    navigate('/signin'); 
   };
 
-  // Inline CSS styles for the component
   const styles = {
     container: {
       maxWidth: '400px',

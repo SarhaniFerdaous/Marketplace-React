@@ -11,11 +11,9 @@ const Signin = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic validation
     if (!email || !password) {
       setError('Please fill in all fields');
       return;
@@ -25,7 +23,7 @@ const Signin = () => {
       setLoading(true);
       await signInWithEmailAndPassword(auth, email, password);
       setError(null);
-      navigate('/'); // Redirect to the home page on successful sign-in
+      navigate('/'); 
     } catch (err) {
       setError('Sign in failed. Please check your credentials and try again.');
       console.error(err);
@@ -34,12 +32,11 @@ const Signin = () => {
     }
   };
 
-  // Navigate to Register page
+  
   const handleRegisterClick = () => {
-    navigate('/register'); // Navigate to the Register page
+    navigate('/register'); 
   };
 
-  // Inline CSS styles for the component
   const styles = {
     container: {
       maxWidth: '400px',
@@ -88,7 +85,7 @@ const Signin = () => {
         </Form.Group>
 
         <Button variant="primary" type="submit" disabled={loading} className="mt-3">
-          {loading ? 'Signing In...' : 'Sign In'} {/* Loading state for button */}
+          {loading ? 'Signing In...' : 'Sign In'} 
         </Button>
       </Form>
 

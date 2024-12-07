@@ -1,51 +1,50 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // To handle redirection
+import { useNavigate } from "react-router-dom"; 
 import { collection, addDoc } from "firebase/firestore";
 import { auth, db } from "../api/firebase.config"; 
-import { toast, ToastContainer } from "react-toastify"; // Import Toastify
-import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
+import { toast, ToastContainer } from "react-toastify"; 
+import "react-toastify/dist/ReactToastify.css"; 
 
 const Footer = () => {
-  const [paragraph, setParagraph] = useState(""); // State to hold the recommendation
-  const navigate = useNavigate(); // Hook to handle navigation
-
+  const [paragraph, setParagraph] = useState(""); 
+  const navigate = useNavigate(); 
   const handleSubmit = async () => {
-    const user = auth.currentUser; // Get the currently authenticated user
+    const user = auth.currentUser; 
 
-    // Redirect to registration page if the user is not logged in
+    
     if (!user) {
       toast.warning("Please log in to submit your recommendation.", {
-        position: "top-center", // Correctly use the string
+        position: "top-center",
         autoClose: 3000,
       });
-      navigate("/register"); // Adjust the path to match your registration page route
+      navigate("/register"); 
       return;
     }
 
-    // Validate that the input is not empty
+   
     if (paragraph.trim() === "") {
       toast.error("Please type in a recommendation before submitting.", {
-        position: "top-center", // Correctly use the string
+        position: "top-center", 
         autoClose: 3000,
       });
       return;
     }
 
     try {
-      // Add the recommendation to the Firestore 'recommendations' collection
+      
       await addDoc(collection(db, "recommendations"), {
-        userId: user.uid, // Link the recommendation to the user's UID
-        recommendation: paragraph.trim(), // Save the recommendation text
+        userId: user.uid, 
+        recommendation: paragraph.trim(), 
       });
       toast.success("Your recommendation has been submitted successfully!", {
-        position: "top-center", // Correctly use the string
+        position: "top-center", 
         autoClose: 3000,
       });
-      setParagraph(""); // Clear the input field after submission
+      setParagraph(""); 
     } catch (error) {
       console.error("Error adding document: ", error);
       toast.error("An error occurred. Please try again.", {
-        position: "top-center", // Correctly use the string
+        position: "top-center", 
         autoClose: 3000,
       });
     }
@@ -57,7 +56,7 @@ const Footer = () => {
       padding: "20px",
       borderTop: "1px solid #e0e0e0",
       fontSize: "14px",
-      position: "relative", // To ensure the copyright stays at the bottom
+      position: "relative", 
     },
     row: {
       display: "flex",
@@ -94,15 +93,15 @@ const Footer = () => {
       cursor: "pointer",
     },
     copyrightContainer: {
-      marginTop: "20px", // Add space between the main content and the copyright
-      padding: "5px 0", // Reduced padding for a smaller section
-      borderTop: "1px solid #e0e0e0", // Create a visual separation with a border
-      backgroundColor: "#343a40", // Darker background for the copyright section
+      marginTop: "20px", 
+      padding: "5px 0", 
+      borderTop: "1px solid #e0e0e0", 
+      backgroundColor: "#343a40",
       textAlign: "center",
     },
     copyright: {
-      fontSize: "10px", // Smaller text size
-      color: "#ffffff", // White text color for contrast against dark background
+      fontSize: "10px", 
+      color: "#ffffff", 
     }
   };
   
@@ -110,7 +109,7 @@ const Footer = () => {
     <>
       <footer style={styles.footer}>
         <div style={styles.row}>
-          {/* Contact Section */}
+   
           <div style={styles.column}>
             <h5 style={styles.header}>Contact</h5>
             <div>
@@ -120,7 +119,7 @@ const Footer = () => {
             </div>
           </div>
   
-          {/* Recommendations Section */}
+          
           <div style={styles.column}>
             <h5 style={styles.header}>Recommendations</h5>
             <p>There is always room for improvements !</p>
@@ -129,7 +128,7 @@ const Footer = () => {
                 type="text"
                 placeholder="Your recommendation"
                 value={paragraph}
-                onChange={(e) => setParagraph(e.target.value)} // Update the paragraph state
+                onChange={(e) => setParagraph(e.target.value)} 
                 style={styles.input}
               />
               <button onClick={handleSubmit} style={styles.button}>Submit</button>
@@ -137,7 +136,7 @@ const Footer = () => {
           </div>
         </div>
         
-        {/* Copyright Container */}
+       
         <div style={styles.copyrightContainer}>
           <div style={styles.copyright}>
             Copyright © 2024-present InfoZone, Inc. All rights reserved.

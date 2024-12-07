@@ -4,14 +4,7 @@ import { format, isValid, getWeek } from 'date-fns';
 import { Bar, Doughnut } from 'react-chartjs-2';
 
 import {
-  Chart as ChartJS,
-  ArcElement,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+  Chart as ChartJS, ArcElement,BarElement,CategoryScale,LinearScale,Tooltip,Legend,} from 'chart.js';
 
 ChartJS.register(
   ArcElement,
@@ -56,7 +49,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Fetch ventes data
+      
       const ventesSnapshot = await getDocs(collection(db, 'ventes'));
       let totalSales = 0,
         totalQuantity = 0,
@@ -72,19 +65,18 @@ const Dashboard = () => {
         totalSales += data.total || 0;
         totalQuantity += data.quantity || 0;
 
-        // Count payment methods
+        
         if (data.paymentMethod === 'delivery') deliveryCount++;
         if (data.paymentMethod === 'online') onlineCount++;
 
-        // Count product types
+     
         const { productType } = data;
         if (productType) {
           productTypeCounts[productType] = (productTypeCounts[productType] || 0) + 1;
         }
 
-        // Weekly sales calculation
         if (saleDate && isValid(saleDate)) {
-          const weekNumber = Math.ceil((saleDate.getDate() - 1) / 7); // Calculate week of the month
+          const weekNumber = Math.ceil((saleDate.getDate() - 1) / 7); 
           weeklySalesData[weekNumber] += data.quantity || 0;
           if (getWeek(saleDate) === currentWeek) {
             weeklySalesAmount += data.total || 0;
@@ -108,7 +100,7 @@ const Dashboard = () => {
         ],
       });
 
-      // Fetch products data
+      
       const productsSnapshot = await getDocs(collection(db, 'products'));
       let chairGamerCount = 0,
         pcCount = 0,
@@ -124,7 +116,7 @@ const Dashboard = () => {
         if (productType === 'PC') pcCount++;
         if (productType === 'accessories') accessoriesCount++;
 
-        // Count products added by users
+        
         const key = `${name} - ${brand}`;
         userProductCounts[key] = (userProductCounts[key] || 0) + 1;
       });
@@ -151,7 +143,7 @@ const Dashboard = () => {
         accessories: accessoriesCount,
       });
 
-      // Fetch users data
+      
       const usersSnapshot = await getDocs(collection(db, 'users'));
       setUserCount(usersSnapshot.size);
     };
@@ -159,7 +151,7 @@ const Dashboard = () => {
     fetchData();
   }, [db, currentWeek]);
 
-  // Chart Data for Product Types
+  
   const productData = {
     labels: ['Chair Gamer', 'PC', 'Accessories'],
     datasets: [
@@ -171,7 +163,7 @@ const Dashboard = () => {
     ],
   };
 
-  // Chart Data for Payment Methods
+  
   const paymentData = {
     labels: ['Delivery', 'Online'],
     datasets: [
@@ -186,7 +178,6 @@ const Dashboard = () => {
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', backgroundColor: '#f9fafb' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>Visualise numbers</h1>
 
-      {/* Cards Section */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '30px' }}>
         <div style={cardStyle}>
           <h3>Total Sales</h3>
@@ -206,7 +197,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Charts Section */}
+  
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
         <div style={cardStyle}>
           <h3>Payment Methods</h3>

@@ -1,60 +1,51 @@
-/* General styles */
-.App {
-  display: flex; /* Use flexbox for layout */
-  flex-direction: column; /* Arrange children vertically */
-  min-height: 100vh; /* Ensure it fills the viewport height */
-  text-align: center; /* Center text in the App */
-}
 
+.App {
+  display: flex; 
+  flex-direction: column; 
+  min-height: 100vh; 
+  text-align: center; 
+}
 .App-logo {
-  height: 40vmin; /* Responsive logo size */
-  pointer-events: none; /* Disable pointer events */
+  height: 40vmin; 
+  pointer-events: none; 
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
-    animation: App-logo-spin infinite 20s linear; /* Animation for the logo */
+    animation: App-logo-spin infinite 20s linear; 
   }
 }
-
-/* Header styles */
 .App-header {
-  background-color: #282c34; /* Dark background for header */
-  min-height: 100px; /* Ensure a fixed height for the header */
-  display: flex; /* Use flexbox for alignment */
-  align-items: center; /* Center items vertically */
-  justify-content: center; /* Center items horizontally */
-  font-size: calc(10px + 2vmin); /* Responsive font size */
-  color: white; /* Text color */
+  background-color: #282c34; 
+  min-height: 100px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  font-size: calc(10px + 2vmin); 
+  color: white; 
 }
-
-/* Main content styles */
 .content {
-  flex: 1; /* Allow content area to expand and fill space */
-  display: flex; /* Optional: Use flexbox for content layout */
-  flex-direction: column; /* Arrange content vertically */
-  justify-content: center; /* Center content vertically */
+  flex: 1; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
 }
 
-/* Footer styles */
 .footer {
-  background-color: #f8f9fa; /* Example light footer background */
-  padding: 20px; /* Padding for footer */
-  text-align: center; /* Center footer text */
-  color: #333; /* Text color for footer */
+  background-color: #f8f9fa; 
+  padding: 20px; 
+  text-align: center; 
+  color: #333;
 }
-
-/* Link styles */
 .App-link {
-  color: #61dafb; /* Link color */
+  color: #61dafb; 
 }
 
-/* Animation */
 @keyframes App-logo-spin {
   from {
-    transform: rotate(0deg); /* Start rotation */
+    transform: rotate(0deg); 
   }
   to {
-    transform: rotate(360deg); /* Complete rotation */
+    transform: rotate(360deg); 
   }
 }

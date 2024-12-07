@@ -6,9 +6,9 @@ export const fetchUserData = async (uid) => {
   const docSnap = await getDoc(userDoc);
 
   if (docSnap.exists()) {
-    return docSnap.data(); // Return the user data
+    return docSnap.data(); 
   } else {
     console.log("No such document!");
-    return null; // Return null if no document exists
+    return null; 
   }
 };

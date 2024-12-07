@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Spinner, Container } from "react-bootstrap"; // Import spinner from react-bootstrap
+import { Spinner, Container } from "react-bootstrap"; 
 
 const LoadingPage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setIsLoading(false); // Set isLoading to false after 1 second if page isn't loaded
+      setIsLoading(false); 
     }, 1000);
 
-    // Clear the timeout if the component is unmounted before the timeout
     return () => clearTimeout(timer);
   }, []);
 
@@ -22,7 +21,7 @@ const LoadingPage = () => {
         </div>
       ) : (
         <div>
-          {/* Your page content goes here */}
+        
           <h3>Page has finished loading!</h3>
         </div>
       )}

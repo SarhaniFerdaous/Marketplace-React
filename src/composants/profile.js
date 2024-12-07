@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Button, Row, Col, Modal } from "react-bootstrap";
 import { FaTrashAlt } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { fetchUserProducts, deleteProduct } from "../api/profile.fetch"; // Adjust import if necessary
+import { fetchUserProducts, deleteProduct } from "../api/profile.fetch"; 
 
 const UserProfile = () => {
   const [products, setProducts] = useState([]);
@@ -13,7 +13,7 @@ const UserProfile = () => {
   useEffect(() => {
     const loadUserProducts = async () => {
       try {
-        const data = await fetchUserProducts(); // No need to pass userId, API handles it
+        const data = await fetchUserProducts(); 
         setProducts(data);
         setLoading(false);
       } catch (err) {
@@ -24,13 +24,13 @@ const UserProfile = () => {
     };
 
     loadUserProducts();
-  }, []); // Empty dependency array means this runs once when the component mounts
+  }, []); 
 
   const handleRemoveProduct = async (productId) => {
     try {
-      const result = await deleteProduct(productId); // API call to delete product
+      const result = await deleteProduct(productId); 
       if (result) {
-        // Remove the deleted product from the state
+        
         setProducts((prevProducts) => prevProducts.filter((product) => product.id !== productId));
         toast.success("Product removed successfully.");
       } else {
@@ -38,7 +38,7 @@ const UserProfile = () => {
       }
     } catch (err) {
       toast.error("Error removing product.");
-      console.error(err); // Log any error
+      console.error(err);
     }
   };
   
@@ -105,7 +105,6 @@ const UserProfile = () => {
         </Row>
       )}
 
-      {/* Modal for Product Removal Confirmation */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Deletion</Modal.Title>

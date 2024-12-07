@@ -40,7 +40,7 @@ const Header = () => {
       if (user) {
         if (searchText.trim()) {
           navigate(`/search?search=${encodeURIComponent(searchText.trim())}`);
-          setSearchText(""); // Clear the search input after navigating
+          setSearchText(""); 
         }
       } else {
         navigate("/register");

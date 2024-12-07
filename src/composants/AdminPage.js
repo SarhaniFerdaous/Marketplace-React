@@ -90,7 +90,7 @@ const AdminPage = () => {
                     <div key={product.id} style={styles.productItem}>
                       <p>{product.description}</p>
                       <button style={styles.deleteButton} onClick={() => handleDelete(product.id, 'product', 'products')}>Delete</button>
-                      <strong>{product.name}</strong> {/* Move the product name below the description */}
+                      <strong>{product.name}</strong> 
                     </div>
                   ))}
                 </div>
@@ -112,8 +112,8 @@ const AdminPage = () => {
             <ul style={styles.list}>
               {users.map((user) => (
                 <li key={user.id} style={styles.listItem}>
-                  <p>{user.email}</p> {/* Move the email above the user name */}
-                  <strong>{user.name}</strong> {/* Move the user name below the email */}
+                  <p>{user.email}</p> 
+                  <strong>{user.name}</strong> 
                   <button style={styles.button} onClick={() => handleUpdateUser(user.id, { role: 'admin' })}>Make Admin</button>
                   <button style={styles.deleteButton} onClick={() => handleDelete(user.id, 'user', 'users')}>Delete</button>
                 </li>

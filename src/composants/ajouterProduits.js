@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import { useNavigate } from "react-router-dom"; 
 import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
-import { getAuth } from "firebase/auth";  // Import Firebase Authentication
+import { getAuth } from "firebase/auth";  
 import { db } from "../api/firebase.config";
 import { collection, addDoc } from "firebase/firestore";
 import { generateSearchKeywords } from "../utils/productHelpers";
@@ -13,22 +13,22 @@ const AddProductForm = () => {
   const [currency, setCurrency] = useState("TND");
   const [amount, setAmount] = useState("");
   const [image, setImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState(""); // Store the image URL here
+  const [imageUrl, setImageUrl] = useState(""); 
   const [brand, setBrand] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate(); 
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImageUrl(reader.result); // Set the data URL of the image
-        setImage(file); // Store the actual file (if needed for validation or future reference)
+        setImageUrl(reader.result); 
+        setImage(file); 
       };
-      reader.readAsDataURL(file); // This converts the image file to a base64 string
+      reader.readAsDataURL(file); 
     }
   };
 
@@ -39,14 +39,13 @@ const AddProductForm = () => {
     setCurrency("TND");
     setAmount("");
     setImage(null);
-    setImageUrl(""); // Clear the image URL
+    setImageUrl(""); 
     setBrand("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check for required fields
     if (!productType || !description || !price || !amount || !brand || !imageUrl) {
       setMessage({ type: "danger", text: "Please fill all required fields." });
       return;
@@ -66,15 +65,14 @@ const AddProductForm = () => {
     setMessage({ type: "", text: "Processing your product..." });
 
     try {
-      const auth = getAuth(); // Get Firebase Authentication instance
-      const user = auth.currentUser; // Get the current logged-in user
+      const auth = getAuth(); 
+      const user = auth.currentUser; 
 
       if (!user) {
         setMessage({ type: "danger", text: "You must be logged in to add a product." });
         return;
       }
 
-      // Create the product data
       const productData = {
         productType,
         description,
@@ -82,28 +80,26 @@ const AddProductForm = () => {
         currency,
         amount,
         brand,
-        imageUrl, // Save the image URL (base64 or external URL)
+        imageUrl, 
         createdAt: new Date(),
-        userId: user.uid, // Add the userId field to associate product with the user
+        userId: user.uid, 
       };
 
-      // Add the product data to Firestore
+      
       const productDocRef = await addDoc(collection(db, "products"), productData);
 
-      // After successfully adding the product, call generateSearchKeywords
-      await generateSearchKeywords(productDocRef.id); // Pass the product ID to generateSearchKeywords
+      await generateSearchKeywords(productDocRef.id); 
 
-      // Success message and reset form
       setMessage({ type: "success", text: "Product added successfully!" });
       resetForm();
 
-      // Navigate to the appropriate page based on product type
+      
       if (productType === "PC") {
-        navigate("/pc"); // Navigate to PC page
+        navigate("/pc"); 
       } else if (productType === "accessories") {
-        navigate("/Accessories"); // Navigate to Accessories page
+        navigate("/Accessories");
       } else if (productType === "Chair Gamer") {
-        navigate("/chairgamer"); // Navigate to Chair Gamer page
+        navigate("/chairgamer"); 
       }
     } catch (error) {
       console.error("Error adding product: ", error);
@@ -115,11 +111,11 @@ const AddProductForm = () => {
 
   return (
     <Container>
-      {/* Display success or error messages */}
+    
       {message.text && <Alert variant={message.type}>{message.text}</Alert>}
 
       <Form onSubmit={handleSubmit} style={styles.formContainer}>
-        {/* Product Type Radio Buttons */}
+       
         <Form.Group as={Row} style={styles.formGroup}>
           <Form.Label as="legend" column sm={2} style={styles.formLabel}>
             Type of product
@@ -155,7 +151,6 @@ const AddProductForm = () => {
           </Col>
         </Form.Group>
 
-        {/* Description Input */}
         <Form.Group controlId="description" style={styles.formGroup}>
           <Form.Label style={styles.formLabel}>Description</Form.Label>
           <Form.Control
@@ -168,7 +163,6 @@ const AddProductForm = () => {
           />
         </Form.Group>
 
-        {/* Price and Amount Inputs */}
         <Form.Group as={Row} style={styles.formGroup}>
           <Col sm={6}>
             <Form.Label style={styles.formLabel}>Price</Form.Label>
@@ -192,7 +186,6 @@ const AddProductForm = () => {
           </Col>
         </Form.Group>
 
-        {/* Brand Input */}
         <Form.Group controlId="brand" style={styles.formGroup}>
           <Form.Label style={styles.formLabel}>Brand</Form.Label>
           <Form.Control
@@ -204,7 +197,6 @@ const AddProductForm = () => {
           />
         </Form.Group>
 
-        {/* Image Input */}
         <Form.Group controlId="image" style={styles.formGroup}>
           <Form.Label style={styles.formLabel}>Product Image</Form.Label>
           <Form.Control
@@ -220,7 +212,6 @@ const AddProductForm = () => {
           )}
         </Form.Group>
 
-        {/* Submit Button */}
         <Button variant="primary" type="submit" disabled={loading} style={styles.submitButton}>
           {loading ? "Submitting..." : "Add Product"}
         </Button>

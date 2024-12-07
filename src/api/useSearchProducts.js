@@ -17,13 +17,13 @@ export const useSearchProducts = (searchText) => {
 
         let q;
         if (searchText) {
-          // Search based on `searchKeywords` field
+         
           q = query(
             productsRef,
             where("searchKeywords", "array-contains", searchText.toLowerCase())
           );
         } else {
-          // If no searchText, fetch all products
+        
           q = query(productsRef);
         }
 

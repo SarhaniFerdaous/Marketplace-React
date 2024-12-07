@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { Navbar, Nav, Button } from 'react-bootstrap';
-import { useUser } from '../context/UserContext'; // Ensure correct path to UserContext
+import { useUser } from '../context/UserContext'; 
 
 const NavBar = () => {
   const [showCategories, setShowCategories] = useState(false);
   const dropdownRef = useRef(null);
-  const { userData } = useUser(); // Retrieve user data from context
+  const { userData } = useUser(); 
   const navigate = useNavigate();
-  const location = useLocation(); // Use the location hook to get the current route
+  const location = useLocation(); 
 
   const handleToggle = () => {
     if (!userData) {
-      // If the user is not signed in, navigate to the register page
+     
       navigate('/register');
     } else {
-      // If the user is signed in, toggle the categories dropdown
+      
       setShowCategories(!showCategories);
     }
   };
@@ -25,7 +25,7 @@ const NavBar = () => {
   };
 
   const handleAddProductClick = () => {
-    navigate('/ajouterProduits'); // Updated route
+    navigate('/ajouterProduits');
   };
 
   useEffect(() => {
@@ -49,10 +49,9 @@ const NavBar = () => {
   }, []);
 
   useEffect(() => {
-    console.log('userData:', userData); // Check if user data is being updated correctly
+    console.log('userData:', userData); 
   }, [userData]);
 
-  // Check if the current path is "ajouterProduits" and hide the "Ajouter Produit" button if so
   const isOnAddProductPage = location.pathname === '/ajouterProduits';
 
   return (
@@ -77,27 +76,22 @@ const NavBar = () => {
         <div className="greeting-message">
   {userData ? (
     userData.isAdmin ? (
-      // If the user is an admin
+    
       <h1>What a surprise!</h1>
     ) : (
-      // If the user is not an admin
+      
       <h1>Happy shopping, {userData.name}!</h1>
     )
   ) : (
     <h1>Become an InfoZoner!</h1>
   )}
 </div>
-
-
-        {/* Conditionally Render Ajouter Produit Button */}
         {userData && !isOnAddProductPage && (
           <Button variant="primary" className="add-product-button" onClick={handleAddProductClick}>
             Sell your goods
           </Button>
         )}
       </Navbar.Collapse>
-
-      {/* Inline CSS Styles */}
       <style jsx>{`
   .navbar {
     display: flex;

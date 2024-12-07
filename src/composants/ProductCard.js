@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import { onSnapshot, collection } from "firebase/firestore";
-import { db } from "../api/firebase.config"; // Adjust the import path to your Firebase config
-import { BasketContext } from "../context/BasketContext"; // Adjust based on where your context is defined
+import { db } from "../api/firebase.config"; 
+import { BasketContext } from "../context/BasketContext"; 
 
 const styles = {
   container: {
@@ -18,7 +18,7 @@ const styles = {
     overflow: "hidden",
     transition: "box-shadow 0.3s ease, transform 0.3s ease",
     marginBottom: "1.5rem",
-    padding: "1rem", // Reduced padding
+    padding: "1rem", 
   },
   cardHover: {
     transform: "translateY(-5px)",
@@ -32,41 +32,41 @@ const styles = {
     backgroundColor: "#ffffff",
     borderBottom: "1px solid #eaeaea",
     overflow: "hidden",
-    height: "150px", // Fixed height
+    height: "150px", 
   },
   image: {
     width: "100%",
-    height: "100%", // Match container height
-    objectFit: "contain", // Ensure the entire image fits within the container
+    height: "100%", 
+    objectFit: "contain", 
     transition: "transform 0.3s ease",
   },
   cardBody: {
-    padding: "0.8rem", // Reduced padding
+    padding: "0.8rem", 
     textAlign: "left",
   },
   cardTitle: {
-    fontSize: "1rem", // Reduced font size
+    fontSize: "1rem",
     fontWeight: "bold",
     color: "#2c3e50",
-    marginBottom: "0.3rem", // Reduced margin
+    marginBottom: "0.3rem", 
   },
   cardText: {
-    fontSize: "0.9rem", // Reduced font size
+    fontSize: "0.9rem", 
     color: "#7f8c8d",
-    marginBottom: "0.8rem", // Reduced margin
+    marginBottom: "0.8rem", 
     lineHeight: "1.4",
   },
   info: {
-    margin: "0.2rem 0", // Reduced spacing
-    fontSize: "0.85rem", // Reduced font size
+    margin: "0.2rem 0",
+    fontSize: "0.85rem", 
     color: "#34495e",
   },
   button: {
     backgroundColor: "#3498db",
     color: "#ffffff",
-    fontSize: "0.85rem", // Reduced font size
+    fontSize: "0.85rem", 
     fontWeight: "bold",
-    padding: "0.4rem 0.8rem", // Reduced padding
+    padding: "0.4rem 0.8rem", 
     border: "none",
     borderRadius: "5px",
     transition: "background-color 0.3s ease, transform 0.2s ease",

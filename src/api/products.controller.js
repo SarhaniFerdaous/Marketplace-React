@@ -3,7 +3,6 @@ const admin = require('firebase-admin');
 const db = admin.firestore();
 const router = express.Router();
 
-// Endpoint to search for products
 router.get("/api/products", async (req, res) => {
   const { search, type } = req.query;
   
@@ -12,10 +11,10 @@ router.get("/api/products", async (req, res) => {
   }
 
   try {
-    // Query Firestore for products matching the search text in the searchKeywords field
+   
     const productsRef = db.collection("products");
     const snapshot = await productsRef
-      .where("productType", "==", type) // Filter by product type (optional)
+      .where("productType", "==", type) 
       .get();
 
     const matchedProducts = [];
@@ -38,15 +37,15 @@ router.get("/api/products", async (req, res) => {
   }
 });
 
-// Endpoint to process the order and save delivery information if "Payment on Delivery"
+
 router.post("/api/orders", async (req, res) => {
   const { paymentMethod, deliveryAddress, phoneNumber, otherOrderDetails } = req.body;
 
-  // Check if payment method is 'Payment on Delivery'
+  
   if (paymentMethod === 'Payment on Delivery') {
     try {
-      // Save the order with delivery address and phone number in the 'vente' collection
-      const venteRef = db.collection('vente').doc(); // Creates a new document in the 'vente' collection
+      
+      const venteRef = db.collection('vente').doc(); 
       await venteRef.set({
         ...otherOrderDetails,
         paymentMethod,

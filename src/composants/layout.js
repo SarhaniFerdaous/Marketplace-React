@@ -1,6 +1,6 @@
 import React from 'react';
-import Header from './composants/header'; // Ensure this matches your actual file case
-import Footer from './composants/footer'; // Ensure this matches your actual file case
+import Header from './composants/header'; 
+import Footer from './composants/footer'; 
 
 const Layout = ({ children }) => {
   return (

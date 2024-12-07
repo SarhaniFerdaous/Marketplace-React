@@ -7,7 +7,7 @@ const Categories = () => {
 
   return (
     <div>
-      {/* ProductList for different categories */}
+      
       <ProductList productType={selectedCategory} searchText={searchText} />
     </div>
   );
