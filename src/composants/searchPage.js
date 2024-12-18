@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { useSearchProducts } from "../api/useSearchProducts";
+import { useSearchProducts } from "../context/useSearchProducts";
 import ProductCard from "../composants/ProductCard";
 
 const SearchPage = () => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Button, Row, Col, Modal } from "react-bootstrap";
 import { FaTrashAlt } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { fetchUserProducts, deleteProduct } from "../api/profile.fetch"; 
+import { fetchUserProducts, deleteProduct } from "../context/profile.fetch"; 
 
 const UserProfile = () => {
   const [products, setProducts] = useState([]);

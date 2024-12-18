@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { db } from "./firebase.config";
+import { db } from "../api/firebase.config";
 import { collection, query, where, getDocs } from "firebase/firestore";
 
 export const useSearchProducts = (searchText) => {
